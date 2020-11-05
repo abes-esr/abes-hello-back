@@ -1,6 +1,6 @@
-# abes-hello
+# abes-hello-back
 
-Application exemple qui illustre notre politique de développement avec des modèles : un batch, une API, un client VueJs etc.
+Application exemple qui illustre notre politique de développement avec des modèles pour la partie back : un batch, une API etc.
 
 ## Partie batch
 
