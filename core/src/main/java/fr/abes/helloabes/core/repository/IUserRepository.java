@@ -1,11 +1,10 @@
 package fr.abes.helloabes.core.repository;
 
-import fr.abes.helloabes.core.models.Users;
+import fr.abes.helloabes.core.models.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface IUserRepository extends JpaRepository<Users, String> {
+public interface IUserRepository extends JpaRepository<AppUser, String> {
 
-    Users findUserByUserName(String userName);
+    AppUser findByUserName(String userName);
+
 }

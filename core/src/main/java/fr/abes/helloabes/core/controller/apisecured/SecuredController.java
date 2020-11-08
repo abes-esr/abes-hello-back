@@ -1,16 +1,15 @@
-package fr.abes.helloabes.core.controller;
+package fr.abes.helloabes.core.controller.apisecured;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/")
-public class HomeController {
+@RequestMapping("/secured")
+public class SecuredController {
 
     @GetMapping
-    public String displayHome() {
-        return "Hello Abes";
+    public String displaySecureHome() {
+        return "Hello from Abes - Voici est private API";
     }
 }

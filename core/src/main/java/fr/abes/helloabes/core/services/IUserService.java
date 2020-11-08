@@ -1,10 +1,10 @@
 package fr.abes.helloabes.core.services;
 
-import fr.abes.helloabes.core.models.Users;
+import fr.abes.helloabes.core.models.AppUser;
 
 public interface IUserService {
 
-    Users createUser(Users user);
+    AppUser createUser(AppUser user);
+    AppUser findUserByUserName(AppUser user);
 
-    Users findUserByUserName(String userName);
 }

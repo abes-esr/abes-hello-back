@@ -14,16 +14,17 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Users {
+public class AppUser {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private String id;
     private String userName;
-    private String password;
+    private String passWord;
 
-    public Users(String userName, String password) {
+    public AppUser(String userName, String password) {
         this.userName = userName;
-        this.password = password;
+        this.passWord = password;
     }
+
 }
