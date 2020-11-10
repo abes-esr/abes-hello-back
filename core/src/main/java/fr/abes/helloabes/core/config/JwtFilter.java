@@ -18,19 +18,40 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Filtre de jetons JWT.
+ * Cette classe est basée sur le framework Spring avec les modules Spring Web et Spring Security.
+ * @since 0.0.1
+ * @author Duy Tran
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
+    /** Service utilitaire pour les jetons JWT. */
     private final JwtUtil jwtUtil;
+
+    /** Service d'authentification des utilisateurs. */
     private final CustomUserDetailsService service;
 
+    /**
+     * Construit un filtre de jetons JWT.
+     * @param jwtUtil Service utilitaire pour les jetons JWT.
+     * @param service Service d'authentification des utilisateurs.
+     */
     @Autowired
     public JwtFilter(JwtUtil jwtUtil, CustomUserDetailsService service) {
         this.jwtUtil = jwtUtil;
         this.service = service;
     }
 
-    // Ici nous allons analyser le header avec le Bearer token JWT
+    /**
+     * Execute le filtre avec la vérification du jeton JWT.
+     * @param httpServletRequest requête HTTP entrante.
+     * @param httpServletResponse requête HTTP sortante.
+     * @param filterChain Chaîne de filtres.
+     * @throws ServletException si
+     * @throws IOException si
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
