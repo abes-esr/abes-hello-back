@@ -1,6 +1,6 @@
-package fr.abes.helloabes.core.repository;
+package fr.abes.helloabes.core.dao;
 
-import fr.abes.helloabes.core.models.AppUser;
+import fr.abes.helloabes.core.entities.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since 0.0.1
  * @author Duy Tran
  */
-public interface IUserRepository extends JpaRepository<AppUser, String> {
+public interface IUserDao extends JpaRepository<AppUser, String> {
 
     /**
      * Recherche un utilisateur du service web dans le dépot à partir de son nom d'utilisateur.

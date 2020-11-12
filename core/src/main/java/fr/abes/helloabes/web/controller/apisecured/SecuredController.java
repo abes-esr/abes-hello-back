@@ -1,4 +1,4 @@
-package fr.abes.helloabes.core.controller.apisecured;
+package fr.abes.helloabes.web.controller.apisecured;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

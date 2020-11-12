@@ -1,6 +1,6 @@
-package fr.abes.helloabes.core;
+package fr.abes.helloabes.web.security;
 
-import fr.abes.helloabes.core.config.JwtFilter;
+import fr.abes.helloabes.core.configuration.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

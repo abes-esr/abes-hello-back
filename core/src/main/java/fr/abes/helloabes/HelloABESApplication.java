@@ -1,16 +1,11 @@
-package fr.abes.helloabes.core;
+package fr.abes.helloabes;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.abes.helloabes.core.config.JwtUtil;
-import fr.abes.helloabes.core.models.AppUser;
-import fr.abes.helloabes.core.repository.IUserRepository;
-import fr.abes.helloabes.core.services.IUserService;
+import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.core.dao.IUserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * La classe {@code CoreApplication} représente la classe principale du service web RESTFul.
@@ -20,7 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * @author Duy Tran
  */
 @SpringBootApplication
-public class CoreApplication implements CommandLineRunner {
+public class HelloABESApplication implements CommandLineRunner {
 
 	/** Dépot d'utilisateurs du service web. L'attribut {@link #userRepository} est utilisé ici dans le cadre de
 	 * la version de démontration afin d'ajouter dès le démarrage un utilisateur par defaut.
@@ -28,14 +23,14 @@ public class CoreApplication implements CommandLineRunner {
 	 * <p> Note : il est important de supprimer cet attribut dans une version de production.</p>
 	 */
 	@Autowired
-	private IUserRepository userRepository;
+	private IUserDao userRepository;
 
 	/**
 	 * Fonction principale exécutée à l'initialisation du framework Spring.
 	 * @param args Tableau des arguments passées à l'appel de la fonction.  Par défaut, il ne contient rien.
 	 */
 	public static void main(String[] args) {
-		SpringApplication.run(CoreApplication.class, args);
+		SpringApplication.run(HelloABESApplication.class, args);
 	}
 
 	/**

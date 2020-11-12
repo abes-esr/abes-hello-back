@@ -1,15 +1,16 @@
-package fr.abes.helloabes.core.controller.apipublic;
+package fr.abes.helloabes.web.controller.apipublic;
 
-import fr.abes.helloabes.core.config.JwtUtil;
-import fr.abes.helloabes.core.models.AppUser;
-import fr.abes.helloabes.core.services.IUserService;
-import fr.abes.helloabes.core.services.serviceimpl.UserServiceImpl;
+import fr.abes.helloabes.core.configuration.JwtUtil;
+import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.core.service.IUserService;
+import fr.abes.helloabes.core.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
 
@@ -60,7 +61,7 @@ public class PublicController {
      * @return L'utilisateur du service web enregistré.
      */
     @PostMapping("/register")
-    public AppUser register(@RequestBody AppUser user) {
+    public AppUser register(@Valid @RequestBody AppUser user) {
         return userService.createUser(user);
     }
 

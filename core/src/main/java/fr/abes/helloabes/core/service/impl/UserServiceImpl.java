@@ -1,8 +1,8 @@
-package fr.abes.helloabes.core.services.serviceimpl;
+package fr.abes.helloabes.core.service.impl;
 
-import fr.abes.helloabes.core.models.AppUser;
-import fr.abes.helloabes.core.repository.IUserRepository;
-import fr.abes.helloabes.core.services.IUserService;
+import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.core.dao.IUserDao;
+import fr.abes.helloabes.core.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements IUserService {
 
     /** Dépot d'utilisateurs du service web. */
-    private final IUserRepository userRepository;
+    private final IUserDao userRepository;
 
     /** Encodeur de mots de passe selon un algorithmede crpytage. */
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements IUserService {
      * @param bCryptPasswordEncoder Encodeur de mots de passe selon un algorithmede crpytage.
      */
     @Autowired
-    public UserServiceImpl(IUserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(IUserDao userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }

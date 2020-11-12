@@ -1,10 +1,9 @@
-package fr.abes.helloabes.core.config;
+package fr.abes.helloabes.core.configuration;
 
-import fr.abes.helloabes.core.services.CustomUserDetailsService;
+import fr.abes.helloabes.core.service.CustomUserDetailsService;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -65,7 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
             try {
-                userName = jwtUtil.extractUsername(token);
+                userName = jwtUtil.extractSubject(token);
             } catch (SignatureException ex) {
                 System.out.println("Invalid JWT Signature");
             } catch (MalformedJwtException ex){

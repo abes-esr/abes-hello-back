@@ -1,7 +1,7 @@
-package fr.abes.helloabes.core.services;
+package fr.abes.helloabes.core.service;
 
-import fr.abes.helloabes.core.models.AppUser;
-import fr.abes.helloabes.core.repository.IUserRepository;
+import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.core.dao.IUserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class CustomUserDetailsService implements UserDetailsService {
 
     /** Dépot d'utilisateurs du service web. */
-    private final IUserRepository userRepository;
+    private final IUserDao userRepository;
 
     /**
      * Construit un service d'authentification des utilisateurs pour le framework Spring 
@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @param userRepository Dépot d'utilisateurs du service web.
      */
     @Autowired
-    public CustomUserDetailsService(IUserRepository userRepository) {
+    public CustomUserDetailsService(IUserDao userRepository) {
         this.userRepository = userRepository;
     }
 

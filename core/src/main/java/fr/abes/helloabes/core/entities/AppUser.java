@@ -1,13 +1,15 @@
-package fr.abes.helloabes.core.models;
+package fr.abes.helloabes.core.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import fr.abes.helloabes.web.security.constraint.ValidPassword;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Setter;
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * Représente un utilisateur du service web. {@code AppUser} est synchronisé avec une base de données via Entity.
@@ -15,10 +17,11 @@ import javax.persistence.Id;
  * @since 0.0.1
  * @author Duy Tran
  */
-@Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Getter @Setter
+@Table(name= "UTILISATEUR")
 public class AppUser {
 
     /**
@@ -27,12 +30,19 @@ public class AppUser {
      */
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private String id;
+    @Column(name = "USER_ID")
+    private Integer identityNumber;
 
     /** Nom d'utilisateur  */
+    @Column(name = "USER_NAME")
+    @NotNull
+    @NotEmpty(message = "Le nom d'utilisateur ne doit pas être vide")
     private String userName;
 
     /** Mot de passe */
+    @Column(name = "USER_PASSWORD")
+    @ValidPassword
+    @NotNull
     private String passWord;
 
     /**
@@ -45,4 +55,11 @@ public class AppUser {
         this.passWord = password;
     }
 
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public String getPassWord() {
+        return this.passWord;
+    }
 }

@@ -1,6 +1,6 @@
-package fr.abes.helloabes.core.services;
+package fr.abes.helloabes.core.service;
 
-import fr.abes.helloabes.core.models.AppUser;
+import fr.abes.helloabes.core.entities.AppUser;
 
 /**
  * Représente un service pour gérer les utilisateurs du service web.

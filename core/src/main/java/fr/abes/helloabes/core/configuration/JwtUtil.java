@@ -1,4 +1,4 @@
-package fr.abes.helloabes.core.config;
+package fr.abes.helloabes.core.configuration;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
@@ -64,7 +64,7 @@ public class JwtUtil {
      * @param token Jeton JWT en chaîne de caractère.
      * @return Le sujet du jeton en chaîne de caractère.
      */
-    public String extractUsername(String token) {
+    public String extractSubject(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -111,7 +111,7 @@ public class JwtUtil {
      * @return Vrai si le nom d'utilisateur et le sujet du jeton sont égaux et si le jeton n'est pas expiré, Faux sinon.
      */
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
+        final String username = extractSubject(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
