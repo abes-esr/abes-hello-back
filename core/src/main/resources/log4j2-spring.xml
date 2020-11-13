@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <!-- On décrit les supports de sorties pour les logs -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{dark,yellow}: %msg%n%throwable" />
+        </Console>
+
+        <RollingFile name="LogFile"
+                     fileName="../logs/helloabes.log"
+                     filePattern="../logs/$${date:yyyy-MM}/helloabes-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- Au démarrage, on fait un fichier de log par jour ou si le fichier du jour dépasse 10MB -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                        size="10 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="ErrorFile"
+                     fileName="../logs/error.log"
+                     filePattern="../logs/$${date:yyyy-MM}/error-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- Au démarrage, on fait un fichier de log par jour ou si le fichier du jour dépasse 10MB -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                        size="10 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="DebugFile"
+                     fileName="..logs/debug.log"
+                     filePattern="../logs/$${date:yyyy-MM}/debug-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- Au démarrage, on fait un fichier de log par jour ou si le fichier du jour dépasse 10MB -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                        size="10 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <!-- On décrit les log et les supports utilisés -->
+
+        <Logger name="fr.abes" level="debug">
+            <!-- Pour les paquets dans fr.abes, on écrit un journal pour les erreurs et un journal pour les boggues -->
+            <AppenderRef ref="ErrorFile" level="error" />
+            <AppenderRef ref="DebugFile" level="debug" />
+        </Logger>
+
+        <!-- Pour le niveau INFO, on écrit dans la console -->
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="LogFile"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

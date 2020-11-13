@@ -1,4 +1,4 @@
-package fr.abes.helloabes.core.configuration;
+package fr.abes.helloabes.web.configuration;
 
 import fr.abes.helloabes.core.service.CustomUserDetailsService;
 import io.jsonwebtoken.MalformedJwtException;

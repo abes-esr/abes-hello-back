@@ -1,5 +1,6 @@
 package fr.abes.helloabes.web.controller.apisecured;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 0.0.1
  * @author Duy Tran
  */
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/secured")
 public class SecuredController {

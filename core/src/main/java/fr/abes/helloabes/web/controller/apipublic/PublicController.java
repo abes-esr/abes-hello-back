@@ -1,15 +1,18 @@
 package fr.abes.helloabes.web.controller.apipublic;
 
-import fr.abes.helloabes.core.configuration.JwtUtil;
+import fr.abes.helloabes.web.configuration.JwtUtil;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.service.IUserService;
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
@@ -20,6 +23,8 @@ import java.util.Map;
  * @since 0.0.1
  * @author Duy Tran
  */
+@Slf4j
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/")
 public class PublicController {
@@ -61,7 +66,7 @@ public class PublicController {
      * @return L'utilisateur du service web enregistré.
      */
     @PostMapping("/register")
-    public AppUser register(@Valid @RequestBody AppUser user) {
+    public AppUser register(@Valid @RequestBody AppUser user, HttpServletRequest request) {
         return userService.createUser(user);
     }
 
@@ -69,17 +74,15 @@ public class PublicController {
      * Traitement d'une requête POST sur la route '/login'.
      * @param authRequest Utilisateur du service web à identifier.
      * @return Jeton JWT en chaîne de caractère.
-     * @throws Exception si l'authentification a échoué.
+     * @throws BadCredentialsException si l'authentification a échoué.
      */
     @PostMapping("/login")
-    public String generateToken(@RequestBody AppUser authRequest) throws Exception {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassWord())
-            );
-        } catch (Exception ex) {
-            throw new Exception("invalid username/password");
-        }
+    public String generateToken(@RequestBody AppUser authRequest) throws BadCredentialsException {
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassWord())
+        );
+
         return jwtUtil.generateToken(authRequest.getUserName());
     }
 

@@ -33,3 +33,6 @@ build/
 .vscode/
 /batch/src/main/resources/application.properties
 /core/src/test/resources/hibernate.cfg.xml
+
+### Logs ###
+/logs/

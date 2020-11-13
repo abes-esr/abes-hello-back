@@ -1,17 +1,11 @@
 package fr.abes.helloabes.web.security.constraint;
 
 import org.passay.*;
-import org.passay.dictionary.WordListDictionary;
-import org.passay.dictionary.WordLists;
-import org.passay.dictionary.sort.ArraysSort;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -25,13 +19,13 @@ import java.util.stream.Collectors;
  */
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
 
-    /** Contient les messages d'exigence pour chaque règle */
+    /** Contient les messages de contrainte pour chaque règle */
     private MessageResolver resolver;
 
     /**
      * Cette fonction permet de charger en mémoire les messages d'exigence à l'initilisaion.
      * @param constraintAnnotation
-     * @exception RuntimeException si le fichier n'existe pas ou ne peut être chargé.
+     * @exception RuntimeException si le fichier n'existe pas ou ne peut pas être chargé.
      */
     @Override
     public void initialize(ValidPassword constraintAnnotation) {
@@ -46,10 +40,10 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
                 this.resolver = new PropertiesMessageResolver(props);
             }
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException("Erreur dans le chargement du fichier contenant les messages de contrainte des mots de passe", e);
+        } catch (FileNotFoundException ex) {
+            throw new RuntimeException(ex);
+        } catch (IOException ex) {
+            throw new RuntimeException("Erreur dans le chargement du fichier contenant les messages de contrainte des mots de passe", ex);
         }
     }
 
@@ -57,10 +51,14 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
      * Verifie si le mot de passe respecte les règles de sécurité.
      * @param password Mot de passe à tester.
      * @param context
-     * @return  Vrai si le mot de passe respète les règles de sécurité, Faux sinon.
+     * @return  Vrai si le mot de passe respècte les règles de sécurité, Faux sinon.
      */
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
+
+        if (password == null) {
+            return false;
+        }
 
         PasswordValidator validator = new PasswordValidator(resolver,Arrays.asList(
                 // au moins 8 caractere et maximum 100.

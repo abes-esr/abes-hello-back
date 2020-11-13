@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -35,14 +33,14 @@ public class AppUser {
 
     /** Nom d'utilisateur  */
     @Column(name = "USER_NAME")
-    @NotNull
+    @NotNull(message = "Le nom d'utilisateur ne doit pas être null")
     @NotEmpty(message = "Le nom d'utilisateur ne doit pas être vide")
     private String userName;
 
     /** Mot de passe */
     @Column(name = "USER_PASSWORD")
+    @NotNull(message = "Le mot de passe ne doit pas être null")
     @ValidPassword
-    @NotNull
     private String passWord;
 
     /**
@@ -53,13 +51,5 @@ public class AppUser {
     public AppUser(String userName, String password) {
         this.userName = userName;
         this.passWord = password;
-    }
-
-    public String getUserName() {
-        return this.userName;
-    }
-
-    public String getPassWord() {
-        return this.passWord;
     }
 }

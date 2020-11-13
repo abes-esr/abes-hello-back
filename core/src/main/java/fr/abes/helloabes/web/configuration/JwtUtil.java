@@ -1,4 +1,4 @@
-package fr.abes.helloabes.core.configuration;
+package fr.abes.helloabes.web.configuration;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
