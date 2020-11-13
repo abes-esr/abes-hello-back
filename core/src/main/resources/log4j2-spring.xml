@@ -38,7 +38,7 @@
         </RollingFile>
 
         <RollingFile name="DebugFile"
-                     fileName="..logs/debug.log"
+                     fileName="../logs/debug.log"
                      filePattern="../logs/$${date:yyyy-MM}/debug-%d{-dd-MMMM-yyyy}-%i.log.gz">
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
