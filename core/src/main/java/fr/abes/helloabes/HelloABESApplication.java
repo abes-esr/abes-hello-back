@@ -1,7 +1,7 @@
 package fr.abes.helloabes;
 
-import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.dao.IUserDao;
+import fr.abes.helloabes.core.entities.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

@@ -8,6 +8,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Représente un utilisateur du service web. {@code AppUser} est synchronisé avec une base de données via Entity.
@@ -16,6 +18,7 @@ import javax.validation.constraints.NotNull;
  * @author Duy Tran
  */
 @Entity
+@ApiModel
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
@@ -29,18 +32,21 @@ public class AppUser {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
+    @ApiModelProperty(value = "identifiant de l'utilisateur", name = "identityNumber", dataType = "Integer", example = "1")
     private Integer identityNumber;
 
     /** Nom d'utilisateur  */
     @Column(name = "USER_NAME")
     @NotNull(message = "Le nom d'utilisateur ne doit pas être null")
     @NotEmpty(message = "Le nom d'utilisateur ne doit pas être vide")
+    @ApiModelProperty(value = "nom de l'utilisateur", name = "userName", dataType = "String", example = "corentin")
     private String userName;
 
     /** Mot de passe */
     @Column(name = "USER_PASSWORD")
     @NotNull(message = "Le mot de passe ne doit pas être null")
     @ValidPassword
+    @ApiModelProperty(value = "mot de passe de l'utilisateur", name = "passWord", dataType = "String", example = "motDePasseC0!mplex")
     private String passWord;
 
     /**
