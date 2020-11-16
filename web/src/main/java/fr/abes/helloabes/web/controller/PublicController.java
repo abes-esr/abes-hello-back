@@ -78,7 +78,7 @@ public class PublicController {
      */
     @PostMapping("/register")
     @ApiOperation(
-            value = "Enregistre utilisateur",
+            value = "Enregistrer un utilisateur",
             notes = "Enregistre un nouvel utilisateur")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Opération terminée avec succès."),
@@ -102,7 +102,7 @@ public class PublicController {
      */
     @PostMapping("/login")
     @ApiOperation(
-            value = "Authentification utilisateur",
+            value = "Authentifier un utilisateur",
             notes = "Service d'authentification d'un utilisateur")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Opération terminée avec succès."),
