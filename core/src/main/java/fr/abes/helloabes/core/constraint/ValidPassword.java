@@ -1,4 +1,4 @@
-package fr.abes.helloabes.web.security.constraint;
+package fr.abes.helloabes.core.constraint;
 
 import javax.validation.Payload;
 import javax.validation.Constraint;

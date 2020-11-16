@@ -1,4 +1,4 @@
-package fr.abes.helloabes.web.security.constraint;
+package fr.abes.helloabes.core.constraint;
 
 import org.passay.*;
 import javax.validation.ConstraintValidator;
@@ -31,12 +31,12 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
     public void initialize(ValidPassword constraintAnnotation) {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            URL resource = classLoader.getResource("web/security/constraint/passwordConstraintMessage.properties");
+            URL resource = classLoader.getResource("core/constraint/passwordConstraintMessage.properties");
             if (resource == null) {
                 throw new FileNotFoundException("Le fichier contenant les messages de contrainte des mots de passe n'existe pas");
             } else {
                 Properties props = new Properties();
-                props.load(new FileInputStream(classLoader.getResource("web/security/constraint/passwordConstraintMessage.properties").getFile()));
+                props.load(new FileInputStream(classLoader.getResource("core/constraint/passwordConstraintMessage.properties").getFile()));
                 this.resolver = new PropertiesMessageResolver(props);
             }
 

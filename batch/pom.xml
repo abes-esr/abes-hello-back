@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Fichier de configuration du projet Maven
+
+        Abes-hello-back
+     ======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.5.RELEASE</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
-    <artifactId>batch</artifactId>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-    </properties>
+    <parent>
+        <artifactId>helloabesbackoffice</artifactId>
+        <groupId>fr.abes.helloabes</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <!-- =========================================================== -->
+    <!--     Description du module                                   -->
+    <!-- =========================================================== -->
+    <groupId>fr.abes.helloabes</groupId>
+    <artifactId>batch</artifactId>
+    <packaging>jar</packaging>
+    <name>Batch</name>
+    <description>Traitement en tache de fond de l'application.</description>
+
 
     <dependencyManagement>
         <dependencies>
@@ -27,8 +35,20 @@
         </dependencies>
     </dependencyManagement>
 
+    <!-- =========================================================== -->
+    <!--     Gestion des dependances                                 -->
+    <!-- =========================================================== -->
     <dependencies>
 
+        <!-- === Module projet === -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>core</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- === Spring batch === -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-batch</artifactId>
@@ -36,18 +56,12 @@
         <dependency>
             <groupId>org.springframework.batch</groupId>
             <artifactId>spring-batch-core</artifactId>
-            <version>4.0.0.RELEASE</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.hsqldb/hsqldb -->
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>2.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- ************** RETRY *************************** -->
@@ -61,11 +75,19 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
     </dependencies>
+
+    <!-- =========================================================== -->
+    <!--     Configuration de la compilation                         -->
+    <!-- =========================================================== -->
     <build>
         <plugins>
+            <!-- ======================================================= -->
+            <!--     Compilation de l'application Spring                 -->
+            <!-- ======================================================= -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${org.springframework.boot.version}</version>
             </plugin>
         </plugins>
     </build>

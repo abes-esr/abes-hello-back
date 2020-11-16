@@ -1,6 +1,6 @@
 package fr.abes.helloabes.core.entities;
 
-import fr.abes.helloabes.web.security.constraint.ValidPassword;
+import fr.abes.helloabes.core.constraint.ValidPassword;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
