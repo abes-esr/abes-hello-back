@@ -1,13 +1,11 @@
 package fr.abes.helloabes.web.configuration;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +18,7 @@ import java.util.function.Function;
  * @author Duy Tran
  */
 @Service
-public class JwtUtil {
+public class JwtUtility {
 
     /** Clé privée de cryptage des jetons JWT. */
     @Value("${secret.key}")
@@ -102,6 +100,24 @@ public class JwtUtil {
         Map<String, Object> claims;
         claims = new HashMap<>();
         return createToken(claims, username);
+    }
+
+    public boolean checkToken(String token, HttpServletRequest httpServletRequest) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
+        } catch (SignatureException ex) {
+            httpServletRequest.setAttribute("token-invalid", "Token invalid");
+        } catch (MalformedJwtException ex) {
+            httpServletRequest.setAttribute("token-invalid", "Token invalid");
+        } catch (ExpiredJwtException ex) {
+            httpServletRequest.setAttribute("expired", "Token Exipred");
+        } catch (UnsupportedJwtException ex) {
+            httpServletRequest.setAttribute("token-invalid", "Token invalid");
+        } catch (IllegalArgumentException ex) {
+            httpServletRequest.setAttribute("token-invalid", "Token invalid");
+        }
+        return false;
     }
 
     /**

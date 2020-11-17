@@ -24,17 +24,6 @@
     <name>Batch</name>
     <description>Traitement en tache de fond de l'application.</description>
 
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.18.2</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <!-- =========================================================== -->
     <!--     Gestion des dependances                                 -->
     <!-- =========================================================== -->
@@ -87,7 +76,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${org.springframework.boot.version}</version>
             </plugin>
         </plugins>
     </build>

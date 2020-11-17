@@ -47,10 +47,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-		</dependency>
 
 		<!--- === Securite === -->
 		<dependency>
@@ -97,7 +93,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${org.springframework.boot.version}</version>
 			</plugin>
 		</plugins>
 	</build>

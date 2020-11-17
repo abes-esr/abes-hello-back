@@ -1,4 +1,4 @@
-package fr.abes.hello.chunk;
+package fr.abes.helloabes.batch.chunk;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;

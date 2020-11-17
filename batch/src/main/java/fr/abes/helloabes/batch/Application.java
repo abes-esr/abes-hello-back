@@ -1,4 +1,4 @@
-package fr.abes.hello;
+package fr.abes.helloabes.batch;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

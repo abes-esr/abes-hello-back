@@ -1,6 +1,6 @@
-package fr.abes.hello.chunk;
+package fr.abes.helloabes.batch.chunk;
 
-import fr.abes.hello.ProxyRetry;
+import fr.abes.helloabes.batch.ProxyRetry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;

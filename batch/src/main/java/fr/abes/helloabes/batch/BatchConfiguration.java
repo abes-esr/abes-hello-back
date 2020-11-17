@@ -1,8 +1,8 @@
-package fr.abes.hello;
+package fr.abes.helloabes.batch;
 
-import fr.abes.hello.chunk.LineProcessor;
-import fr.abes.hello.chunk.LineReader;
-import fr.abes.hello.chunk.LinesWriter;
+import fr.abes.helloabes.batch.chunk.LineProcessor;
+import fr.abes.helloabes.batch.chunk.LineReader;
+import fr.abes.helloabes.batch.chunk.LinesWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
