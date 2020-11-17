@@ -1,6 +1,5 @@
 package fr.abes.helloabes.core.entities;
 
-import fr.abes.helloabes.core.constraint.ValidPassword;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -8,6 +7,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -45,7 +46,7 @@ public class AppUser {
     /** Mot de passe */
     @Column(name = "USER_PASSWORD")
     @NotNull(message = "Le mot de passe ne doit pas être null")
-    @ValidPassword
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
     @ApiModelProperty(value = "mot de passe de l'utilisateur", name = "passWord", dataType = "String", example = "motDePasseC0!mplex")
     private String passWord;
 

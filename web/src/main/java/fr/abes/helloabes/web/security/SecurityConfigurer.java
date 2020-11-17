@@ -1,6 +1,7 @@
 package fr.abes.helloabes.web.security;
 
-import fr.abes.helloabes.web.configuration.JwtFilter;
+import fr.abes.helloabes.web.configuration.JwtAuthenticationEntryPoint;
+import fr.abes.helloabes.web.configuration.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,19 +22,22 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
+    
+    private JwtAuthenticationEntryPoint unauthorizedHandler;
 
     /**
      * Filtre pour les jetons JWT.
      */
-    private final JwtFilter jwtFilter;
+    private final JwtAuthenticationFilter jwtFilter;
 
     /**
      * Construit une nouvelle configuration de sécurité pour le service web avec un filtre pour les jetons JWT.
      * @param jwtFilter Filtre pour les jetons JWT.
      */
     @Autowired
-    public SecurityConfigurer(JwtFilter jwtFilter) {
+    public SecurityConfigurer(JwtAuthenticationFilter jwtFilter, JwtAuthenticationEntryPoint unauthorizedHandler) {
         this.jwtFilter = jwtFilter;
+        this.unauthorizedHandler = unauthorizedHandler;
     }
 
     @Bean
@@ -65,10 +69,13 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
+                .cors()
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests().antMatchers("/secured/**").authenticated()
                 .and().exceptionHandling()
+                .authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

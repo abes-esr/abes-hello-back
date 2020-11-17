@@ -3,11 +3,13 @@ package fr.abes.helloabes.web.controller;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.service.IUserService;
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
-import fr.abes.helloabes.web.configuration.JwtUtil;
+import fr.abes.helloabes.web.configuration.AuthenticationResponse;
+import fr.abes.helloabes.web.configuration.JwtUtility;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +38,7 @@ public class PublicController {
     private final IUserService userService;
 
     /** Filtre pour les jetons JWT. */
-    private final JwtUtil jwtUtil;
+    private final JwtUtility jwtUtility;
 
     /** Gestionnaire des authentifications */
     private final AuthenticationManager authenticationManager;
@@ -45,13 +47,13 @@ public class PublicController {
      * Construit un contrôlleur de l'API pour toutes les routes pupliques.
      * @param userService Service pour les utilisateurs du service web.
      * @param authenticationManager Gestionnaure des authentifications.
-     * @param jwtUtil Filtre pour les jetons JWT.
+     * @param jwtUtility Filtre pour les jetons JWT.
      */
     @Autowired
-    public PublicController(UserServiceImpl userService, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public PublicController(UserServiceImpl userService, AuthenticationManager authenticationManager, JwtUtility jwtUtility) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
+        this.jwtUtility = jwtUtility;
     }
 
     /**
@@ -97,8 +99,7 @@ public class PublicController {
     /**
      * Traitement d'une requête POST sur la route '/login'.
      * @param authRequest Utilisateur du service web à identifier.
-     * @return Jeton JWT en chaîne de caractère.
-     * @throws BadCredentialsException si l'authentification a échoué.
+     * @return ResponseEntity<AuthenticationResponse> Une réponse en JSON contant un objet AuthentifcationResponse.
      */
     @PostMapping("/login")
     @ApiOperation(
@@ -110,16 +111,16 @@ public class PublicController {
             @ApiResponse(code = 400, message = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronnée..."),
             @ApiResponse(code = 404, message = "Opération a échoué."),
     })
-    public String generateToken(
+    public ResponseEntity<AuthenticationResponse> generateToken(
             @ApiParam(value = "Objet JSON contenant les informations sur l'utilisateur à authentifier. Tous les champs sont nécessairese.", required = true)
             @PathParam("user")
-            @NotNull @RequestBody AppUser authRequest) throws BadCredentialsException {
+            @Valid @NotNull @RequestBody AppUser authRequest) {
 
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassWord())
-        );
+                new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassWord()));
+        String token = jwtUtility.generateToken(authRequest.getUserName());
 
-        return jwtUtil.generateToken(authRequest.getUserName());
+        return ResponseEntity.ok(new AuthenticationResponse(token, authRequest.getUserName()));
     }
 
 }

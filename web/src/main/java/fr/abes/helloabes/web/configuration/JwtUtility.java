@@ -117,6 +117,7 @@ public class JwtUtility {
         } catch (IllegalArgumentException ex) {
             httpServletRequest.setAttribute("token-invalid", "Token invalid");
         }
+
         return false;
     }
 

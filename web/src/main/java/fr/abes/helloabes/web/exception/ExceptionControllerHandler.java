@@ -6,8 +6,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,18 +18,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
 
-    private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
-        return new ResponseEntity<>(apiError, apiError.getStatus());
+    private ResponseEntity<Object> buildResponseEntity(ApiReturnError apiReturnError) {
+        return new ResponseEntity<>(apiReturnError, apiReturnError.getStatus());
     }
 
     /**
@@ -44,7 +39,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         String error = "Malformed JSON request";
-        return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
     /**
@@ -58,7 +53,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "method is not supported for this request.";
-        return buildResponseEntity(new ApiError(HttpStatus.METHOD_NOT_ALLOWED, error, ex));
+        return buildResponseEntity(new ApiReturnError(HttpStatus.METHOD_NOT_ALLOWED, error, ex));
     }
 
     /**
@@ -72,7 +67,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "The credentials are not valid.";
-        return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
     /**
@@ -86,7 +81,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Page Not Found";
-        return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, error, ex));
+        return buildResponseEntity(new ApiReturnError(HttpStatus.NOT_FOUND, error, ex));
     }
 
     /**
@@ -97,8 +92,13 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     protected ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex) {
         String error = "Access Denied";
-        return buildResponseEntity(new ApiError(HttpStatus.UNAUTHORIZED, error, ex));
+        return buildResponseEntity(new ApiReturnError(HttpStatus.UNAUTHORIZED, error, ex));
     }
 
+    @ExceptionHandler(UsernameNotFoundException.class)
+    protected ResponseEntity<Object> handleUserNotFoundException(UsernameNotFoundException ex) {
+        String error = "User Not Found";
+        return buildResponseEntity(new ApiReturnError(HttpStatus.NOT_FOUND, error, ex));
+    }
 
 }
