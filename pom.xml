@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Fichier de configuration du projet Maven
+
+        Abes-hello-back
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>fr.abes</groupId>
+        <artifactId>abes-spring</artifactId>
+        <version>1.0.7</version>
+    </parent>
+
+    <!-- ===================================================== -->
+    <!--     Description du projet                             -->
+    <!-- ===================================================== -->
+    <groupId>fr.abes.helloabes</groupId>
+    <artifactId>helloabesbackoffice</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>Hello ABES Back</name>
+    <description>Application d'exemple pour illustrer la politique de développement au sein de l'ABES</description>
+
+    <!-- =========================================================== -->
+    <!--     Description des modules                                 -->
+    <!-- =========================================================== -->
+    <modules>
+        <module>core</module>
+        <module>web</module>
+        <module>batch</module>
+    </modules>
+    <packaging>pom</packaging>
+
+    <!-- =========================================================== -->
+    <!--     Dependances heritees pour tous les modules.             -->
+    <!-- =========================================================== -->
+    <dependencies>
+
+        <!--- === Annotations === -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- === Log === -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+
+        <!--- === Documentation API === -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+    </dependencies>
+
+    <distributionManagement>
+        <site>
+            <id>abes</id>
+            <url>${url.doc.abes}doc${doc.root.path}/${doc.root.path}-${project.version}</url>
+        </site>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>artifactory-public</id>
+            <name>artifactory-public</name>
+            <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>artifactory-public</id>
+            <name>artifactory-public</name>
+            <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <!-- =========================================================== -->
+    <!--     Configuration de la compilation                         -->
+    <!-- =========================================================== -->
+    <build>
+        <finalName>Hello Abes back-end</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
