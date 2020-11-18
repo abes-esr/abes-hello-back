@@ -1,10 +1,14 @@
 package fr.abes.helloabes.batch.chunk;
 
+import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.core.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,12 +18,14 @@ import java.util.List;
 @Slf4j
 public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
 
+    @Value("${FILE.OUT.PUT}")
+    private String source;
     PrintWriter out;
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
         try {
-            out = new PrintWriter(new FileWriter("C:\\dev\\abes-hello\\res.txt"));
+            out = new PrintWriter(new FileWriter(source));
         } catch (IOException e) {
             log.error(e.toString());
         }

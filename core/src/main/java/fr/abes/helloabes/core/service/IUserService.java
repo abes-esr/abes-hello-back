@@ -2,6 +2,8 @@ package fr.abes.helloabes.core.service;
 
 import fr.abes.helloabes.core.entities.AppUser;
 
+import java.util.List;
+
 /**
  * Représente un service pour gérer les utilisateurs du service web.
  * Cette interface a uniquement vocation de permettre l'utilisation d'injection des dépendances 
@@ -24,5 +26,7 @@ public interface IUserService {
      * @return L'utilisateur du service web trouvé.
      */
     AppUser findUserByUserName(AppUser user);
+
+    List<AppUser> getAllUsers();
 
 }

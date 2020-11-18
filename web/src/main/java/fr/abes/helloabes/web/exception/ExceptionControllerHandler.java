@@ -1,5 +1,7 @@
 package fr.abes.helloabes.web.exception;
 
+import io.swagger.annotations.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -12,11 +14,11 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -95,10 +97,6 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(new ApiReturnError(HttpStatus.UNAUTHORIZED, error, ex));
     }
 
-    @ExceptionHandler(UsernameNotFoundException.class)
-    protected ResponseEntity<Object> handleUserNotFoundException(UsernameNotFoundException ex) {
-        String error = "User Not Found";
-        return buildResponseEntity(new ApiReturnError(HttpStatus.NOT_FOUND, error, ex));
-    }
+
 
 }

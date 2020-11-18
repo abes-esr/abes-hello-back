@@ -3,12 +3,14 @@ package fr.abes.helloabes.batch;
 import fr.abes.helloabes.batch.chunk.LineProcessor;
 import fr.abes.helloabes.batch.chunk.LineReader;
 import fr.abes.helloabes.batch.chunk.LinesWriter;
+import fr.abes.helloabes.core.entities.AppUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 @Slf4j
@@ -38,19 +41,20 @@ public class BatchConfiguration {
     @Bean
     public Job jobTraitement() {
         log.info("debut du job : jobTraitement...");
-				
-		return jobs
-			.get("chunksJob")
-			.start(executerTasklet())
-			.next(stepProcessLines(itemReader(), itemProcessor(), itemWriter()))
-			.build();
+
+        return jobs
+                .get("chunksJob")
+                .start(executerTasklet())
+                .next(stepProcessLines(itemReader(), itemProcessor(), itemWriter()))
+                .incrementer(new RunIdIncrementer())
+                .build();
     }
-	
-	// ***************** TASK EXECUTOR **************************
-	@Bean
-	public TaskExecutor taskExecutor(){
-		return new SimpleAsyncTaskExecutor("spring_batch");
-	}
+
+    // ***************** TASK EXECUTOR **************************
+    @Bean
+    public TaskExecutor taskExecutor(){
+        return new SimpleAsyncTaskExecutor("spring_batch");
+    }
 
 
 
@@ -63,18 +67,18 @@ public class BatchConfiguration {
                 .tasklet(uneTasklet())
                 .build();
     }
-	
-	@Bean
-    protected Step stepProcessLines(ItemReader<String> reader, ItemProcessor<String, String> processor, ItemWriter<String> writer) {
+
+    @Bean
+    protected Step stepProcessLines(ItemReader<AppUser> reader, ItemProcessor<AppUser, String> processor, ItemWriter<String> writer) {
         return stepBuilderFactory
-				.get("stepProcessLines").<String, String> chunk(10)
-          .reader(reader)
-          .processor(processor)
-          .writer(writer)
-		  //.taskExecutor(taskExecutor())
-		  //.throttleLimit(10)
-          .build();
-}
+                .get("stepProcessLines").<AppUser, String> chunk(10)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                //.taskExecutor(taskExecutor())
+                //.throttleLimit(10)
+                .build();
+    }
 
     // ------------- TASKLETS -----------------------
     @Bean
@@ -83,21 +87,21 @@ public class BatchConfiguration {
         return new UneTasklet();
     }
 
-	
-	// ----------------- CHUNKS ------------------------------
-	
-	 @Bean
-    public ItemReader<String> itemReader() {
+
+    // ----------------- CHUNKS ------------------------------
+
+    @Bean
+    public ItemReader<AppUser> itemReader() {
         return new LineReader();
     }
 
     @Bean
-    public ItemProcessor<String, String> itemProcessor() {
+    public ItemProcessor<AppUser, String> itemProcessor() {
         return new LineProcessor();
     }
 
     @Bean
     public ItemWriter<String> itemWriter() {
         return new LinesWriter();
-}
+    }
 }
