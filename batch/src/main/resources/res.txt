@@ -1,0 +1,4 @@
+1;L'utilisateur;admin
+2;L'utilisateur;demo1
+3;L'utilisateur;demo2
+4;L'utilisateur;demo4

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Représente un service pour les utilisateurs du service web.
  * Cette classe est basée sur le framework Spring.
@@ -53,6 +55,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public AppUser findUserByUserName(AppUser user) {
         return userRepository.findByUserName(user.getUserName());
+    }
+
+    @Override
+    public List<AppUser> getAllUsers() {
+        return userRepository.findAll();
     }
 
 
