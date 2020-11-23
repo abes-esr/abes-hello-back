@@ -1,5 +1,6 @@
 package fr.abes.helloabes.web.exception;
 
+import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import io.swagger.annotations.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -95,6 +96,17 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex) {
         String error = "Access Denied";
         return buildResponseEntity(new ApiReturnError(HttpStatus.UNAUTHORIZED, error, ex));
+    }
+
+    /**
+     * Si un utilisateur avec le nom d'utilisateur existe déjà
+     * @param ex UserAlreadyExistException
+     * @return
+     */
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    protected ResponseEntity<Object> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+        String error = "Username not available";
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
 
