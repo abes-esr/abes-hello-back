@@ -25,27 +25,30 @@ public class CustomUserDetailServiceIntegrationTest {
     @InjectMocks
     CustomUserDetailsService userService;
 
-    protected static AppUser getRandomAppUser() {
-        final AppUser user;
-        user = new AppUser("admin", "@totoTOTO1234");
-        return user;
-    }
-
     @Before
     public void setup(){
         userService = new CustomUserDetailsService(userRepository);
     }
 
+    protected static AppUser getAdminUser() {
+        final AppUser user;
+        user = new AppUser("admin", "@totoTOTO1234");
+        return user;
+    }
+
+    /**
+     * Test la recherche d'un utilisateur par son nom d'utilisation
+     */
     @Test
     public void findUserByUserName() {
 
-        AppUser myCandidate = getRandomAppUser();
+        AppUser myUser = getAdminUser();
 
-        Mockito.when(userRepository.findByUserName("admin")).thenReturn(myCandidate);
+        Mockito.when(userRepository.findByUserName("admin")).thenReturn(myUser);
 
-        UserDetails myUser = userService.loadUserByUsername(myCandidate.getUserName());
+        UserDetails myCandidate = userService.loadUserByUsername(myUser.getUserName());
 
-        assertEquals("admin", myUser.getUsername());
+        assertEquals("admin", myCandidate.getUsername());
 
     }
 }

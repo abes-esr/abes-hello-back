@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,26 +34,31 @@ public class IUserDaoTest {
     @Autowired
     private IUserDao userRepository;
 
-    protected static AppUser getRandomAppUser() {
+    protected static AppUser getAdminUser() {
         final AppUser user;
         user = new AppUser("admin", "@totoTOTO1234");
         return user;
     }
 
-    // Tests d'écriture
+    /**
+     * Test l'ajout d'un utilisateur
+     */
     @Test
-    public void testSaveRandomAppUser() {
-        AppUser myNewUser = userRepository.save(getRandomAppUser());
+    public void saveAdminUser() {
+        AppUser myNewUser = userRepository.save(getAdminUser());
         assertEquals("admin", myNewUser.getUserName());
         assertEquals("@totoTOTO1234", myNewUser.getPassWord());
     }
 
+    /**
+     * Test l'ajout d'un utilisateur dont le nom d'utilisateur existe dejà
+     */
     @Test
-    public void testSaveAlreadyExistingUserName() {
+    public void saveAlreadyExistingUserName() {
 
-        userRepository.save(getRandomAppUser());
+        userRepository.save(getAdminUser());
 
-        AppUser mySecondUser = getRandomAppUser();
+        AppUser mySecondUser = getAdminUser();
         mySecondUser.setPassWord("1234TOTOtoto@");
 
         userRepository.save(mySecondUser);
@@ -64,9 +68,12 @@ public class IUserDaoTest {
         });
     }
 
+    /**
+     * Test l'ajout d'un utilisateur dont le nom d'utilisateur est null
+     */
     @Test
-    public void testSaveNullUserName() {
-        AppUser myUser = getRandomAppUser();
+    public void saveNullUserName() {
+        AppUser myUser = getAdminUser();
         myUser.setUserName(null);
 
         Exception exception = assertThrows(ConstraintViolationException.class, () -> {
@@ -79,9 +86,12 @@ public class IUserDaoTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Test l'ajout d'un utilisateur dont le nom d'utilisateur est vide
+     */
     @Test
-    public void testSaveEmptyUserName() {
-        AppUser myUser = getRandomAppUser();
+    public void saveEmptyUserName() {
+        AppUser myUser = getAdminUser();
         myUser.setUserName("");
 
         Exception exception = assertThrows(ConstraintViolationException.class, () -> {
@@ -94,9 +104,12 @@ public class IUserDaoTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Test l'ajout d'un utilisateur dont le mot de passe est null
+     */
     @Test
-    public void testSaveNullPassword() {
-        AppUser myUser = getRandomAppUser();
+    public void saveNullPassword() {
+        AppUser myUser = getAdminUser();
         myUser.setPassWord(null);
 
         Exception exception = assertThrows(ConstraintViolationException.class, () -> {
@@ -109,8 +122,11 @@ public class IUserDaoTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
+    /**
+     * Test l'ajout d'un utilisateur dont le mot de passe est faible
+     */
     @Test
-    public void testSavePasswordSecurity() {
+    public void saveWeakPassword() {
 
         Exception exception = assertThrows(ConstraintViolationException.class, () -> {
             AppUser myUser = new AppUser("admin", "admin");
@@ -123,19 +139,24 @@ public class IUserDaoTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
-    // Test de lecture
+    /**
+     * Test la recherche d'un utilisateur existant par son nom d'utilisateur
+     */
     @Test
-    public void testFindByUserNameExistUser() {
-        userRepository.save(getRandomAppUser());
+    public void findExistUserByUserName() {
+        userRepository.save(getAdminUser());
 
         AppUser myCandidate = userRepository.findByUserName("admin");
         assertEquals("admin", myCandidate.getUserName());
         assertEquals("@totoTOTO1234", myCandidate.getPassWord());
     }
 
+    /**
+     * Test la recherche d'un utilisateur qui n'existe pas par son nom d'utilisateur
+     */
     @Test
-    public void testFindByUserNameNotExistUser() {
-        userRepository.save(getRandomAppUser());
+    public void findNotExistsUserByUserName() {
+        userRepository.save(getAdminUser());
 
         AppUser myCandidate = userRepository.findByUserName("corentin");
         assertNull(myCandidate);

@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Test d'intégration de la couche service des utilisateur de l'application.
+ * Test d'intégration de la couche service des utilisateurs de l'application.
  * La base de données est remplacée par un Mock.
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -35,82 +35,91 @@ public class UserServiceImplIntegrationTest {
     @InjectMocks
     UserServiceImpl userService;
 
-    protected static AppUser getRandomAppUser() {
-        final AppUser user;
-        user = new AppUser("admin", "@totoTOTO1234");
-        return user;
-    }
-
     @Before
     public void setup(){
         userService = new UserServiceImpl(userRepository,encoder());
     }
 
+    protected static AppUser getAdminUser() {
+        final AppUser user;
+        user = new AppUser("admin", "@totoTOTO1234");
+        return user;
+    }
+
+    /**
+     * Retourne l'utilisateur dans l'état stocké en base de données.
+     * Dans la base de données, son identifiant vaut 1 et son mot de passe est crypté.
+     * On vérifie que le mot de passe crypté corresond au mot de passe clair.
+     * @param myUser AppUser Utilisateur à retourner dans l'état stocké en base de données
+     * @return AppUser L'utilisateur dans l'état stocké en base de données
+     */
+    protected AppUser getDataBaseUser(AppUser myUser) {
+        final AppUser myDataBaseUser = new AppUser(myUser.getUserName(),myUser.getPassWord());
+
+        myDataBaseUser.setIdentityNumber(1);
+        myDataBaseUser.setPassWord(encoder().encode(myUser.getPassWord()));
+        assertTrue(encoder().matches(myUser.getPassWord(), myDataBaseUser.getPassWord()));
+
+        return myDataBaseUser;
+    }
+
+    /**
+     * Test la recherche d'un utilisateur par son nom d'utilisateur
+     */
     @Test
     public void findUserByUserName() {
 
-        AppUser myCandidate = getRandomAppUser();
+        AppUser myCandidate = getAdminUser();
 
         Mockito.when(userRepository.findByUserName("admin")).thenReturn(myCandidate);
 
         AppUser myUser = userService.findUserByUserName(myCandidate);
 
         assertEquals("admin", myUser.getUserName());
-
     }
 
     /**
-     * Test le service de création d'un nouvelle utilisateur.
+     * Test la création d'un nouvelle utilisateur.
      * On test ici le cryptage du mot de passe.
      */
     @Test
     public void createUser() {
 
-        AppUser myOrginalUser = getRandomAppUser();
-        AppUser myTestingUser = new AppUser(myOrginalUser.getUserName(),myOrginalUser.getPassWord());
-        AppUser myDataBaseUser = new AppUser(myOrginalUser.getUserName(),myOrginalUser.getPassWord());
-
-        /**
-         * Dans la base de données, le mot de passe est crypté donc
-         * on encode le mot de passe de l'utilisateur original pour simuler l'enregistrement
-         * dans la base de données.
-         * On vérifie que le mot de passe crypté corresond au mot de passe clair.
-         */
-        myDataBaseUser.setPassWord(encoder().encode(myOrginalUser.getPassWord()));
-        assertTrue(encoder().matches(myOrginalUser.getPassWord(), myDataBaseUser.getPassWord()));
+        AppUser myUser = getAdminUser();
+        AppUser myTestingUser = new AppUser(myUser.getUserName(),myUser.getPassWord());
+        AppUser myDataBaseUser = getDataBaseUser(myUser);
 
         // On mocke la DAO avec l'utilisateur à tester et l'utilisateur de la base de données
         Mockito.when(userRepository.save(myTestingUser)).thenReturn(myDataBaseUser);
 
-        // On appelle la fonction à tester.
         AppUser myCandidate = userService.createUser(myTestingUser);
 
         /**
          * On test si le mot de passe de l'utilisateur passé en paramètre
          * a bien été crypté et correspond au mot de passe clair.
          */
-        assertTrue(encoder().matches(myOrginalUser.getPassWord(),myTestingUser.getPassWord()));
+        assertTrue(encoder().matches(myUser.getPassWord(),myTestingUser.getPassWord()));
 
         /**
          * On test si le mapping DAO a bien fonctionné.
          * Les noms d'utilisateur doivent correspondrent.
          */
-        Assertions.assertEquals(myOrginalUser.getUserName(),myCandidate.getUserName());
+        Assertions.assertEquals(myUser.getUserName(),myCandidate.getUserName());
 
         /**
          * On test si le mapping DAO a bien fonctionné.
          * Le mot de passe crypté du candidat doit correspondre au mot de passe clair.
          */
-        assertTrue(encoder().matches(myOrginalUser.getPassWord(),myCandidate.getPassWord()));
+        assertTrue(encoder().matches(myUser.getPassWord(),myCandidate.getPassWord()));
     }
 
     /**
-     * On test la création d'un utilisateur dont le nom d'utilisateur existe dejà.
+     * Test la création d'un utilisateur dont le nom d'utilisateur existe dejà.
      */
     @Test
     public void createTwiceSameUser() {
 
-        AppUser myTestingUser = getRandomAppUser();      
+        AppUser myTestingUser = getAdminUser();
 
         // On mocke la DAO avec l'utilisateur à tester
         Mockito.when(userRepository.findByUserName("admin")).thenReturn(myTestingUser);
