@@ -23,7 +23,12 @@ public class LoginRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void loginGetMethod() throws Exception {
-        mockMvc.perform(get("/login")).andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(get("/login"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Method is not supported for this request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -32,7 +37,12 @@ public class LoginRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void loginPostMethod() throws Exception {
-        mockMvc.perform(post("/login")).andExpect(status().isBadRequest());
+        mockMvc.perform(post("/login"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Malformed JSON request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -41,7 +51,12 @@ public class LoginRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void loginPutMethod() throws Exception {
-        mockMvc.perform(put("/login")).andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(put("/login"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Method is not supported for this request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -50,7 +65,12 @@ public class LoginRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void loginDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/login")).andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(delete("/login"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Method is not supported for this request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
     
     /**
@@ -98,7 +118,7 @@ public class LoginRouteTest extends PublicControllerTestBase {
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
-                .andExpect(jsonPath("$.debugMessage").isNotEmpty());
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -122,7 +142,7 @@ public class LoginRouteTest extends PublicControllerTestBase {
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
-                .andExpect(jsonPath("$.debugMessage").isNotEmpty());
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -140,7 +160,7 @@ public class LoginRouteTest extends PublicControllerTestBase {
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("The credentials are not valid"))
-                .andExpect(jsonPath("$.debugMessage").isNotEmpty());
+                .andExpect(jsonPath("$.debugMessage").exists());
 
     }
 }

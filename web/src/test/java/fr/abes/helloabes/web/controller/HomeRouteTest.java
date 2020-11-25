@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -19,7 +20,9 @@ public class HomeRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void homeGetMethod() throws Exception {
-        mockMvc.perform(get("/")).andExpect(status().isOk());
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response").value("Hello from ABES - PUBLIC API PAGE"));
     }
 
     /**
@@ -28,7 +31,12 @@ public class HomeRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void homePostMethod() throws Exception {
-        mockMvc.perform(post("/")).andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(post("/"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Method is not supported for this request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -37,7 +45,12 @@ public class HomeRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void homePutMethod() throws Exception {
-        mockMvc.perform(put("/")).andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(put("/"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Method is not supported for this request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -46,7 +59,12 @@ public class HomeRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void homeDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/")).andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(delete("/"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Method is not supported for this request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }   
 
     /**
@@ -57,6 +75,8 @@ public class HomeRouteTest extends PublicControllerTestBase {
     public void homeEmptyBody() throws Exception {
 
         String json = "{ }";
-        mockMvc.perform(get("/").contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk());
+        mockMvc.perform(get("/").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response").value("Hello from ABES - PUBLIC API PAGE"));
     }
 }

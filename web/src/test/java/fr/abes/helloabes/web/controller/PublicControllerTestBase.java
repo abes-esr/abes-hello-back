@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -38,7 +39,12 @@ public class PublicControllerTestBase extends ApplicationTestBase {
      */
     @Test
     public void wrongRouteGetMethod() throws Exception {
-        mockMvc.perform(get("/test")).andExpect(status().isNotFound());
+        mockMvc.perform(get("/test"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Page not found"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -47,7 +53,12 @@ public class PublicControllerTestBase extends ApplicationTestBase {
      */
     @Test
     public void wrongRoutePostMethod() throws Exception {
-        mockMvc.perform(post("/test")).andExpect(status().isNotFound());
+        mockMvc.perform(post("/test"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Page not found"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -56,7 +67,12 @@ public class PublicControllerTestBase extends ApplicationTestBase {
      */
     @Test
     public void wrongRoutePutMethod() throws Exception {
-        mockMvc.perform(put("/test")).andExpect(status().isNotFound());
+        mockMvc.perform(put("/test"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Page not found"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -65,6 +81,11 @@ public class PublicControllerTestBase extends ApplicationTestBase {
      */
     @Test
     public void wrongRouteDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/test")).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/test"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Page not found"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }    
 }

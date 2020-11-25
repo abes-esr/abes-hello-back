@@ -65,7 +65,7 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
     }
     
     /**
-     * Test une route inconnue sans authentification avec la méthode GET
+     * Test une route inconnue sans authentification - méthode GET
      * @throws Exception
      */
     @Test
@@ -79,7 +79,7 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
     }
 
     /**
-     * Test une route inconnue sans authentification avec la méthode POST
+     * Test une route inconnue sans authentification - méthode POST
      * @throws Exception
      */
     @Test
@@ -92,7 +92,7 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
     }
 
     /**
-     * Test une route inconnue sans authentification avec la méthode PUT
+     * Test une route inconnue sans authentification  - méthode PUT
      * @throws Exception
      */
     @Test
@@ -105,7 +105,7 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
     }
 
     /**
-     * Test une route inconnue sans authentification avec la méthode DELETE
+     * Test une route inconnue sans authentification - méthode DELETE
      * @throws Exception
      */
     @Test
@@ -115,5 +115,77 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
                 .andExpect(jsonPath("$.path").value("/secured/test"));
+    }
+
+    /**
+     * Test une route inconnue avec authentification valide - méthode GET
+     * @throws Exception
+     */
+    @Test
+    public void wrongRouteAuthenticateGetMethod() throws Exception {
+        AppUser adminUser = getAdminUser();
+        String token = createAndAuthenticate(adminUser);
+
+        mockMvc.perform(get("/secured/test")
+                .header("Authorization","Bearer "+token))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Page not found"))
+                .andExpect(jsonPath("$.debugMessage").exists());
+    }
+
+    /**
+     * Test une route inconnue avec authentification valide - méthode POST
+     * @throws Exception
+     */
+    @Test
+    public void wrongRouteAuthenticatePostMethod() throws Exception {
+        AppUser adminUser = getAdminUser();
+        String token = createAndAuthenticate(adminUser);
+
+        mockMvc.perform(post("/secured/test")
+                .header("Authorization","Bearer "+token))
+                .andExpect(status().isNotFound()).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Page not found"))
+                .andExpect(jsonPath("$.debugMessage").exists());
+    }
+
+    /**
+     * Test une route inconnue avec authentification valide - méthode PUT
+     * @throws Exception
+     */
+    @Test
+    public void wrongRouteAuthenticatePutMethod() throws Exception {
+        AppUser adminUser = getAdminUser();
+        String token = createAndAuthenticate(adminUser);
+
+        mockMvc.perform(put("/secured/test")
+                .header("Authorization","Bearer "+token))
+                .andExpect(status().isNotFound()).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Page not found"))
+                .andExpect(jsonPath("$.debugMessage").exists());
+    }
+
+    /**
+     * Test une route inconnue avec authentification valide - méthode DELETE
+     * @throws Exception
+     */
+    @Test
+    public void wrongRouteAuthenticateDeleteMethod() throws Exception {
+        AppUser adminUser = getAdminUser();
+        String token = createAndAuthenticate(adminUser);
+
+        mockMvc.perform(delete("/secured/test")
+                .header("Authorization","Bearer "+token))
+                .andExpect(status().isNotFound()).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Page not found"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 }
