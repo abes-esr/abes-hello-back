@@ -1,5 +1,6 @@
 package fr.abes.helloabes.web.exception;
 
+import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import io.swagger.annotations.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -54,7 +55,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String error = "method is not supported for this request.";
+        String error = "Method is not supported for this request";
         return buildResponseEntity(new ApiReturnError(HttpStatus.METHOD_NOT_ALLOWED, error, ex));
     }
 
@@ -68,7 +69,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String error = "The credentials are not valid.";
+        String error = "The credentials are not valid";
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
@@ -82,19 +83,30 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String error = "Page Not Found";
+        String error = "Page not found";
         return buildResponseEntity(new ApiReturnError(HttpStatus.NOT_FOUND, error, ex));
     }
 
     /**
-     * Vérifier le nom d'utilisateur et le mot de passe lors de la connexion
-     * @param ex
+     * Si l'authentification d'un utilisateur a echoué
+     * @param ex AuthenticationException
      * @return
      */
     @ExceptionHandler(AuthenticationException.class)
     protected ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex) {
-        String error = "Access Denied";
+        String error = "This ressource requires an authentification";
         return buildResponseEntity(new ApiReturnError(HttpStatus.UNAUTHORIZED, error, ex));
+    }
+
+    /**
+     * Si un utilisateur avec le nom d'utilisateur existe déjà
+     * @param ex UserAlreadyExistException
+     * @return
+     */
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    protected ResponseEntity<Object> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+        String error = "Username not available";
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
 

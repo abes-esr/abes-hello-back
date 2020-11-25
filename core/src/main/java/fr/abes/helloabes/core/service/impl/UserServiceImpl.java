@@ -2,6 +2,7 @@ package fr.abes.helloabes.core.service.impl;
 
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.dao.IUserDao;
+import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import fr.abes.helloabes.core.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,7 +42,14 @@ public class UserServiceImpl implements IUserService {
      * @return L'utilisateur du service web enregistré.
      */
     @Override
-    public AppUser createUser(AppUser user) {
+    public AppUser createUser(AppUser user) throws UserAlreadyExistsException {
+
+        AppUser candidate = findUserByUserName(user);
+
+        if (candidate != null) { 
+            throw new UserAlreadyExistsException("Username already exists");
+        }
+
         String passHash = bCryptPasswordEncoder.encode(user.getPassWord());
         user.setPassWord(passHash);
         return userRepository.save(user);

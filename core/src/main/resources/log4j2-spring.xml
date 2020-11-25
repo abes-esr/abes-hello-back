@@ -1,52 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Doc : http://logging.apache.org/log4j/2.x/manual/appenders.html#CustomDeleteOnRollover -->
 <Configuration>
+    <Properties>
+        <Property name="baseDir">../logs</Property>
+        <Property name="logFileName">helloabes_core_log</Property>
+        <Property name="errorFileName">helloabes_core_error</Property>
+        <Property name="debugFileName">helloabes_core_debug</Property>
+
+        <!-- Politique de gestion des fichiers -->
+        <Property name="sizeTriggerPolicy">100 MB</Property>
+        <Property name="deleteAgeFile">3d</Property>
+        <Property name="keepMostRecentFile">1</Property>
+        <Property name="keepMostRecentSize">100 MB</Property>
+    </Properties>
     <Appenders>
-        <!-- On décrit les supports de sorties -->
+
+        <!-- CONSOLE -->
         <Console name="Console">
             <PatternLayout
                     pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{dark,yellow}: %msg%n%throwable" />
         </Console>
 
+        <!-- LOG FILE -->
         <RollingFile name="LogFile"
-                     fileName="../logs/helloabes.log"
-                     filePattern="../logs/$${date:yyyy-MM}/helloabes_%d{dd-MM-yyyy}_%i.log.gz">
+                     fileName="${baseDir}/${logFileName}.log"
+                     filePattern="${baseDir}/$${date:yyyy-MM}/${logFileName}_%d{dd-MM-yyyy}_%i.log.gz">
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
             <Policies>
-                <!--Nouveau fichier si le fichier courant dépasse 10MB -->
-                <SizeBasedTriggeringPolicy size="10 MB" />
-                <!-- Nouveau fichier si le jour est different -->
+                <!-- On exécute les stratégies de création de nouveaux fichiers et de suppresion :
+                - Au démarrage de l'application
+                - Si l'un des fichiers atteint ${sizeTriggerPolicy}
+                - Si la date du filePattern nécessite un nouveau fichier -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}" />
                 <TimeBasedTriggeringPolicy />
             </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${baseDir}" maxDepth="2">
+                    <IfFileName glob="*/${logFileName}_*.log.gz">
+                        <!-- On supprime les fichiers de plus de ${deleteAgeFile}
+                         mais on garde les ${keepMostRecentFile} fichiers plus récent ou les ${keepMostRecentSize} plus récent-->
+                        <IfLastModified age="${deleteAgeFile}" />
+                        <IfAny>
+                            <IfAccumulatedFileCount exceeds="${keepMostRecentFile}" />
+                            <IfAccumulatedFileSize exceeds="${keepMostRecentSize}" />
+                        </IfAny>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
 
+        <!-- ERROR FILE -->
         <RollingFile name="ErrorFile"
-                     fileName="../logs/error.log"
-                     filePattern="../logs/$${date:yyyy-MM}/error_%d{dd-MM-yyyy}_%i.log.gz">
+                     fileName="${baseDir}/${errorFileName}.log"
+                     filePattern="${baseDir}/$${date:yyyy-MM}/${errorFileName}_%d{dd-MM-yyyy}_%i.log.gz">
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
             <Policies>
-                <!--Nouveau fichier si le fichier courant dépasse 10MB -->
-                <SizeBasedTriggeringPolicy size="10 MB" />
-                <!-- Nouveau fichier si le jour est different -->
+                <!-- On exécute les stratégies de création de nouveau fichier et de suppresion :
+                - Au démarrage de l'application
+                - Si l'un des fichiers atteint 10 MB
+                - Si la date du filePattern nécessite un nouveau fichier -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}" />
                 <TimeBasedTriggeringPolicy />
             </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${baseDir}/" maxDepth="2">
+                    <IfFileName glob="*/${errorFileName}_*.log.gz">
+                        <!-- On supprime les fichiers de plus de ${deleteAgeFile}
+                          mais on garde les ${keepMostRecentFile} fichier plus récent ou les ${keepMostRecentSize} plus récent-->
+                        <IfLastModified age="${deleteAgeFile}" />
+                        <IfAny>
+                            <IfAccumulatedFileCount exceeds="${keepMostRecentFile}" />
+                            <IfAccumulatedFileSize exceeds="${keepMostRecentSize}" />
+                        </IfAny>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
 
+        <!-- DEBUG FILE -->
         <RollingFile name="DebugFile"
-                     fileName="../logs/debug.log"
-                     filePattern="../logs/$${date:yyyy-MM}/debug_%d{dd-MM-yyyy}_%i.log.gz">
+                     fileName="${baseDir}/${debugFileName}.log"
+                     filePattern="${baseDir}/$${date:yyyy-MM}/${debugFileName}_%d{dd-MM-yyyy}_%i.log.gz">
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
             <Policies>
-                <!--Nouveau fichier si le fichier courant dépasse 10MB -->
-                <SizeBasedTriggeringPolicy size="10 MB" />
-                <!-- Nouveau fichier si le jour est different -->
+                <!-- On exécute les stratégies de création de nouveau fichier et de suppresion :
+                - Au démarrage de l'application
+                - Si l'un des fichiers atteint 10 MB
+                - Si la date du filePattern nécessite un nouveau fichier -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}" />
                 <TimeBasedTriggeringPolicy />
             </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${baseDir}/" maxDepth="2">
+                    <IfFileName glob="*/${debugFileName}_*.log.gz">
+                        <!-- On supprime les fichiers de plus de ${deleteAgeFile}
+                         mais on garde les ${keepMostRecentFile} fichiers plus récent ou les ${keepMostRecentSize} plus récent-->
+                        <IfLastModified age="${deleteAgeFile}" />
+                        <IfAny>
+                            <IfAccumulatedFileCount exceeds="${keepMostRecentFile}" />
+                            <IfAccumulatedFileSize exceeds="${keepMostRecentSize}" />
+                        </IfAny>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
 
     </Appenders>

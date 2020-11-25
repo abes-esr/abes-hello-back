@@ -2,6 +2,7 @@ package fr.abes.helloabes.core.dao;
 
 import fr.abes.helloabes.core.entities.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * Représente un dépôt d'utilisateur du service web.
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since 0.0.1
  * @author Duy Tran
  */
+@Repository
 public interface IUserDao extends JpaRepository<AppUser, String> {
 
     /**
