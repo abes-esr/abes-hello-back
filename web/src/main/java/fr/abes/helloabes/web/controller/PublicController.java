@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Duy Tran
  */
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:8888")
 @RestController
 @RequestMapping("/")
 public class PublicController {
