@@ -22,7 +22,12 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void registerGetMethod() throws Exception {
-        mockMvc.perform(get("/register")).andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(get("/register"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Method is not supported for this request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -31,7 +36,12 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void registerPostMethod() throws Exception {
-        mockMvc.perform(post("/register")).andExpect(status().isBadRequest());
+        mockMvc.perform(post("/register"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Malformed JSON request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -40,7 +50,12 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void registerPutMethod() throws Exception {
-        mockMvc.perform(put("/register")).andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(put("/register"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Method is not supported for this request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -49,7 +64,12 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void registerDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/register")).andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(delete("/register"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Method is not supported for this request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
     }
 
     /**
@@ -99,7 +119,7 @@ public class RegisterRouteTest extends PublicControllerTestBase {
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("Username not available"))
-                .andExpect(jsonPath("$.debugMessage").isNotEmpty());
+                .andExpect(jsonPath("$.debugMessage").exists());
 
     }
 
@@ -125,7 +145,7 @@ public class RegisterRouteTest extends PublicControllerTestBase {
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("The credentials are not valid"))
-                .andExpect(jsonPath("$.debugMessage").isNotEmpty());
+                .andExpect(jsonPath("$.debugMessage").exists());
 
     }
 
@@ -144,7 +164,7 @@ public class RegisterRouteTest extends PublicControllerTestBase {
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("The credentials are not valid"))
-                .andExpect(jsonPath("$.debugMessage").isNotEmpty());
+                .andExpect(jsonPath("$.debugMessage").exists());
 
     }
 
@@ -163,7 +183,7 @@ public class RegisterRouteTest extends PublicControllerTestBase {
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("The credentials are not valid"))
-                .andExpect(jsonPath("$.debugMessage").isNotEmpty());
+                .andExpect(jsonPath("$.debugMessage").exists());
 
     }
 }
