@@ -1,8 +1,11 @@
 package fr.abes.helloabes.core.dao;
 
+import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.entities.Commandes;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 
 /**
@@ -13,5 +16,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ICommandeDao extends JpaRepository<Commandes, Long> {
+
+    List<Commandes> findAllByUser(AppUser user);
 
 }

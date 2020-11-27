@@ -1,5 +1,6 @@
 package fr.abes.helloabes.core.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 
@@ -31,6 +32,7 @@ public class Commandes {
      */
     @ManyToOne
     @JoinColumn(name="USER_Id")
+    @JsonIgnore
     private AppUser user;
 
     /**
@@ -47,8 +49,7 @@ public class Commandes {
      * Un produit peut ajouter dans une ou plusieurs commandes
      */
     @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
+            CascadeType.ALL
     })
     @JoinTable(
             name =  "COMMANDE_PRODUCT",

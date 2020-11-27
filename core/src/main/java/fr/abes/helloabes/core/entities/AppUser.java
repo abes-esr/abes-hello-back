@@ -1,5 +1,6 @@
 package fr.abes.helloabes.core.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -53,7 +54,9 @@ public class AppUser {
     private String passWord;
 
     /** Relation avec la table commande */
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",
+    cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Commandes> commandes;
 
 

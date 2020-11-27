@@ -66,6 +66,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public AppUser findUserByUserName(String userName) {
+        return userRepository.findByUserName(userName);
+    }
+
+    @Override
     public List<AppUser> getAllUsers() {
         return userRepository.findAll();
     }

@@ -64,7 +64,7 @@ public class HelloABESApplication implements CommandLineRunner {
 				new AppUser("demoUser1", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
 				new AppUser("demoUser2", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
 				new AppUser("demoUser3", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
-				new AppUser("demoUser3", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy")
+				new AppUser("demoUser4", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy")
 		);
 
 		userRepository.saveAll(listOfUsersDemo);
@@ -127,6 +127,13 @@ public class HelloABESApplication implements CommandLineRunner {
 						productDemo1
 						),
 				new Commandes(
+						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("admin"))
+								.findAny().orElse(null),
+						listOfFournisseurs.stream().filter(f -> f.getName().contains("Darty"))
+								.findAny().orElse(null),
+						productDemo4
+				),
+				new Commandes(
 						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("demoUser1"))
 								.findAny().orElse(null),
 						listOfFournisseurs.stream().filter(f -> f.getName().contains("Boulanger"))
@@ -150,6 +157,14 @@ public class HelloABESApplication implements CommandLineRunner {
 		);
 
 		commandeDao.saveAll(commandes);
+
+
+/*
+		userRepository.delete(userRepository.findByUserName("demoUser3"));
+
+*/
+
+
 
 	}
 

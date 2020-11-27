@@ -1,5 +1,6 @@
 package fr.abes.helloabes.core.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,6 +40,7 @@ public class Products {
      * Un produit peut ajouter dans une ou plusieurs commandes
      */
     @ManyToMany(mappedBy = "products")
+    @JsonIgnore
     private List<Commandes> commandes ;
 
     public Products(String name, Double price, List<Commandes> commandes) {

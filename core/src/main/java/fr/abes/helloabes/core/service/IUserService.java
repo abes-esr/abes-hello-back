@@ -27,6 +27,8 @@ public interface IUserService {
      */
     AppUser findUserByUserName(AppUser user);
 
+    AppUser findUserByUserName(String userName);
+
     List<AppUser> getAllUsers();
 
 }

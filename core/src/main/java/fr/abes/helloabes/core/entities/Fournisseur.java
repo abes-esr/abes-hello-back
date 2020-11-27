@@ -1,6 +1,7 @@
 package fr.abes.helloabes.core.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 
@@ -31,6 +32,7 @@ public class Fournisseur {
      * La relation avec la table Commandes
      */
     @OneToMany(mappedBy = "fournisseur")
+    @JsonIgnore
     private List<Commandes> commandes;
 
     public Fournisseur(String name, List<Commandes> commandes) {

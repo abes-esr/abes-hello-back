@@ -56,7 +56,7 @@ public class JwtUtility {
      */
     private Claims extractAllClaims(String token) {
         /**
-         * TODO Corriger pour attraper io.jsonwebtoken.ExpiredJwtException
+         *
          * Actuellement cela provoque une erreur interne 500
          */
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
