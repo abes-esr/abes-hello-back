@@ -93,30 +93,38 @@ public class HelloABESApplication implements CommandLineRunner {
 
 
 		List<Products> productDemo1 = Arrays.asList(
-				new Products("Livre Harry Potter", 17.80),
-				new Products("Livre Energie vagabonde", 28.40),
-				new Products("Livre Akira", 14.50),
-				new Products("Le Monde", 4.50)
+				products.stream().filter(p -> p.getName().contains("Livre Harry Potter"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Livre Energie vagabonde"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Livre Akira"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Le Monde"))
+						.findAny().orElse(null)
 		);
 
 		List<Products> productDemo2 = Arrays.asList(
-				new Products("Le Souris sans fil", 12.60),
-				new Products("L'écran HP", 350.00),
-				new Products("Tablette Samsung", 480.70)
+				products.stream().filter(p -> p.getName().contains("Le Souris sans fil"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Iphone 12"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Iphone 12"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Samsung S20"))
+						.findAny().orElse(null)
 		);
 
 		List<Products> productDemo3 = Arrays.asList(
-				new Products("Samsung S20", 890.40),
-				new Products("Iphone 12", 1090.50)
+				products.stream().filter(p -> p.getName().contains("Tablette Samsung"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Iphone 12"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("L'écran HP"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Samsung S20"))
+						.findAny().orElse(null)
 		);
 
-		List<Products> productDemo4 = Arrays.asList(
-				new Products("Livre Energie vagabonde", 28.40),
-				new Products("Iphone 12", 1090.50),
-				new Products("Le Monde", 4.50)
-		);
-
-		fournisseurDao.saveAll(listOfFournisseurs);
 
 		List<Commandes> commandes = Arrays.asList(
 				new Commandes(
@@ -129,30 +137,16 @@ public class HelloABESApplication implements CommandLineRunner {
 				new Commandes(
 						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("admin"))
 								.findAny().orElse(null),
-						listOfFournisseurs.stream().filter(f -> f.getName().contains("Darty"))
-								.findAny().orElse(null),
-						productDemo4
-				),
-				new Commandes(
-						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("demoUser1"))
-								.findAny().orElse(null),
 						listOfFournisseurs.stream().filter(f -> f.getName().contains("Boulanger"))
 								.findAny().orElse(null),
 						productDemo2
 				),
 				new Commandes(
-						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("demoUser2"))
+						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("demoUser1"))
 								.findAny().orElse(null),
 						listOfFournisseurs.stream().filter(f -> f.getName().contains("Darty"))
 								.findAny().orElse(null),
 						productDemo3
-				),
-				new Commandes(
-						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("demoUser3"))
-								.findAny().orElse(null),
-						listOfFournisseurs.stream().filter(f -> f.getName().contains("Darty"))
-								.findAny().orElse(null),
-						productDemo4
 				)
 		);
 
@@ -160,11 +154,9 @@ public class HelloABESApplication implements CommandLineRunner {
 
 
 /*
-		userRepository.delete(userRepository.findByUserName("demoUser3"));
+		userRepository.delete(userRepository.findByUserName("demoUser1"));
 
 */
-
-
 
 	}
 

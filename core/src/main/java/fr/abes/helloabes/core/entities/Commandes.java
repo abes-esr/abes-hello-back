@@ -48,9 +48,7 @@ public class Commandes {
      * Une commande peut avoir un ou plusieurs produits
      * Un produit peut ajouter dans une ou plusieurs commandes
      */
-    @ManyToMany(cascade = {
-            CascadeType.ALL
-    })
+    @ManyToMany
     @JoinTable(
             name =  "COMMANDE_PRODUCT",
             joinColumns  = {@JoinColumn(name="COMMAND_ID")},

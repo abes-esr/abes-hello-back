@@ -31,7 +31,8 @@ public class Fournisseur {
     /**
      * La relation avec la table Commandes
      */
-    @OneToMany(mappedBy = "fournisseur")
+    @OneToMany(mappedBy = "fournisseur",
+            cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Commandes> commandes;
 
