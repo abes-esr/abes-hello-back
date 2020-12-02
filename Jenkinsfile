@@ -51,13 +51,11 @@ node {
     // 2. On configure les paramètres d'utilisation
     stage ("Setting parameters") {
         try {
-            def tags = sh (
-                    script: 'git tag -l',
-                    returnStdout: true
-            ).trim()
-
-            echo "tags = $tags"
-
+            sh (script: 'git tag -l > tags_list.txt',returnStdout: true)
+            def tags = readFile('tags_list.txt').trim()
+            echo "tags = ${tags}"
+            sh 'rm -f tags_list.txt'
+            
             properties(
                     [parameters([
                             choice(choices: ['RELEASE', 'LATEST', '0.0.1-SNAPSHOT'], description: '', name: 'maven-repository-artifact'),
