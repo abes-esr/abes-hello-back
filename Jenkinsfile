@@ -52,7 +52,7 @@ node {
     stage ("Setting parameters") {
         try {
             tags = sh (
-                    script: 'git tag --sort=-creatordate',
+                    script: 'git tag -l',
                     returnStdout: true
             ).trim()
 
@@ -70,7 +70,7 @@ node {
         }
 
     }
-    
+
     //if the checkbox (params.executeTests) is checked
     stage ('test') {
         if("${executeTests}" == 'true'){
