@@ -1,16 +1,14 @@
 package fr.abes.helloabes.batch.chunk;
 
 import fr.abes.helloabes.core.entities.AppUser;
-import fr.abes.helloabes.core.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Iterator;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,7 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LineReader implements ItemReader<AppUser>, StepExecutionListener {
 
     List<AppUser> users;
-    Iterator<AppUser> iter;
     AtomicInteger i = new AtomicInteger();
     @Override
     public void beforeStep(StepExecution stepExecution) {

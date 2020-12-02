@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Component
 public class UneTasklet implements Tasklet, StepExecutionListener  {
 
 	List<AppUser> users = new ArrayList<AppUser>();

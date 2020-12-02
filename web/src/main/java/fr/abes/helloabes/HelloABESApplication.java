@@ -1,7 +1,13 @@
 package fr.abes.helloabes;
 
+import fr.abes.helloabes.core.dao.ICommandeDao;
+import fr.abes.helloabes.core.dao.IFournisseurDao;
+import fr.abes.helloabes.core.dao.IProductDao;
 import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.core.entities.Commandes;
+import fr.abes.helloabes.core.entities.Fournisseur;
+import fr.abes.helloabes.core.entities.Products;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -28,6 +34,12 @@ public class HelloABESApplication implements CommandLineRunner {
 	 */
 	@Autowired
 	private IUserDao userRepository;
+	@Autowired
+	private ICommandeDao commandeDao;
+	@Autowired
+	private IFournisseurDao fournisseurDao;
+	@Autowired
+	private IProductDao productDao;
 
 	/**
 	 * Fonction principale exécutée à l'initialisation du framework Spring.
@@ -46,18 +58,106 @@ public class HelloABESApplication implements CommandLineRunner {
 	 */
 	@Override
 	public void run(String... args) throws Exception {
-		/*
+
 		List<AppUser> listOfUsersDemo = Arrays.asList(
 				new AppUser("admin", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
 				new AppUser("demoUser1", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
 				new AppUser("demoUser2", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
 				new AppUser("demoUser3", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
-				new AppUser("demoUser3", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy")
+				new AppUser("demoUser4", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy")
 		);
 
 		userRepository.saveAll(listOfUsersDemo);
 
-		 */
+		List<Fournisseur> listOfFournisseurs = Arrays.asList(
+				new Fournisseur("Boulanger"),
+				new Fournisseur("Darty"),
+				new Fournisseur("Abes")
+		);
+
+		fournisseurDao.saveAll(listOfFournisseurs);
+
+		List<Products> products = Arrays.asList(
+				new Products("Livre Harry Potter", 17.80),
+				new Products("Livre Energie vagabonde", 28.40),
+				new Products("Livre Akira", 14.50),
+				new Products("Le Monde", 4.50),
+				new Products("Le Souris sans fil", 12.60),
+				new Products("L'écran HP", 350.00),
+				new Products("Tablette Samsung", 480.70),
+				new Products("Samsung S20", 890.40),
+				new Products("Iphone 12", 1090.50)
+		);
+
+		productDao.saveAll(products);
+
+
+		List<Products> productDemo1 = Arrays.asList(
+				products.stream().filter(p -> p.getName().contains("Livre Harry Potter"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Livre Energie vagabonde"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Livre Akira"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Le Monde"))
+						.findAny().orElse(null)
+		);
+
+		List<Products> productDemo2 = Arrays.asList(
+				products.stream().filter(p -> p.getName().contains("Le Souris sans fil"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Iphone 12"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Iphone 12"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Samsung S20"))
+						.findAny().orElse(null)
+		);
+
+		List<Products> productDemo3 = Arrays.asList(
+				products.stream().filter(p -> p.getName().contains("Tablette Samsung"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Iphone 12"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("L'écran HP"))
+						.findAny().orElse(null),
+				products.stream().filter(p -> p.getName().contains("Samsung S20"))
+						.findAny().orElse(null)
+		);
+
+
+		List<Commandes> commandes = Arrays.asList(
+				new Commandes(
+						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("admin"))
+								.findAny().orElse(null),
+						listOfFournisseurs.stream().filter(f -> f.getName().contains("Abes"))
+								.findAny().orElse(null),
+						productDemo1
+						),
+				new Commandes(
+						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("admin"))
+								.findAny().orElse(null),
+						listOfFournisseurs.stream().filter(f -> f.getName().contains("Boulanger"))
+								.findAny().orElse(null),
+						productDemo2
+				),
+				new Commandes(
+						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("demoUser1"))
+								.findAny().orElse(null),
+						listOfFournisseurs.stream().filter(f -> f.getName().contains("Darty"))
+								.findAny().orElse(null),
+						productDemo3
+				)
+		);
+
+		commandeDao.saveAll(commandes);
+
+
+/*
+		userRepository.delete(userRepository.findByUserName("demoUser1"));
+
+*/
 
 	}
+
 }
