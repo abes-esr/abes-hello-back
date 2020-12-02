@@ -51,18 +51,20 @@ node {
     // 2. On configure les paramètres d'utilisation
     stage ("Setting parameters") {
         try {
-            def tags = sh (
+            sh (cript: 'git tag -l')
+
+            TAGS = sh (
                     script: 'git tag -l',
                     returnStdout: true
             ).trim()
 
-            echo "tags = ${tags}"
+            echo "tags = ${TAGS}"
 
             properties(
                     [parameters([
                             choice(choices: ['RELEASE', 'LATEST', '0.0.1-SNAPSHOT'], description: '', name: 'maven-repository-artifact'),
                             choice(choices: ['DEV', 'TEST', 'PROD'], description: '', name: 'ENV'),
-                            choice(choices: ['CURRENT', ${tags}], description: '', name: 'VERSION'),
+                            choice(choices: ['CURRENT', ${TAGS}], description: '', name: 'VERSION'),
                             booleanParam(defaultValue: false, description: '', name: 'executeTests')
                     ])])
 
