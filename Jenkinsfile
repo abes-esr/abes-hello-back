@@ -36,10 +36,21 @@ node {
         }
     }
 
+    stage('SCM checkout') {
+        checkout([$class: 'GitSCM',
+                  branches: [[name: '*/master'],
+                             [name: '*/develop']],
+                  doGenerateSubmoduleConfigurations: false,
+                  extensions: [],
+                  submoduleCfg: [],
+                  userRemoteConfigs: [[credentialsId: 'Github',
+                                       url: 'https://github.com/abes-esr/abes-hello-back.git']]
+        ])
+    }
+
     // 2. On configure les paramètres d'utilisation
     stage ("Setting parameters") {
         try {
-            git url: 'https://github.com/abes-esr/abes-hello-back.git', credentialsId: 'Github'
             tags = sh (
                     script: 'git tag --sort=-creatordate',
                     returnStdout: true
@@ -59,20 +70,7 @@ node {
         }
 
     }
-
-    stage('SCM checkout') {
-        checkout([$class: 'GitSCM',
-                  branches: [[name: '*/master'],
-                             [name: '*/develop']],
-                  doGenerateSubmoduleConfigurations: false,
-                  extensions: [],
-                  submoduleCfg: [],
-                  userRemoteConfigs: [[credentialsId: 'Github',
-                                       url: 'https://github.com/abes-esr/abes-hello-back.git']]
-        ])
-    }
-
-
+    
     //if the checkbox (params.executeTests) is checked
     stage ('test') {
         if("${executeTests}" == 'true'){
