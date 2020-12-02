@@ -5,58 +5,60 @@
 //it's necessary to see if a jenkins variable is usefull so to maybe allows conditionnal running and deploying test contexts
 
 node {
+    // 1. On charge les variables d'environnement (Java, Maven,...)
+    stage ("Loading environement variables") {
 
-    env.JAVA_HOME = "${tool 'Open JDK 11'}"
-    env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+        try {
+            env.JAVA_HOME = "${tool 'Open JDK 11'}"
+            env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
-    def maventool = tool 'Maven 3.3.9'
-    //def serverArtifactory = Artifactory.newServer url: 'https://artifactory-test.abes.fr', credentialsId: 'artifactorykey'
-    def rtMaven = Artifactory.newMavenBuild()
-    def buildInfo
-    def server = Artifactory.server '-1137809952@1458918089773'
-    rtMaven.tool = 'Maven 3.3.9'
-    rtMaven.opts = '-Xms1024m -Xmx4096m'
+            def maventool = tool 'Maven 3.3.9'
+            //def serverArtifactory = Artifactory.newServer url: 'https://artifactory-test.abes.fr', credentialsId: 'artifactorykey'
+            def rtMaven = Artifactory.newMavenBuild()
+            def buildInfo
+            def server = Artifactory.server '-1137809952@1458918089773'
+            rtMaven.tool = 'Maven 3.3.9'
+            rtMaven.opts = '-Xms1024m -Xmx4096m'
 
-    //rtMaven
-    def ENV = params.ENV
-    def executeTests = params.executeTests
-    if(params.ENV != null) {
-        echo "env =  ${ENV}"
-        echo ENV
+            //rtMaven
+            def ENV = params.ENV
+            def executeTests = params.executeTests
+            if (params.ENV != null) {
+                echo "env =  ${ENV}"
+                echo ENV
+            }
+            if (params.executeTests != null) {
+                echo "executeTests =  ${executeTests}"
+            }
+
+        } catch (err) {
+            throw err
+        }
     }
-    if(params.executeTests != null) {
-        echo "executeTests =  ${executeTests}"
+
+    // 2. On configure les paramètres d'utilisation
+    stage ("Setting parameters") {
+        try {
+            git url: 'https://github.com/abes-esr/abes-hello-back.git', credentialsId: 'Github'
+            tags = sh (
+                    script: 'git tag --sort=-creatordate',
+                    returnStdout: true
+            ).trim()
+
+            properties(
+                    [parameters([
+                            choice(choices: ['RELEASE', 'LATEST', '0.0.1-SNAPSHOT'], description: '', name: 'maven-repository-artifact'),
+                            choice(choices: ['DEV', 'TEST', 'PROD'], description: '', name: 'ENV'),
+                            choice(choices: ['CURRENT', ${tags}], description: '', name: 'VERSION'),
+                            booleanParam(defaultValue: false, description: '', name: 'executeTests')
+                    ])])
+
+        }
+        catch (err) {
+            throw err
+        }
+
     }
-    //some_flag = params.SOME_FLAG != null ? params.SOME_FLAG.toBoolean() : false
-
-    properties(
-            [parameters([
-                    choice(choices: ['RELEASE', 'LATEST', '0.0.1-SNAPSHOT'], description: '', name: 'maven-repository-artifact'),
-                    choice(choices: ['DEV', 'TEST', 'PROD'], description: '', name: 'ENV'),
-                    choice(choices: ['1.1.0', '1.2.0', '1.3.0'], description: '', name: 'VERSION'),
-                    booleanParam(defaultValue: false, description: '', name: 'executeTests')
-            ])])
-
-
-
-
-
-    //def version = input(
-    //    id: 'versionToDeploy', message: 'Enter a comma separated list of additional tags for the image (0.0.1,some-tagname,etc):?',
-    //    parameters: [
-    //      [$class: 'StringParameterDefinition', defaultValue: 'None', description: 'List of tags', name: 'coreImageTagsList'],
-    //    ]
-    //  )
-
-    //  echo ("Image tags: "+coreImageTags)
-
-
-    //  parameters {
-    //         string(name:'VERSION', defaultValue: '', description: 'version to deploy on prod')
-
-
-
-
 
     stage('SCM checkout') {
         checkout([$class: 'GitSCM',
