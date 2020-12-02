@@ -56,7 +56,7 @@ node {
                     returnStdout: true
             ).trim()
 
-            echo ${tags}
+            echo "tags = ${tags}"
 
             properties(
                     [parameters([
