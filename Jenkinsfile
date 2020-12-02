@@ -101,7 +101,7 @@ node {
     stage('artifact') {
         //we have to put the war in the workspace/target directory (see on the server Jacinthe)
         //the path is /var/lib/jenkins/jobs/indexationsolr_test_multibranch_pipeline/branches/develop/workspace/target/indexationsolr.war
-        archive 'target/*.war'
+        archive 'web/target/*.war'
     }
 
 
@@ -117,27 +117,27 @@ node {
             //here it's a project credential
             sshagent(credentials: ['cirse1-dev-ssh-key']) { //one key per tomcat
                 echo 'key ok'
-                sh 'scp target/*.war tomcat@cirse1-dev.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                sh 'scp web/target/*.war tomcat@cirse1-dev.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
             }
             //here it's a global projects credential
             sshagent(credentials: ['cirse2-dev-ssh-key']) {
-                sh 'scp target/*.war tomcat@cirse2-dev.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                sh 'scp web/target/*.war tomcat@cirse2-dev.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
             }
         }
         if (ENV == 'TEST') {
             sshagent(credentials: ['cirse1-test-ssh-key']) {//so need to generate new keys (not already done)
-                sh 'scp target/*.war tomcat@cirse1-test.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                sh 'scp web/target/*.war tomcat@cirse1-test.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
             }
             sshagent(credentials: ['cirse2-test-ssh-key']) {//so need to generate new keys (not already done)
-                sh 'scp target/*.war tomcat@cirse2-test.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                sh 'scp web/target/*.war tomcat@cirse2-test.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
             }
         }
         if (ENV == 'PROD') {
             sshagent(credentials: ['cirse1-prod-ssh-key']) {//so need to generate new keys (not already done)
-                sh 'scp target/*.war tomcat@cirse1.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                sh 'scp web/target/*.war tomcat@cirse1.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
             }
             sshagent(credentials: ['cirse2-prod-ssh-key']) {//so need to generate new keys (not already done)
-                sh 'scp target/*.war tomcat@cirse2.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                sh 'scp web/target/*.war tomcat@cirse2.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
             }
         }
     }
