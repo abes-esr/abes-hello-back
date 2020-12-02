@@ -55,12 +55,12 @@ node {
             def tags = readFile('tags_list.txt').trim()
             echo "tags = ${tags}"
             sh 'rm -f tags_list.txt'
-            
+
             properties(
                     [parameters([
                             choice(choices: ['RELEASE', 'LATEST', '0.0.1-SNAPSHOT'], description: '', name: 'maven-repository-artifact'),
                             choice(choices: ['DEV', 'TEST', 'PROD'], description: '', name: 'ENV'),
-                            choice(choices: ['CURRENT', $tags], description: '', name: 'VERSION'),
+                            choice(choices: ['CURRENT', ${tags}], description: '', name: 'VERSION'),
                             booleanParam(defaultValue: false, description: '', name: 'executeTests')
                     ])])
 
