@@ -51,7 +51,7 @@ node {
     // 2. On configure les paramètres d'utilisation
     stage ("Setting parameters") {
         try {
-            sh (cript: 'git tag -l')
+            sh (script: 'git tag -l')
 
             TAGS = sh (
                     script: 'git tag -l',
