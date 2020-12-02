@@ -51,10 +51,12 @@ node {
     // 2. On configure les paramètres d'utilisation
     stage ("Setting parameters") {
         try {
-            tags = sh (
+            def tags = sh (
                     script: 'git tag -l',
                     returnStdout: true
             ).trim()
+
+            echo $tags
 
             properties(
                     [parameters([
