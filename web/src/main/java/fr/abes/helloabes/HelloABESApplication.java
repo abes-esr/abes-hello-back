@@ -1,18 +1,18 @@
 package fr.abes.helloabes;
 
-import fr.abes.helloabes.core.dao.ICommandeDao;
-import fr.abes.helloabes.core.dao.IFournisseurDao;
+import fr.abes.helloabes.core.dao.IOrderDao;
+import fr.abes.helloabes.core.dao.ISupplierDao;
 import fr.abes.helloabes.core.dao.IProductDao;
 import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.AppUser;
-import fr.abes.helloabes.core.entities.Commandes;
-import fr.abes.helloabes.core.entities.Fournisseur;
-import fr.abes.helloabes.core.entities.Products;
+import fr.abes.helloabes.core.entities.Order;
+import fr.abes.helloabes.core.entities.Product;
+import fr.abes.helloabes.core.entities.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,17 +27,17 @@ import java.util.List;
 @SpringBootApplication
 public class HelloABESApplication implements CommandLineRunner {
 
-	/** Dépot d'utilisateurs du service web. L'attribut {@link #userRepository} est utilisé ici dans le cadre de
+	/** Dépot d'utilisateurs du service web. L'attribut {@link #userDao} est utilisé ici dans le cadre de
 	 * la version de démontration afin d'ajouter dès le démarrage un utilisateur par defaut.
 	 * La base de donnée du projet est une base de donnée volatile H2 qui nécessite de remplir la base à chaque démarrage.
 	 * <p> Note : il est important de supprimer cet attribut dans une version de production.</p>
 	 */
 	@Autowired
-	private IUserDao userRepository;
+	private IUserDao userDao;
 	@Autowired
-	private ICommandeDao commandeDao;
+	private IOrderDao orderDao;
 	@Autowired
-	private IFournisseurDao fournisseurDao;
+	private ISupplierDao supplierDao;
 	@Autowired
 	private IProductDao productDao;
 
@@ -57,42 +57,14 @@ public class HelloABESApplication implements CommandLineRunner {
 	 * @throws Exception si l'utilisateur ne peut pas être crée ou s'il ne peut pas être ajouter à la collection des utilisateurs.
 	 */
 	@Override
+	@Transactional
 	public void run(String... args) throws Exception {
 
-		List<AppUser> listOfUsersDemo = Arrays.asList(
-				new AppUser("admin", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
-				new AppUser("demoUser1", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
-				new AppUser("demoUser2", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
-				new AppUser("demoUser3", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy"),
-				new AppUser("demoUser4", "$2a$10$gDbTV0zgAmKX350ggJ7W7.zYUWR8H/KWzW9.yrl9z80uuzZ73kppy")
-		);
+		List<Supplier> listOfFournisseurs = supplierDao.findAll();
+		List<AppUser> listOfUsersDemo = userDao.findAll();
+		List<Product> products = productDao.findAll();
 
-		userRepository.saveAll(listOfUsersDemo);
-
-		List<Fournisseur> listOfFournisseurs = Arrays.asList(
-				new Fournisseur("Boulanger"),
-				new Fournisseur("Darty"),
-				new Fournisseur("Abes")
-		);
-
-		fournisseurDao.saveAll(listOfFournisseurs);
-
-		List<Products> products = Arrays.asList(
-				new Products("Livre Harry Potter", 17.80),
-				new Products("Livre Energie vagabonde", 28.40),
-				new Products("Livre Akira", 14.50),
-				new Products("Le Monde", 4.50),
-				new Products("Le Souris sans fil", 12.60),
-				new Products("L'écran HP", 350.00),
-				new Products("Tablette Samsung", 480.70),
-				new Products("Samsung S20", 890.40),
-				new Products("Iphone 12", 1090.50)
-		);
-
-		productDao.saveAll(products);
-
-
-		List<Products> productDemo1 = Arrays.asList(
+		List<Product> productDemo1 = Arrays.asList(
 				products.stream().filter(p -> p.getName().contains("Livre Harry Potter"))
 						.findAny().orElse(null),
 				products.stream().filter(p -> p.getName().contains("Livre Energie vagabonde"))
@@ -103,8 +75,8 @@ public class HelloABESApplication implements CommandLineRunner {
 						.findAny().orElse(null)
 		);
 
-		List<Products> productDemo2 = Arrays.asList(
-				products.stream().filter(p -> p.getName().contains("Le Souris sans fil"))
+		List<Product> productDemo2 = Arrays.asList(
+				products.stream().filter(p -> p.getName().contains("La Souris sans fil"))
 						.findAny().orElse(null),
 				products.stream().filter(p -> p.getName().contains("Iphone 12"))
 						.findAny().orElse(null),
@@ -114,7 +86,7 @@ public class HelloABESApplication implements CommandLineRunner {
 						.findAny().orElse(null)
 		);
 
-		List<Products> productDemo3 = Arrays.asList(
+		List<Product> productDemo3 = Arrays.asList(
 				products.stream().filter(p -> p.getName().contains("Tablette Samsung"))
 						.findAny().orElse(null),
 				products.stream().filter(p -> p.getName().contains("Iphone 12"))
@@ -125,24 +97,30 @@ public class HelloABESApplication implements CommandLineRunner {
 						.findAny().orElse(null)
 		);
 
-
-		List<Commandes> commandes = Arrays.asList(
-				new Commandes(
-						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("admin"))
+		List<Order> commandes = Arrays.asList(
+				new Order(
+						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("toto"))
 								.findAny().orElse(null),
 						listOfFournisseurs.stream().filter(f -> f.getName().contains("Abes"))
 								.findAny().orElse(null),
 						productDemo1
 						),
-				new Commandes(
+				new Order(
 						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("admin"))
 								.findAny().orElse(null),
 						listOfFournisseurs.stream().filter(f -> f.getName().contains("Boulanger"))
 								.findAny().orElse(null),
 						productDemo2
 				),
-				new Commandes(
+				new Order(
 						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("demoUser1"))
+								.findAny().orElse(null),
+						listOfFournisseurs.stream().filter(f -> f.getName().contains("Darty"))
+								.findAny().orElse(null),
+						productDemo3
+				),
+				new Order(
+						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("toto"))
 								.findAny().orElse(null),
 						listOfFournisseurs.stream().filter(f -> f.getName().contains("Darty"))
 								.findAny().orElse(null),
@@ -150,13 +128,9 @@ public class HelloABESApplication implements CommandLineRunner {
 				)
 		);
 
-		commandeDao.saveAll(commandes);
+		orderDao.saveAll(commandes);
 
-
-/*
-		userRepository.delete(userRepository.findByUserName("demoUser1"));
-
-*/
+		//userDao.delete(userDao.findByUserName("demoUser1"));
 
 	}
 

@@ -1,8 +1,8 @@
 package fr.abes.helloabes.web.controller;
 
 import fr.abes.helloabes.core.entities.AppUser;
-import fr.abes.helloabes.core.entities.Commandes;
-import fr.abes.helloabes.core.service.ICommandeService;
+import fr.abes.helloabes.core.entities.Order;
+import fr.abes.helloabes.core.service.IOrderService;
 import fr.abes.helloabes.core.service.IUserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -32,14 +32,14 @@ public class SecuredController {
 
     private final IUserService userService;
 
-    private final ICommandeService commandeService;
+    private final IOrderService orderService;
 
 
     @Autowired
-    public SecuredController(IUserService userService, ICommandeService commandeService) {
+    public SecuredController(IUserService userService, IOrderService orderService) {
         this.userService = userService;
 
-        this.commandeService = commandeService;
+        this.orderService = orderService;
     }
 
     /**
@@ -75,9 +75,9 @@ public class SecuredController {
             @ApiResponse(code = 400, message = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronnée..."),
             @ApiResponse(code = 404, message = "Opération a échoué."),
     })
-    public List<Commandes> displaySecureCommandes(Authentication authentication) {
+    public List<Order> displaySecureCommandes(Authentication authentication) {
 
         AppUser user = userService.findUserByUserName(authentication.getName());
-        return commandeService.findCommandeByUser(user);
+        return orderService.findOrdersOfUser(user);
     }
 }

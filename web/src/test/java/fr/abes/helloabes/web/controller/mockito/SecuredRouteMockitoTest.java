@@ -1,14 +1,15 @@
-package fr.abes.helloabes.web.controller;
+package fr.abes.helloabes.web.controller.mockito;
 
 import fr.abes.helloabes.core.entities.AppUser;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.test.annotation.IfProfileValue;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class SecuredRouteTest extends SecuredControllerTestBase {
+public class SecuredRouteMockitoTest extends SecuredControllerMockitoTestBase {
 
     /**
      * Test la route /secured sans authentification
@@ -30,10 +31,12 @@ public class SecuredRouteTest extends SecuredControllerTestBase {
      * @throws Exception
      */
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-mockito")
     public void securedAuthenticate() throws Exception {
 
-        AppUser adminUser = getAdminUser();
-        String token = createAndAuthenticate(adminUser);
+        AppUser adminUser = getTotoUser();
+        AppUser myDataBaseUser = getDataBaseUser(adminUser);
+        String token = authenticate(myDataBaseUser);
 
         mockMvc.perform(get("/secured")
                 .header("Authorization","Bearer "+token))
@@ -62,12 +65,14 @@ public class SecuredRouteTest extends SecuredControllerTestBase {
      * @throws Exception
      */
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-mockito")
     public void securedTokenUserNotFound() throws Exception {
 
-        AppUser adminUser = getAdminUser();
-        String token = createAndAuthenticate(adminUser);
+        AppUser adminUser = getTotoUser();
+        AppUser myDataBaseUser = getDataBaseUser(adminUser);
+        String token = authenticate(myDataBaseUser);
 
-        Mockito.when(userRepository.findByUserName("admin")).thenReturn(null);
+        Mockito.when(userDao.findByUserName(myDataBaseUser.getUserName())).thenReturn(null);
 
         mockMvc.perform(get("/secured")
                 .header("Authorization","Bearer "+token))
@@ -84,10 +89,12 @@ public class SecuredRouteTest extends SecuredControllerTestBase {
      * @throws Exception
      */
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-mockito")
     public void securedExpiredToken() throws Exception {
 
-        AppUser adminUser = getAdminUser();
-        String token = createAndAuthenticate(adminUser);
+        AppUser adminUser = getTotoUser();
+        AppUser myDataBaseUser = getDataBaseUser(adminUser);
+        String token = authenticate(myDataBaseUser);
         String expiredToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlzcyI6IkFCRVMiLCJleHAiOjE2MDYyMzEyODYsImlhdCI6MTYwNjIzMTI4NX0.-09cv6DFzgFtm9b8nNNIP2EzqMOun7GScly8zWJy3dc";
 
         mockMvc.perform(get("/secured")
@@ -99,3 +106,4 @@ public class SecuredRouteTest extends SecuredControllerTestBase {
                 .andExpect(jsonPath("$.path").value("/secured"));
     }
 }
+

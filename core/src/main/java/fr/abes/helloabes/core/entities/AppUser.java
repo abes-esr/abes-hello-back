@@ -13,6 +13,10 @@ import javax.validation.constraints.Pattern;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.awt.print.Book;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -26,8 +30,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-@Table(name= "UTILISATEUR")
-public class AppUser {
+@Table(name= "user")
+public class AppUser implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Identifiant unique d'un utilisateur. Cette identifiant est géré automatiquement par la couche
@@ -35,30 +41,28 @@ public class AppUser {
      */
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column(name = "USER_ID")
+    @Column(name = "user_id")
     @ApiModelProperty(value = "identifiant de l'utilisateur", name = "identityNumber", dataType = "Integer", example = "1")
     private Integer identityNumber;
 
     /** Nom d'utilisateur  */
-    @Column(name = "USER_NAME")
+    @Column(name = "user_name")
     @NotNull(message = "Le nom d'utilisateur ne doit pas être null")
     @NotEmpty(message = "Le nom d'utilisateur ne doit pas être vide")
     @ApiModelProperty(value = "nom de l'utilisateur", name = "userName", dataType = "String", example = "corentin")
     private String userName;
 
     /** Mot de passe */
-    @Column(name = "USER_PASSWORD")
+    @Column(name = "user_password")
     @NotNull(message = "Le mot de passe ne doit pas être null")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
     @ApiModelProperty(value = "mot de passe de l'utilisateur", name = "passWord", dataType = "String", example = "motDePasseC0!mplex")
     private String passWord;
 
-    /** Relation avec la table commande */
-    @OneToMany(mappedBy = "user",
-    cascade = CascadeType.ALL)
+    /** Liste des commandes de l'utilisateur */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Commandes> commandes;
-
+    private List<Order> orders = new ArrayList<>();
 
     /**
      * Construit un utilisateur à partir de son nom d'utilisateur et de son mot de passe.
@@ -68,5 +72,42 @@ public class AppUser {
     public AppUser(String userName, String password) {
         this.userName = userName;
         this.passWord = password;
+    }
+
+    /**
+     * Ajoute une commande à l'utilisateur.
+      * @param order Order la commande à ajouter.
+     */
+    public void addOrder(Order order) {
+        this.orders.add(order);
+        order.setUser(this);
+    }
+
+    /**
+     * Supprime une commande à l'utilisateur.
+     * @param order Order la commande à suprimmer.
+     */
+    public void removeOrder(Order order) {
+        order.setUser(null);
+        this.orders.remove(order);
+    }
+
+    /**
+     * Supprime toutes les commandes de l'utilisateur.
+     */
+    public void removeOrders() {
+        Iterator<Order> iterator = this.orders.iterator();
+
+        while (iterator.hasNext()) {
+            Order order = iterator.next();
+
+            order.setUser(null);
+            iterator.remove();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "AppUser {"+ "identityNumber="+ identityNumber +", userName ="+userName+"}";
     }
 }

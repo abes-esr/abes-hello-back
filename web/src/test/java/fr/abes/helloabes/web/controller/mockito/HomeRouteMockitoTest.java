@@ -1,4 +1,4 @@
-package fr.abes.helloabes.web.controller;
+package fr.abes.helloabes.web.controller.mockito;
 
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Classe de test pour la route /
  */
-public class HomeRouteTest extends PublicControllerTestBase {
+public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
 
     /**
      * Test la route / avec la méthode GET
