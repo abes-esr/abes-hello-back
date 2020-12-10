@@ -7,6 +7,7 @@ import fr.abes.helloabes.core.entities.Product;
 import fr.abes.helloabes.core.entities.Supplier;
 import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import fr.abes.helloabes.core.service.IUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.List;
  * @author Duy Tran
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements IUserService {
 
     /** Dépot d'utilisateurs du service web. */
@@ -56,6 +58,7 @@ public class UserServiceImpl implements IUserService {
             throw new UserAlreadyExistsException("Username already exists");
         }
 
+        log.info("User password is encoded");
         String passHash = bCryptPasswordEncoder.encode(user.getPassWord());
         user.setPassWord(passHash);
         return userDao.save(user);

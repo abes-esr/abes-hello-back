@@ -2,10 +2,10 @@
 <!-- Doc : http://logging.apache.org/log4j/2.x/manual/appenders.html#CustomDeleteOnRollover -->
 <Configuration>
     <Properties>
-        <Property name="baseDir">../logs</Property>
-        <Property name="logFileName">helloabes_batch_log</Property>
-        <Property name="errorFileName">helloabes_batch_error</Property>
-        <Property name="debugFileName">helloabes_batch_debug</Property>
+        <Property name="baseDir">${bundle:application-test:application.basedir}${bundle:application:application.finalname}/${bundle:application-test:log4j2.logdir}</Property>
+        <Property name="logFileName">helloabes_web_log</Property>
+        <Property name="errorFileName">helloabes_web_error</Property>
+        <Property name="debugFileName">helloabes_web_debug</Property>
 
         <!-- Politique de gestion des fichiers -->
         <Property name="sizeTriggerPolicy">100 MB</Property>

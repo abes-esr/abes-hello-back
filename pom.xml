@@ -40,6 +40,39 @@
     <packaging>pom</packaging>
 
     <!-- =========================================================== -->
+    <!--     Profile                                                 -->
+    <!-- =========================================================== -->
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>default</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <spring.profiles.active>test</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
+    <!-- =========================================================== -->
     <!--     Dependances heritees pour tous les modules.             -->
     <!-- =========================================================== -->
     <dependencies>

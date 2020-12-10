@@ -1,17 +1,20 @@
 package fr.abes.helloabes;
 
 import fr.abes.helloabes.core.dao.IOrderDao;
-import fr.abes.helloabes.core.dao.ISupplierDao;
 import fr.abes.helloabes.core.dao.IProductDao;
+import fr.abes.helloabes.core.dao.ISupplierDao;
 import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.entities.Order;
 import fr.abes.helloabes.core.entities.Product;
 import fr.abes.helloabes.core.entities.Supplier;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -25,7 +28,8 @@ import java.util.List;
  * @author Duy Tran
  */
 @SpringBootApplication
-public class HelloABESApplication implements CommandLineRunner {
+@Slf4j
+public class HelloABESApplication extends SpringBootServletInitializer implements CommandLineRunner {
 
 	/** Dépot d'utilisateurs du service web. L'attribut {@link #userDao} est utilisé ici dans le cadre de
 	 * la version de démontration afin d'ajouter dès le démarrage un utilisateur par defaut.
@@ -50,6 +54,16 @@ public class HelloABESApplication implements CommandLineRunner {
 	}
 
 	/**
+	 * Configure le serveur
+	 * @param builder
+	 * @return
+	 */
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+		return builder.sources(HelloABESApplication.class);
+	}
+
+	/**
 	 * Fonction exécutée au démarrage du service. Il s'agit ici d'une surcharge afin de modifier
 	 * le comportement original du démarrage afin d'ajouter un utilisateur par défaut.
 	 * <p> Note : il est important de supprimer cette fonction dans une version de production.</p>
@@ -59,6 +73,8 @@ public class HelloABESApplication implements CommandLineRunner {
 	@Override
 	@Transactional
 	public void run(String... args) throws Exception {
+
+		log.debug("Ajout de commandes dans la base de données.");
 
 		List<Supplier> listOfFournisseurs = supplierDao.findAll();
 		List<AppUser> listOfUsersDemo = userDao.findAll();

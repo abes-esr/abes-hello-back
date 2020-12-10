@@ -2,10 +2,10 @@
 <!-- Doc : http://logging.apache.org/log4j/2.x/manual/appenders.html#CustomDeleteOnRollover -->
 <Configuration>
     <Properties>
-        <Property name="baseDir">../logs</Property>
-        <Property name="logFileName">helloabes_core_log</Property>
-        <Property name="errorFileName">helloabes_core_error</Property>
-        <Property name="debugFileName">helloabes_core_debug</Property>
+        <Property name="baseDir">${bundle:application-dev:application.basedir}${bundle:application:application.finalname}/${bundle:application-dev:log4j2.logdir}</Property>
+        <Property name="logFileName">helloabes_web_log</Property>
+        <Property name="errorFileName">helloabes_web_error</Property>
+        <Property name="debugFileName">helloabes_web_debug</Property>
 
         <!-- Politique de gestion des fichiers -->
         <Property name="sizeTriggerPolicy">100 MB</Property>
@@ -87,6 +87,7 @@
         <RollingFile name="DebugFile"
                      fileName="${baseDir}/${debugFileName}.log"
                      filePattern="${baseDir}/$${date:yyyy-MM}/${debugFileName}_%d{dd-MM-yyyy}_%i.log.gz">
+            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
@@ -117,18 +118,14 @@
     </Appenders>
 
     <Loggers>
-        <!-- On décrit l'utilisation des supports -->
-
-        <Logger name="fr.abes" level="debug">
-            <!-- Pour les paquets dans fr.abes, on écrit un journal pour les erreurs et un journal pour les boggues -->
-            <AppenderRef ref="ErrorFile" level="error" />
-            <AppenderRef ref="DebugFile" level="debug" />
-        </Logger>
-
-        <!-- Pour le niveau INFO, on écrit dans la console et le log -->
-        <Root level="info">
+        <!-- Pour tous les niveaux, on ecrit dans la console et le fichier debug -->
+        <!-- LogFile ne recoit que le niveau info -->
+        <!-- ErrorFile ne recoit que le niveau error -->
+        <Root level="all">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="LogFile"/>
+            <AppenderRef ref="DebugFile" />
+            <AppenderRef ref="LogFile" level="info"/>
+            <AppenderRef ref="ErrorFile" level="error"/>
         </Root>
     </Loggers>
 
