@@ -25,6 +25,7 @@
         <RollingFile name="LogFile"
                      fileName="${baseDir}/${logFileName}.log"
                      filePattern="${baseDir}/$${date:yyyy-MM}/${logFileName}_%d{dd-MM-yyyy}_%i.log.gz">
+            <LevelRangeFilter minLevel="INFO" maxLevel="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
@@ -56,6 +57,7 @@
         <RollingFile name="ErrorFile"
                      fileName="${baseDir}/${errorFileName}.log"
                      filePattern="${baseDir}/$${date:yyyy-MM}/${errorFileName}_%d{dd-MM-yyyy}_%i.log.gz">
+            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
@@ -87,7 +89,7 @@
         <RollingFile name="DebugFile"
                      fileName="${baseDir}/${debugFileName}.log"
                      filePattern="${baseDir}/$${date:yyyy-MM}/${debugFileName}_%d{dd-MM-yyyy}_%i.log.gz">
-            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <LevelRangeFilter minLevel="DEBUG" maxLevel="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
@@ -124,8 +126,8 @@
         <Root level="all">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="DebugFile" />
-            <AppenderRef ref="LogFile" level="info"/>
-            <AppenderRef ref="ErrorFile" level="error"/>
+            <AppenderRef ref="LogFile" />
+            <AppenderRef ref="ErrorFile" />
         </Root>
     </Loggers>
 
