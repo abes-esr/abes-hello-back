@@ -122,7 +122,6 @@
         <!-- LogFile ne recoit que le niveau info -->
         <!-- ErrorFile ne recoit que le niveau error -->
         <Root level="all">
-            <AppenderRef ref="Console"/>
             <AppenderRef ref="DebugFile" />
             <AppenderRef ref="LogFile" level="info"/>
             <AppenderRef ref="ErrorFile" level="error"/>
