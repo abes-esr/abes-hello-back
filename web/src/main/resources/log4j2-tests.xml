@@ -8,9 +8,9 @@
         <Property name="debugFileName">${bundle:application:application.name}_debug</Property>
 
         <!-- Politique de gestion des fichiers -->
-        <Property name="sizeTriggerPolicy">100 MB</Property>
-        <Property name="deleteAgeFile">3d</Property>
-        <Property name="keepMostRecentFile">1</Property>
+        <Property name="sizeTriggerPolicy">200 MB</Property>
+        <Property name="deleteAgeFile">15d</Property>
+        <Property name="keepMostRecentFile">10</Property>
         <Property name="keepMostRecentSize">100 MB</Property>
     </Properties>
     <Appenders>

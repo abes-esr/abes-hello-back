@@ -9,9 +9,9 @@
 
         <!-- Politique de gestion des fichiers -->
         <Property name="sizeTriggerPolicy">100 MB</Property>
-        <Property name="deleteAgeFile">3d</Property>
+        <Property name="deleteAgeFile">1d</Property>
         <Property name="keepMostRecentFile">1</Property>
-        <Property name="keepMostRecentSize">100 MB</Property>
+        <Property name="keepMostRecentSize">10 MB</Property>
     </Properties>
     <Appenders>
 
