@@ -6,6 +6,13 @@
 
 node {
 
+    def maventool
+    def rtMaven
+    def buildInfo
+    def server
+    def ENV
+    def executeTests
+
     properties([
             buildDiscarder(
                     logRotator(
@@ -38,17 +45,17 @@ node {
             env.JAVA_HOME = "${tool 'Open JDK 11'}"
             env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
-            def maventool = tool 'Maven 3.3.9'
+            maventool = tool 'Maven 3.3.9'
             //def serverArtifactory = Artifactory.newServer url: 'https://artifactory-test.abes.fr', credentialsId: 'artifactorykey'
-            def rtMaven = Artifactory.newMavenBuild()
-            def buildInfo
-            def server = Artifactory.server '-1137809952@1458918089773'
+            rtMaven = Artifactory.newMavenBuild()
+            buildInfo
+            server = Artifactory.server '-1137809952@1458918089773'
             rtMaven.tool = 'Maven 3.3.9'
             rtMaven.opts = '-Xms1024m -Xmx4096m'
 
             //rtMaven
-            def ENV = params.ENV
-            def executeTests = params.executeTests
+            ENV = params.ENV
+            executeTests = params.executeTests
             if (params.ENV != null) {
                 echo "env =  ${ENV}"
                 echo ENV
@@ -68,6 +75,8 @@ node {
 
     stage('SCM checkout') {
         try {
+
+            notifyBuild()
             checkout([
                     $class: 'GitSCM',
                     branches: [[name: "${params.BRANCH_TAG}"]],
@@ -335,5 +344,32 @@ node {
             throw e
         }
     }
+}
+
+def notifyBuild(String buildStatus = 'STARTED') {
+    // build status of null means successful
+    buildStatus =  buildStatus ?: 'SUCCESSFUL'
+
+    // Default values
+    def colorName = 'RED'
+    def colorCode = '#FF0000'
+    def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+    def summary = "${subject} (${env.BUILD_URL})"
+
+    // Override default values based on build status
+    if (buildStatus == 'STARTED') {
+        color = 'YELLOW'
+        colorCode = '#FFFF00'
+    } else if (buildStatus == 'SUCCESSFUL') {
+        color = 'GREEN'
+        colorCode = '#00FF00'
+    } else {
+        color = 'RED'
+        colorCode = '#FF0000'
+    }
+
+    // Send notifications
+
+    slackSend (tokenCredentialId: "slack_token", channel: "#notif-helloabes", color: colorCode, message: summary)
 }
 
