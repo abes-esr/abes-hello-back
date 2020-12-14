@@ -8,11 +8,25 @@ node {
 
     properties(
     [parameters([
+            gitParameter(branch: '',
+                    branchFilter: 'origin/(.*)',
+                    defaultValue: 'main',
+                    description: '',
+                    name: 'BRANCH',
+                    quickFilterEnabled: false,
+                    selectedValue: 'NONE',
+                    sortMode: 'NONE',
+                    tagFilter: '*',
+                    type: 'PT_BRANCH'),
             choice(choices: ['RELEASE', 'LATEST', '0.0.1-SNAPSHOT'], description: '', name: 'maven-repository-artifact'),
             choice(choices: ['DEV', 'TEST', 'PROD'], description: '', name: 'ENV'),
             booleanParam(defaultValue: false, description: '', name: 'executeTests')
     ])])
-    // 1. On charge les variables d'environnement (Java, Maven,...)
+
+    parameters {
+
+        choice(name: 'SonarQube', choices: ['False','True'],description: '')
+        // 1. On charge les variables d'environnement (Java, Maven,...)
     env.JAVA_HOME = "${tool 'Open JDK 11'}"
     env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
