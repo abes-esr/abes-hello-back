@@ -42,6 +42,9 @@ node {
             ])
     ])
 
+    currentBuild.result = "START"
+    notifySlack()
+
     stage('Set environnement variables') {
         try {
 
@@ -58,7 +61,7 @@ node {
             rtMaven.opts = '-Xms1024m -Xmx4096m'
 
             //rtMaven
-            ENV = params.ENV
+            ENV = params.ENV555
             executeTests = params.executeTests
             if (params.ENV != null) {
                 echo "env =  ${ENV}"
@@ -69,18 +72,16 @@ node {
             }
 
         } catch(e) {
-            //hipchatSend color: 'RED', credentialId: 'HipChat-API-Token', message: "${env.JOB_NAME} #${env.BUILD_NUMBER} Build failed at stage Behat - Prepare (<a href=\"${env.BUILD_URL}\">Open</a>)", room: '***', sendAs: 'Jenkins', server: '', v2enabled: false
-            //githubNotify account: 'decitre-interactive', context: 'Behat', credentialsId: 'credential-github', description: '', gitApiUrl: '', repo: '***', sha: gitCommit, status: 'FAILURE', targetUrl: "${env.BUILD_URL}"
-            //sh 'docker-compose down'
+            notifySlack(e.getLocalizedMessage())
             throw e
         }
 
     }
 
+    currentBuild.result = "RUNNING"
+
     stage('SCM checkout') {
         try {
-
-            notifySlack()
             checkout([
                     $class: 'GitSCM',
                     branches: [[name: "${params.BRANCH_TAG}"]],
@@ -91,12 +92,12 @@ node {
             ])
 
         } catch(e) {
-            //hipchatSend color: 'RED', credentialId: 'HipChat-API-Token', message: "${env.JOB_NAME} #${env.BUILD_NUMBER} Build failed at stage Behat - Prepare (<a href=\"${env.BUILD_URL}\">Open</a>)", room: '***', sendAs: 'Jenkins', server: '', v2enabled: false
-            //githubNotify account: 'decitre-interactive', context: 'Behat', credentialsId: 'credential-github', description: '', gitApiUrl: '', repo: '***', sha: gitCommit, status: 'FAILURE', targetUrl: "${env.BUILD_URL}"
-            //sh 'docker-compose down'
+            notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
+
+    currentBuild.result = "RUNNING"
 
     //if the checkbox (params.executeTests) is checked
     stage ('test') {
@@ -110,12 +111,12 @@ node {
                 echo "tests = false"
             }
         } catch(e) {
-            //hipchatSend color: 'RED', credentialId: 'HipChat-API-Token', message: "${env.JOB_NAME} #${env.BUILD_NUMBER} Build failed at stage Behat - Prepare (<a href=\"${env.BUILD_URL}\">Open</a>)", room: '***', sendAs: 'Jenkins', server: '', v2enabled: false
-            //githubNotify account: 'decitre-interactive', context: 'Behat', credentialsId: 'credential-github', description: '', gitApiUrl: '', repo: '***', sha: gitCommit, status: 'FAILURE', targetUrl: "${env.BUILD_URL}"
-            //sh 'docker-compose down'
+            notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
+
+    currentBuild.result = "RUNNING"
 
     stage('compile-package') {
         try {
@@ -132,12 +133,12 @@ node {
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Pprod"
             }
         } catch(e) {
-            //hipchatSend color: 'RED', credentialId: 'HipChat-API-Token', message: "${env.JOB_NAME} #${env.BUILD_NUMBER} Build failed at stage Behat - Prepare (<a href=\"${env.BUILD_URL}\">Open</a>)", room: '***', sendAs: 'Jenkins', server: '', v2enabled: false
-            //githubNotify account: 'decitre-interactive', context: 'Behat', credentialsId: 'credential-github', description: '', gitApiUrl: '', repo: '***', sha: gitCommit, status: 'FAILURE', targetUrl: "${env.BUILD_URL}"
-            //sh 'docker-compose down'
+            notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
+
+    currentBuild.result = "RUNNING"
 
     //stage('sonarqube analysis'){
     //   withSonarQubeEnv('SonarQube Server2'){ cf : jenkins/configuration/sonarQube servers ==> between the quotes put the name we gave to the server
@@ -151,12 +152,12 @@ node {
             //the path is /var/lib/jenkins/jobs/indexationsolr_test_multibranch_pipeline/branches/develop/workspace/target/indexationsolr.war
             archive 'web/target/*.war'
         } catch(e) {
-            //hipchatSend color: 'RED', credentialId: 'HipChat-API-Token', message: "${env.JOB_NAME} #${env.BUILD_NUMBER} Build failed at stage Behat - Prepare (<a href=\"${env.BUILD_URL}\">Open</a>)", room: '***', sendAs: 'Jenkins', server: '', v2enabled: false
-            //githubNotify account: 'decitre-interactive', context: 'Behat', credentialsId: 'credential-github', description: '', gitApiUrl: '', repo: '***', sha: gitCommit, status: 'FAILURE', targetUrl: "${env.BUILD_URL}"
-            //sh 'docker-compose down'
+            notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
+
+    currentBuild.result = "RUNNING"
 
     stage ('deploy to tomcat'){
         try {
@@ -195,12 +196,12 @@ node {
             }
 
         } catch(e) {
-            //hipchatSend color: 'RED', credentialId: 'HipChat-API-Token', message: "${env.JOB_NAME} #${env.BUILD_NUMBER} Build failed at stage Behat - Prepare (<a href=\"${env.BUILD_URL}\">Open</a>)", room: '***', sendAs: 'Jenkins', server: '', v2enabled: false
-            //githubNotify account: 'decitre-interactive', context: 'Behat', credentialsId: 'credential-github', description: '', gitApiUrl: '', repo: '***', sha: gitCommit, status: 'FAILURE', targetUrl: "${env.BUILD_URL}"
-            //sh 'docker-compose down'
+            notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
+
+    currentBuild.result = "RUNNING"
 
     stage ('restart tomcat'){
 
@@ -296,12 +297,12 @@ node {
                 }
             }
         } catch(e) {
-            //hipchatSend color: 'RED', credentialId: 'HipChat-API-Token', message: "${env.JOB_NAME} #${env.BUILD_NUMBER} Build failed at stage Behat - Prepare (<a href=\"${env.BUILD_URL}\">Open</a>)", room: '***', sendAs: 'Jenkins', server: '', v2enabled: false
-            //githubNotify account: 'decitre-interactive', context: 'Behat', credentialsId: 'credential-github', description: '', gitApiUrl: '', repo: '***', sha: gitCommit, status: 'FAILURE', targetUrl: "${env.BUILD_URL}"
-            //sh 'docker-compose down'
+            notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
+
+    currentBuild.result = "RUNNING"
 
     stage ('Artifactory configuration') {
         try {
@@ -342,15 +343,16 @@ node {
             buildInfo.env.capture = true
         server.publishBuildInfo buildInfo
         } catch(e) {
-            //hipchatSend color: 'RED', credentialId: 'HipChat-API-Token', message: "${env.JOB_NAME} #${env.BUILD_NUMBER} Build failed at stage Behat - Prepare (<a href=\"${env.BUILD_URL}\">Open</a>)", room: '***', sendAs: 'Jenkins', server: '', v2enabled: false
-            //githubNotify account: 'decitre-interactive', context: 'Behat', credentialsId: 'credential-github', description: '', gitApiUrl: '', repo: '***', sha: gitCommit, status: 'FAILURE', targetUrl: "${env.BUILD_URL}"
-            //sh 'docker-compose down'
+            notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
+
+    notifySlack()
+    //currentBuild.result = "SUCCESS"
 }
 
-def notifySlack() {
+def notifySlack(String info = '' ) {
     def colorCode = '#848484' // Gray
 
     switch (currentBuild.result) {
@@ -370,6 +372,8 @@ def notifySlack() {
         Job name: `${env.JOB_NAME}`
         Build number: `#${env.BUILD_NUMBER}`
         Build status: `${currentBuild.result}`
+        Target environment: `${params.ENV}`
+        Informations: `${info}`
         Build details: <${env.BUILD_URL}/console|See in web console>
     """.stripIndent()
 
