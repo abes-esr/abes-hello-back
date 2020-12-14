@@ -23,10 +23,7 @@ node {
             booleanParam(defaultValue: false, description: '', name: 'executeTests')
     ])])
 
-    parameters {
-
-        choice(name: 'SonarQube', choices: ['False','True'],description: '')
-        // 1. On charge les variables d'environnement (Java, Maven,...)
+    // 1. On charge les variables d'environnement (Java, Maven,...)
     env.JAVA_HOME = "${tool 'Open JDK 11'}"
     env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
