@@ -6,6 +6,7 @@
 
 node {
 
+    // Variables globales
     def maventool
     def rtMaven
     def buildInfo
@@ -13,6 +14,9 @@ node {
     def ENV
     def executeTests
 
+    // Configuration du job Jenkins
+    // On garde les 5 derniers builds par branche
+    // On scanne les branches et les tags du Git
     properties([
             buildDiscarder(
                     logRotator(
@@ -76,7 +80,7 @@ node {
     stage('SCM checkout') {
         try {
 
-            notifyBuild()
+            notifySlack()
             checkout([
                     $class: 'GitSCM',
                     branches: [[name: "${params.BRANCH_TAG}"]],
@@ -346,30 +350,32 @@ node {
     }
 }
 
-def notifyBuild(String buildStatus = 'STARTED') {
-    // build status of null means successful
-    buildStatus =  buildStatus ?: 'SUCCESSFUL'
+def notifySlack() {
+    def colorCode = '#848484' // Gray
 
-    // Default values
-    def colorName = 'RED'
-    def colorCode = '#FF0000'
-    def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
-    def summary = "${subject} (${env.BUILD_URL})"
-
-    // Override default values based on build status
-    if (buildStatus == 'STARTED') {
-        color = 'YELLOW'
-        colorCode = '#FFFF00'
-    } else if (buildStatus == 'SUCCESSFUL') {
-        color = 'GREEN'
-        colorCode = '#00FF00'
-    } else {
-        color = 'RED'
-        colorCode = '#FF0000'
+    switch (currentBuild.result) {
+        case 'SUCCESS':
+            colorCode = '#00FF00' // Green
+            break
+        case 'UNSTABLE':
+            colorCode = '#FFFF00' // Yellow
+            break
+        case 'FAILURE':
+            colorCode = '#FF0000' // Red
+            break;
     }
 
-    // Send notifications
+    String message = """
+        *Jenkins Build*
+        Job name: `${env.JOB_NAME}`
+        Build number: `#${env.BUILD_NUMBER}`
+        Build status: `${currentBuild.result}`
+        Build details: <${env.BUILD_URL}/console|See in web console>
+    """.stripIndent()
 
-    slackSend (tokenCredentialId: "slack_token", channel: "#notif-helloabes", color: colorCode, message: summary)
+    return slackSend(tokenCredentialId: "slack_token",
+            channel: "#notif-helloabes",
+            color: colorCode,
+            message: message)
 }
 
