@@ -8,19 +8,19 @@ node {
 
     properties(
     [parameters([
-            gitParameter(branch: '',
+            gitParameter(
+                    branch: '',
                     branchFilter: 'origin/(.*)',
                     defaultValue: 'main',
-                    description: '',
-                    name: 'BRANCH',
+                    description: 'Sélectionner la branche ou le tag à déployer',
+                    name: 'BRANCH_TAG',
                     quickFilterEnabled: false,
                     selectedValue: 'NONE',
-                    sortMode: 'NONE',
+                    sortMode: 'DESCENDING_SMART',
                     tagFilter: '*',
-                    type: 'PT_BRANCH'),
-            choice(choices: ['RELEASE', 'LATEST', '0.0.1-SNAPSHOT'], description: '', name: 'maven-repository-artifact'),
-            choice(choices: ['DEV', 'TEST', 'PROD'], description: '', name: 'ENV'),
-            booleanParam(defaultValue: false, description: '', name: 'executeTests')
+                    type: 'PT_BRANCH_TAG'),
+            choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV'),
+            booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests')
     ])])
 
     // 1. On charge les variables d'environnement (Java, Maven,...)
@@ -48,7 +48,7 @@ node {
 
     stage('SCM checkout') {
         checkout([$class: 'GitSCM',
-                  branches: [[name: 'feature/AddUnitTestOnCore']],
+                  branches: [[name: "${params.BRANCH_TAG}"]],
                   doGenerateSubmoduleConfigurations: false,
                   extensions: [],
                   submoduleCfg: [],
