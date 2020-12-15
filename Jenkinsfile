@@ -81,7 +81,6 @@ node {
 
             echo "executeTests =  ${executeTests}"
 
-            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch (e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
@@ -89,8 +88,7 @@ node {
         }
     }
 
-    currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
-    notifySlack("We start")
+    notifySlack("Started")
 
     stage('SCM checkout') {
         try {
@@ -103,7 +101,6 @@ node {
                     userRemoteConfigs                : [[credentialsId: '', url: 'https://github.com/abes-esr/abes-hello-back.git']]
             ])
 
-            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch (e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
@@ -118,11 +115,11 @@ node {
                 rtMaven.run pom: 'pom.xml', goals: 'clean test'
                 junit allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml'
 
-                currentBuild.result = hudson.model.Result.SUCCESS.toString()
             } catch (e) {
-                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                currentBuild.result = hudson.model.Result.UNSTABLE.toString()
                 notifySlack(e.getLocalizedMessage())
-                throw e
+                // Si les tests ne passent pas, on mets le build en UNSTABLE et on continue
+                //throw e
             }
         }
     } else {
@@ -147,7 +144,6 @@ node {
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Pprod"
             }
 
-            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
@@ -167,7 +163,6 @@ node {
             //the path is /var/lib/jenkins/jobs/indexationsolr_test_multibranch_pipeline/branches/develop/workspace/target/indexationsolr.war
             archive 'web/target/*.war'
 
-            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
@@ -216,7 +211,6 @@ node {
                 }
             }
 
-            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
@@ -352,7 +346,6 @@ node {
                 }
             }
 
-            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
@@ -399,7 +392,6 @@ node {
             buildInfo.env.capture = true
             server.publishBuildInfo buildInfo
 
-            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
@@ -408,7 +400,6 @@ node {
     }
 
     currentBuild.result = hudson.model.Result.SUCCESS.toString()
-    echo "${currentBuild.result}"
     notifySlack("Congratulation !")
 }
 
