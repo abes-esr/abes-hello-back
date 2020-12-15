@@ -50,15 +50,11 @@ node {
 
     stage('Set environnement variables') {
         try {
-
-            // 1. On charge les variables d'environnement (Java, Maven,...)
             env.JAVA_HOME = "${tool 'Open JDK 11'}"
             env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
             maventool = tool 'Maven 3.3.9'
-            //def serverArtifactory = Artifactory.newServer url: 'https://artifactory-test.abes.fr', credentialsId: 'artifactorykey'
             rtMaven = Artifactory.newMavenBuild()
-            buildInfo
             server = Artifactory.server '-1137809952@1458918089773'
             rtMaven.tool = 'Maven 3.3.9'
             rtMaven.opts = '-Xms1024m -Xmx4096m'
@@ -85,9 +81,9 @@ node {
 
             echo "executeTests =  ${executeTests}"
 
-            currentBuild.result = 'SUCCESS'
+            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch (e) {
-            currentBuild.result = 'FAILURE'
+            currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
             throw e
         }
@@ -187,7 +183,6 @@ node {
 
                 //here it's a project credential
                 sshagent(credentials: ['cirse1-dev-ssh-key']) { //one key per tomcat
-                    echo 'key ok'
                     sh 'scp web/target/*.war tomcat@cirse1-dev.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
                 }
                 //here it's a global projects credential
@@ -227,12 +222,19 @@ node {
             if (ENV == 'DEV') {
                 sshagent(credentials: ['cirse1-dev-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-                        //echo 'test1'
-                        //sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-indexationSolr.service && sudo systemctl start tomcat9-indexationSolr.service && sudo systemctl status tomcat9-indexationSolr.service"'
-                        //echo 'test1 fini'  ==> works fine
 
-                        echo 'beginning : get status cirse1 dev (should be running)'
-                        sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        try {
+                            echo 'get status cirse1 dev (should be running)'
+                            sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'start cirse1 dev'
+                            sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+
+                            echo 'get status cirse1 dev (should be running)'
+                            sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        }
+
                         echo 'stop cirse1 dev'
                         sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
                         //here, I wanted to get the status but since the status returned is code=exited, status=143 (normal because tomcat has been stopped)
@@ -370,6 +372,7 @@ node {
     }
 
     currentBuild.result = hudson.model.Result.SUCCESS.toString()
+    echo "${currentBuild.result}"
     notifySlack("Congratulation !")
 }
 
