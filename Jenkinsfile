@@ -19,6 +19,7 @@ node {
     def server
     def ENV
     def executeTests
+    def finalName
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
@@ -44,6 +45,7 @@ node {
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV'),
+                    string(name: 'FINAL_NAME', defaultValue: 'Hello_Abes_back_end', description: 'Nom du war/jar à déployer', ),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests')
             ])
     ])
@@ -70,7 +72,13 @@ node {
             } else {
                 ENV = params.ENV
                 echo "Target environnement =  ${ENV}"
-                echo ENV
+            }
+
+            if (params.FINAL_NAME == null) {
+                throw new Exception("Variable FINAL_NAME is null")
+            } else {
+                finalName = params.FINAL_NAME
+                echo "Final WAR/JAR name =  ${params.FINAL_NAME}"
             }
 
             if (params.executeTests == null) {
@@ -129,17 +137,17 @@ node {
             sh 'cd '
             if (ENV == 'DEV') {
                 echo 'compile for dev profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Pdev"
+                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -Pdev"
             }
 
             if (ENV == 'TEST') {
                 echo 'compile for test profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Ptest"
+                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -Ptest"
             }
 
             if (ENV == 'PROD') {
                 echo 'compile for prod profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Pprod"
+                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -Pprod"
             }
 
         } catch(e) {
