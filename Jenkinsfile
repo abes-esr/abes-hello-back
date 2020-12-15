@@ -27,16 +27,16 @@ node {
             ),
             parameters([
                     gitParameter(
-                    branch: '',
-                    branchFilter: 'origin/(.*)',
-                    defaultValue: 'main',
-                    description: 'Sélectionner la branche ou le tag à déployer',
-                    name: 'BRANCH_TAG',
-                    quickFilterEnabled: false,
-                    selectedValue: 'NONE',
-                    sortMode: 'DESCENDING_SMART',
-                    tagFilter: '*',
-                    type: 'PT_BRANCH_TAG'),
+                            branch: '',
+                            branchFilter: 'origin/(.*)',
+                            defaultValue: 'main',
+                            description: 'Sélectionner la branche ou le tag à déployer',
+                            name: 'BRANCH_TAG',
+                            quickFilterEnabled: false,
+                            selectedValue: 'NONE',
+                            sortMode: 'DESCENDING_SMART',
+                            tagFilter: '*',
+                            type: 'PT_BRANCH_TAG'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV'),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests')
             ])
@@ -60,22 +60,34 @@ node {
             rtMaven.tool = 'Maven 3.3.9'
             rtMaven.opts = '-Xms1024m -Xmx4096m'
 
-            //rtMaven
-            ENV = params.ENV555
-            executeTests = params.executeTests
-            if (params.ENV != null) {
-                echo "env =  ${ENV}"
-                echo ENV
-            }
-            if (params.executeTests != null) {
-                echo "executeTests =  ${executeTests}"
+            if (params.BRANCH_TAG == null) {
+                throw new Exception("Variable BRANCH_TAG is null")
+            } else {
+                echo "Branch to deploy =  ${params.BRANCH_TAG}"
             }
 
-        } catch(e) {
+            if (params.ENV == null) {
+                throw new Exception("Variable ENV is null")
+            } else {
+                ENV = params.ENV
+                echo "Target environnement =  ${ENV}"
+                echo ENV
+            }
+
+            if (params.executeTests == null) {
+                executeTests = false
+            } else {
+                executeTests = params.executeTests
+            }
+
+            echo "executeTests =  ${executeTests}"
+
+            currentBuild.result = "SUCCESS"
+        } catch (e) {
+            currentBuild.result = "FAILURE"
             notifySlack(e.getLocalizedMessage())
             throw e
         }
-
     }
 
     currentBuild.result = "RUNNING"
@@ -83,15 +95,17 @@ node {
     stage('SCM checkout') {
         try {
             checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "${params.BRANCH_TAG}"]],
+                    $class                           : 'GitSCM',
+                    branches                         : [[name: "${params.BRANCH_TAG}"]],
                     doGenerateSubmoduleConfigurations: false,
-                    extensions: [],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [[credentialsId: '', url: 'https://github.com/abes-esr/abes-hello-back.git']]
+                    extensions                       : [],
+                    submoduleCfg                     : [],
+                    userRemoteConfigs                : [[credentialsId: '', url: 'https://github.com/abes-esr/abes-hello-back.git']]
             ])
 
-        } catch(e) {
+            currentBuild.result = "SUCCESS"
+        } catch (e) {
+            currentBuild.result = "FAILURE"
             notifySlack(e.getLocalizedMessage())
             throw e
         }
@@ -99,21 +113,22 @@ node {
 
     currentBuild.result = "RUNNING"
 
-    //if the checkbox (params.executeTests) is checked
-    stage ('test') {
+    if ("${executeTests}" == 'true') {
+        stage('test') {
+            try {
 
-        try {
-            if("${executeTests}" == 'true'){
                 rtMaven.run pom: 'pom.xml', goals: 'clean test'
                 junit allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml'
+
+                currentBuild.result = "SUCCESS"
+            } catch (e) {
+                currentBuild.result = "FAILURE"
+                notifySlack(e.getLocalizedMessage())
+                throw e
             }
-            else{
-                echo "tests = false"
-            }
-        } catch(e) {
-            notifySlack(e.getLocalizedMessage())
-            throw e
         }
+    } else {
+        echo "Tests are skipped"
     }
 
     currentBuild.result = "RUNNING"
@@ -132,7 +147,10 @@ node {
             if (ENV == 'PROD') {
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Pprod"
             }
+
+            currentBuild.result = "SUCCESS"
         } catch(e) {
+            currentBuild.result = "FAILURE"
             notifySlack(e.getLocalizedMessage())
             throw e
         }
@@ -151,7 +169,10 @@ node {
             //we have to put the war in the workspace/target directory (see on the server Jacinthe)
             //the path is /var/lib/jenkins/jobs/indexationsolr_test_multibranch_pipeline/branches/develop/workspace/target/indexationsolr.war
             archive 'web/target/*.war'
+
+            currentBuild.result = "SUCCESS"
         } catch(e) {
+            currentBuild.result = "FAILURE"
             notifySlack(e.getLocalizedMessage())
             throw e
         }
@@ -195,7 +216,9 @@ node {
                 }
             }
 
+            currentBuild.result = "SUCCESS"
         } catch(e) {
+            currentBuild.result = "FAILURE"
             notifySlack(e.getLocalizedMessage())
             throw e
         }
@@ -296,7 +319,10 @@ node {
                     }
                 }
             }
+
+            currentBuild.result = "SUCCESS"
         } catch(e) {
+            currentBuild.result = "FAILURE"
             notifySlack(e.getLocalizedMessage())
             throw e
         }
@@ -341,15 +367,18 @@ node {
             rtMaven.deployer.deployArtifacts buildInfo
             buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true'
             buildInfo.env.capture = true
-        server.publishBuildInfo buildInfo
+            server.publishBuildInfo buildInfo
+
+            currentBuild.result = "SUCCESS"
         } catch(e) {
+            currentBuild.result = "FAILURE"
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
 
-    notifySlack()
-    //currentBuild.result = "SUCCESS"
+    currentBuild.result = "SUCCESS"
+    notifySlack("Bravo !")
 }
 
 def notifySlack(String info = '' ) {
