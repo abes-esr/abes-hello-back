@@ -3,6 +3,11 @@
 
 //3 places of tests skipping command -Dmaven.test.skip=true
 //it's necessary to see if a jenkins variable is usefull so to maybe allows conditionnal running and deploying test contexts
+//currentBuild.result = hudson.model.Result.SUCCESS.toString()
+//currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
+//currentBuild.result = hudson.model.Result.UNSTABLE.toString()
+//currentBuild.result = hudson.model.Result.FAILURE.toString()
+//currentBuild.result = hudson.model.Result.ABORTED.toString()
 import hudson.model.Result
 
 node {
@@ -88,16 +93,8 @@ node {
         }
     }
 
-    //currentBuild.result = 'START'
-    currentBuild.result = hudson.model.Result.SUCCESS.toString()
-//    build.@result = hudson.model.Result.SUCCESS
-// build.@result = hudson.model.Result.NOT_BUILT
-// build.@result = hudson.model.Result.UNSTABLE
-// build.@result = hudson.model.Result.FAILURE
-// build.@result = hudson.model.Result.ABORTED
-    notifySlack()
-    echo "${currentBuild.result}"
-    echo "${currentBuild.currentResult}"
+    currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
+    notifySlack("We start")
 
     stage('SCM checkout') {
         try {
@@ -110,15 +107,13 @@ node {
                     userRemoteConfigs                : [[credentialsId: '', url: 'https://github.com/abes-esr/abes-hello-back.git']]
             ])
 
-            currentBuild.result = 'SUCCESS'
+            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch (e) {
-            currentBuild.result = 'FAILURE'
+            currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
-
-    currentBuild.result = 'RUNNING'
 
     if ("${executeTests}" == 'true') {
         stage('test') {
@@ -127,9 +122,9 @@ node {
                 rtMaven.run pom: 'pom.xml', goals: 'clean test'
                 junit allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml'
 
-                currentBuild.result = 'SUCCESS'
+                currentBuild.result = hudson.model.Result.SUCCESS.toString()
             } catch (e) {
-                currentBuild.result = 'FAILURE'
+                currentBuild.result = hudson.model.Result.FAILURE.toString()
                 notifySlack(e.getLocalizedMessage())
                 throw e
             }
@@ -137,8 +132,6 @@ node {
     } else {
         echo "Tests are skipped"
     }
-
-    currentBuild.result = 'RUNNING'
 
     stage('compile-package') {
         try {
@@ -155,15 +148,13 @@ node {
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Pprod"
             }
 
-            currentBuild.result = 'SUCCESS'
+            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch(e) {
-            currentBuild.result = 'FAILURE'
+            currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
-
-    currentBuild.result = 'RUNNING'
 
     //stage('sonarqube analysis'){
     //   withSonarQubeEnv('SonarQube Server2'){ cf : jenkins/configuration/sonarQube servers ==> between the quotes put the name we gave to the server
@@ -177,15 +168,13 @@ node {
             //the path is /var/lib/jenkins/jobs/indexationsolr_test_multibranch_pipeline/branches/develop/workspace/target/indexationsolr.war
             archive 'web/target/*.war'
 
-            currentBuild.result = 'SUCCESS'
+            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch(e) {
-            currentBuild.result = 'FAILURE'
+            currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
-
-    currentBuild.result = 'RUNNING'
 
     stage ('deploy to tomcat'){
         try {
@@ -223,16 +212,13 @@ node {
                 }
             }
 
-            currentBuild.result = 'SUCCESS'
-            echo "${currentBuild.result}"
+            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch(e) {
-            currentBuild.result = 'FAILURE'
+            currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
-
-    currentBuild.result = 'RUNNING'
 
     stage ('restart tomcat'){
 
@@ -328,15 +314,13 @@ node {
                 }
             }
 
-            currentBuild.result = 'SUCCESS'
+            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch(e) {
-            currentBuild.result = 'FAILURE'
+            currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
-
-    currentBuild.result = 'RUNNING'
 
     stage ('Artifactory configuration') {
         try {
@@ -377,22 +361,25 @@ node {
             buildInfo.env.capture = true
             server.publishBuildInfo buildInfo
 
-            currentBuild.result = 'SUCCESS'
+            currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch(e) {
-            currentBuild.result = 'FAILURE'
+            currentBuild.result = hudson.model.Result.FAILURE.toString()
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
 
-    currentBuild.result = 'SUCCESS'
-    notifySlack("Bravo !")
+    currentBuild.result = hudson.model.Result.SUCCESS.toString()
+    notifySlack("Congratulation !")
 }
 
 def notifySlack(String info = '' ) {
     def colorCode = '#848484' // Gray
 
     switch (currentBuild.result) {
+        case 'NOT_BUILT':
+            colorCode = '#36C5F0' // Blue
+            break
         case 'SUCCESS':
             colorCode = '#00FF00' // Green
             break
