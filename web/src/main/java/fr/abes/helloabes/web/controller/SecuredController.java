@@ -1,9 +1,10 @@
 package fr.abes.helloabes.web.controller;
 
 import fr.abes.helloabes.core.entities.AppUser;
-import fr.abes.helloabes.core.entities.Order;
 import fr.abes.helloabes.core.service.IOrderService;
 import fr.abes.helloabes.core.service.IUserService;
+import fr.abes.helloabes.web.configuration.DtoMapperUtility;
+import fr.abes.helloabes.web.dto.OrderDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -34,6 +35,8 @@ public class SecuredController {
 
     private final IOrderService orderService;
 
+    @Autowired
+    private DtoMapperUtility dtoMapper;
 
     @Autowired
     public SecuredController(IUserService userService, IOrderService orderService) {
@@ -44,7 +47,7 @@ public class SecuredController {
 
     /**
      * Traitement d'une requête GET sur la route '/secured'.
-     * @return Une chaîne de caractère.
+     * @return Map map avec la réponse.
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(
@@ -63,7 +66,7 @@ public class SecuredController {
 
     /**
      * Traitement d'une requête GET sur la route '/secured'.
-     * @return Une chaîne de caractère.
+     * @return Liste de commande.
      */
     @GetMapping("/commande")
     @ApiOperation(
@@ -75,9 +78,13 @@ public class SecuredController {
             @ApiResponse(code = 400, message = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronnée..."),
             @ApiResponse(code = 404, message = "Opération a échoué."),
     })
-    public List<Order> displaySecureCommandes(Authentication authentication) {
+    public List<OrderDto> displaySecureCommandes(Authentication authentication) {
 
         AppUser user = userService.findUserByUserName(authentication.getName());
-        return orderService.findOrdersOfUser(user);
+
+        return dtoMapper.mapList(orderService.findOrdersOfUser(user), OrderDto.class);
+
     }
+
+
 }

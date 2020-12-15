@@ -1,19 +1,14 @@
 package fr.abes.helloabes.core.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-import java.awt.print.Book;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,7 +21,6 @@ import java.util.List;
  * @author Duy Tran
  */
 @Entity
-@ApiModel
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
@@ -35,33 +29,26 @@ public class AppUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Identifiant unique d'un utilisateur. Cette identifiant est géré automatiquement par la couche
-     * Entity de Java.
-     */
+    /** Identifiant unique d'un utilisateur  */
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    @ApiModelProperty(value = "identifiant de l'utilisateur", name = "identityNumber", dataType = "Integer", example = "1")
     private Integer identityNumber;
 
     /** Nom d'utilisateur  */
     @Column(name = "user_name")
     @NotNull(message = "Le nom d'utilisateur ne doit pas être null")
     @NotEmpty(message = "Le nom d'utilisateur ne doit pas être vide")
-    @ApiModelProperty(value = "nom de l'utilisateur", name = "userName", dataType = "String", example = "corentin")
     private String userName;
 
     /** Mot de passe */
     @Column(name = "user_password")
     @NotNull(message = "Le mot de passe ne doit pas être null")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
-    @ApiModelProperty(value = "mot de passe de l'utilisateur", name = "passWord", dataType = "String", example = "motDePasseC0!mplex")
     private String passWord;
 
     /** Liste des commandes de l'utilisateur */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private List<Order> orders = new ArrayList<>();
 
     /**
