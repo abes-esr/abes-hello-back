@@ -82,13 +82,11 @@ node {
             echo "executeTests =  ${executeTests}"
 
         } catch (e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
+            currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
-
-    notifySlack("Started")
 
     stage('SCM checkout') {
         try {
@@ -258,6 +256,7 @@ node {
 
                 echo 'restart tomcat on cirse2-dev'
                 sshagent(credentials: ['cirse2-dev-ssh-key']) {
+
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
                         try {
                             echo 'beginning : get status cirse2 dev (should be running)'
@@ -290,13 +289,29 @@ node {
                 echo 'restart tomcat on cirse1-test'
                 sshagent(credentials: ['cirse1-test-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-                        echo 'beginning : get status cirse1 test (should be running)'
-                        sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+
+                        try {
+                            echo 'beginning : get status cirse1 test (should be running)'
+                            sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse1 test is not running'
+
+                            echo 'we try to start cirse1 test'
+                            sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+
+                            echo 'get status cirse1 test'
+                            sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+
+                        }
+
                         echo 'stop cirse1 test'
                         sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+
                         echo 'start cirse1 test'
                         sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
-                        echo 'then : get status cirse1 test (should be running)'
+
+                        echo 'finally we get status cirse1 test (should be running)'
                         sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                     }
                 }
@@ -304,13 +319,28 @@ node {
                 echo 'restart tomcat on cirse2-test'
                 sshagent(credentials: ['cirse2-test-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-                        echo 'beginning : get status cirse2 test (should be running)'
-                        sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+
+                        try {
+                            echo 'beginning : get status cirse2 test (should be running)'
+                            sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse2 test is not running'
+
+                            echo 'we try to start cirse2 test'
+                            sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+
+                            echo 'get status cirse2 test'
+                            sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        }
+
                         echo 'stop cirse2 test'
                         sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+
                         echo 'start cirse2 test'
                         sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
-                        echo 'then : get status cirse2 test (should be running)'
+
+                        echo 'finally we get status cirse2 test (should be running)'
                         sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                     }
                 }
@@ -320,13 +350,28 @@ node {
                 echo 'restart tomcat on cirse1-prod'
                 sshagent(credentials: ['cirse1-prod-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-                        echo 'beginning : get status cirse1 prod (should be running)'
-                        sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+
+                        try {
+                            echo 'beginning : get status cirse1 prod (should be running)'
+                            sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse1 prod is not running'
+
+                            echo 'we try to start cirse1 prod'
+                            sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+
+                            echo 'get status cirse1 prod'
+                            sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        }
+
                         echo 'stop cirse1 prod'
                         sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+
                         echo 'start cirse1 prod'
                         sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
-                        echo 'then : get status cirse1 prod (should be running)'
+
+                        echo 'finally we get status cirse1 prod (should be running)'
                         sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                     }
                 }
@@ -334,13 +379,28 @@ node {
                 echo 'restart tomcat on cirse2-prod'
                 sshagent(credentials: ['cirse2-prod-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-                        echo 'beginning : get status cirse2 prod (should be running)'
-                        sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+
+                        try {
+                            echo 'beginning : get status cirse2 prod (should be running)'
+                            sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse2 prod is not running'
+
+                            echo 'we try to start cirse2 prod'
+                            sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+
+                            echo 'get status cirse2 prod'
+                            sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        }
+
                         echo 'stop cirse2 prod'
                         sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+
                         echo 'start cirse2 prod'
                         sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
-                        echo 'then : get status cirse2 prod (should be running)'
+
+                        echo 'finally we get status cirse2 prod (should be running)'
                         sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                     }
                 }
@@ -355,38 +415,10 @@ node {
 
     stage ('Artifactory configuration') {
         try {
-            //server = Artifactory.server '-1137809952@1458918089773'
-            // create an Artifactory Maven Build instance
-            //rtMaven = Artifactory.newMavenBuild()
-            //where the Maven build should download its dependencies from ==> we must have the artifactory repo the good version of springframework, the one indicated in the pom
-            //if it's not the same version of dependency, it throws an error
-            //rtMaven.resolver server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
-            //where our build artifacts should be deployed to
             rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-            //to deploy only some artifacts
-            //rtMaven.deployer.artifactDeploymentPatterns.addInclude("frog*")
-            //exclude artifacts from being deployed
-            //rtMaven.deployer.artifactDeploymentPatterns.addExclude("*.zip")
-            //combine both methods
-            //rtMaven.deployer.artifactDeploymentPatterns.addInclude("frog*").addExclude("*.zip")
-            //add custom properties to the deployed artifacts
-            //rtMaven.deployer.addProperty("status", "in-qa").addProperty("compatibility", "1", "2", "3")
-            //default = 3 ; so to modify the number of threads
-            //rtMaven.deployer.threads = 6
-            //to disable artifacts deployment set to false
-            //rtMaven.deployer.deployArtifacts = false
-            //define a Maven Tool through Jenkins Manage
-
-            //the pom is at the root of the workspace (see on the server Jacinthe)
-            //the path is /var/lib/jenkins/jobs/indexationsolr_test_multibranch_pipeline/branches/develop/workspace/pom.xml
             buildInfo = Artifactory.newBuildInfo()
             buildInfo = rtMaven.run pom: 'pom.xml', goals: '-U clean install -Dmaven.test.skip=true '
 
-            //'clean install -Dartifactory.publish.artifacts=false -Dartifactory.publish.buildInfo=false'
-            //and with jenkins environnement variables :
-            //clean install -Dartifactory.publish.artifacts=$PUBLISH_ARTIFACTS -Dartifactory.publish.buildInfo=$PUBLISH_BUILDINFO
-
-            //rtMaven.run pom: 'pom.xml', goals: 'clean install -Dmaven.test.skip=true', buildInfo: buildInfo
             rtMaven.deployer.deployArtifacts buildInfo
             buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true'
             buildInfo.env.capture = true
@@ -428,7 +460,7 @@ def notifySlack(String info = '' ) {
         Build status: `${currentBuild.result}`
         Branch or tag: `${params.BRANCH_TAG}`
         Target environment: `${params.ENV}`
-        Informations: `${info}`
+        Message: `${info}`
         Build details: <${env.BUILD_URL}/console|See in web console>
     """.stripIndent()
 
