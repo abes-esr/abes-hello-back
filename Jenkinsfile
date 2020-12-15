@@ -84,7 +84,7 @@ node {
             currentBuild.result = hudson.model.Result.SUCCESS.toString()
         } catch (e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(getStackTrace(e))
+            notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
@@ -428,12 +428,3 @@ def notifySlack(String info = '' ) {
             color: colorCode,
             message: message)
 }
-
-def String getStackTrace(Throwable aThrowable)
-{
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    PrintStream ps = new PrintStream(baos, true);
-    aThrowable.printStackTrace(ps);
-    return baos.toString();
-}
-
