@@ -65,7 +65,7 @@ node {
                 echo "Branch to deploy =  ${params.BRANCH_TAG}"
             }
 
-            if (params.ENV555 == null) {
+            if (params.ENV != null) {
                 throw new Exception("Variable ENV is null")
             } else {
                 ENV = params.ENV
