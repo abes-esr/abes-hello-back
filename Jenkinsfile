@@ -42,9 +42,6 @@ node {
             ])
     ])
 
-    currentBuild.result = 'START'
-    notifySlack()
-
     stage('Set environnement variables') {
         try {
 
@@ -90,7 +87,10 @@ node {
         }
     }
 
-    currentBuild.result = 'RUNNING'
+    currentBuild.result = 'START'
+    notifySlack()
+
+    echo ${currentBuild.result}
 
     stage('SCM checkout') {
         try {
@@ -217,6 +217,7 @@ node {
             }
 
             currentBuild.result = 'SUCCESS'
+            echo ${currentBuild.result}
         } catch(e) {
             currentBuild.result = 'FAILURE'
             notifySlack(e.getLocalizedMessage())
@@ -401,6 +402,7 @@ def notifySlack(String info = '' ) {
         Job name: `${env.JOB_NAME}`
         Build number: `#${env.BUILD_NUMBER}`
         Build status: `${currentBuild.result}`
+        Branch or tags: `${params.BRANCH_TAG}`
         Target environment: `${params.ENV}`
         Informations: `${info}`
         Build details: <${env.BUILD_URL}/console|See in web console>
