@@ -65,7 +65,7 @@ node {
                 echo "Branch to deploy =  ${params.BRANCH_TAG}"
             }
 
-            if (params.ENV != null) {
+            if (params.ENV == null) {
                 throw new Exception("Variable ENV is null")
             } else {
                 ENV = params.ENV
@@ -133,14 +133,17 @@ node {
         try {
             sh 'cd '
             if (ENV == 'DEV') {
+                echo 'compile for dev profile'
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Pdev"
             }
 
             if (ENV == 'TEST') {
+                echo 'compile for test profile'
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Ptest"
             }
 
             if (ENV == 'PROD') {
+                echo 'compile for prod profile'
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Pprod"
             }
 
@@ -174,35 +177,41 @@ node {
 
     stage ('deploy to tomcat'){
         try {
-            echo 'deployment started'
 
             if (ENV == 'DEV') {
                 //here we have the choice : we can create the credential in jenkins/configuration/ssh servers
                 //or in the space project (so the credential can only be accessed by the project)
                 //or in jenkins/identifiants/system/identifiants globaux (so the credential can be accessed by all the projects)
 
-                //here it's a project credential
+                echo 'deployment on cirse1-dev'
                 sshagent(credentials: ['cirse1-dev-ssh-key']) { //one key per tomcat
                     sh 'scp web/target/*.war tomcat@cirse1-dev.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
                 }
-                //here it's a global projects credential
+
+                echo 'deployment on cirse2-dev'
                 sshagent(credentials: ['cirse2-dev-ssh-key']) {
                     sh 'scp web/target/*.war tomcat@cirse2-dev.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
                 }
             }
             if (ENV == 'TEST') {
-                sshagent(credentials: ['cirse1-test-ssh-key']) {//so need to generate new keys (not already done)
+                echo 'deployment on cirse1-test'
+                sshagent(credentials: ['cirse1-test-ssh-key']) {
                     sh 'scp web/target/*.war tomcat@cirse1-test.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
                 }
-                sshagent(credentials: ['cirse2-test-ssh-key']) {//so need to generate new keys (not already done)
+
+                echo 'deployment on cirse2-test'
+                sshagent(credentials: ['cirse2-test-ssh-key']) {
                     sh 'scp web/target/*.war tomcat@cirse2-test.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
                 }
             }
             if (ENV == 'PROD') {
-                sshagent(credentials: ['cirse1-prod-ssh-key']) {//so need to generate new keys (not already done)
+                echo 'deployment on cirse1-prod'
+                sshagent(credentials: ['cirse1-prod-ssh-key']) {
                     sh 'scp web/target/*.war tomcat@cirse1.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
                 }
-                sshagent(credentials: ['cirse2-prod-ssh-key']) {//so need to generate new keys (not already done)
+
+                echo 'deployment on cirse2-prod'
+                sshagent(credentials: ['cirse2-prod-ssh-key']) {
                     sh 'scp web/target/*.war tomcat@cirse2.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
                 }
             }
@@ -218,8 +227,9 @@ node {
     stage ('restart tomcat'){
 
         try {
-            echo 'restart tomcat started'
+
             if (ENV == 'DEV') {
+                echo 'restart tomcat on cirse1-dev'
                 sshagent(credentials: ['cirse1-dev-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
 
@@ -251,6 +261,8 @@ node {
                         sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                     }
                 }
+
+                echo 'restart tomcat on cirse2-dev'
                 sshagent(credentials: ['cirse2-dev-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
                         try {
@@ -281,6 +293,7 @@ node {
             }
 
             if (ENV == 'TEST') {
+                echo 'restart tomcat on cirse1-test'
                 sshagent(credentials: ['cirse1-test-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
                         echo 'beginning : get status cirse1 test (should be running)'
@@ -293,6 +306,8 @@ node {
                         sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                     }
                 }
+
+                echo 'restart tomcat on cirse2-test'
                 sshagent(credentials: ['cirse2-test-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
                         echo 'beginning : get status cirse2 test (should be running)'
@@ -308,6 +323,7 @@ node {
             }
 
             if (ENV == 'PROD') {
+                echo 'restart tomcat on cirse1-prod'
                 sshagent(credentials: ['cirse1-prod-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
                         echo 'beginning : get status cirse1 prod (should be running)'
@@ -320,6 +336,8 @@ node {
                         sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                     }
                 }
+
+                echo 'restart tomcat on cirse2-prod'
                 sshagent(credentials: ['cirse2-prod-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
                         echo 'beginning : get status cirse2 prod (should be running)'
