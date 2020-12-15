@@ -91,6 +91,7 @@ node {
     notifySlack()
 
     echo "${currentBuild.result}"
+    echo "${currentBuild.currentResult}"
 
     stage('SCM checkout') {
         try {
