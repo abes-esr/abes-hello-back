@@ -90,7 +90,7 @@ node {
     currentBuild.result = 'START'
     notifySlack()
 
-    echo ${currentBuild.result}
+    echo "${currentBuild.result}"
 
     stage('SCM checkout') {
         try {
@@ -217,7 +217,7 @@ node {
             }
 
             currentBuild.result = 'SUCCESS'
-            echo ${currentBuild.result}
+            echo "${currentBuild.result}"
         } catch(e) {
             currentBuild.result = 'FAILURE'
             notifySlack(e.getLocalizedMessage())
