@@ -65,7 +65,7 @@ node {
                 echo "Branch to deploy =  ${params.BRANCH_TAG}"
             }
 
-            if (params.ENV == null) {
+            if (params.ENV555 == null) {
                 throw new Exception("Variable ENV is null")
             } else {
                 ENV = params.ENV
@@ -228,10 +228,12 @@ node {
                             sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                         } catch(e) {
                             // Maybe the tomcat is not running
-                            echo 'start cirse1 dev'
+                            echo 'cirse1 dev is not running'
+
+                            echo 'we try to start cirse1 dev'
                             sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
 
-                            echo 'get status cirse1 dev (should be running)'
+                            echo 'get status cirse1 dev'
                             sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                         }
 
@@ -244,19 +246,35 @@ node {
                         //sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-indexationSolr.service"'
                         echo 'start cirse1 dev'
                         sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
-                        echo 'then : get status cirse1 dev (should be running)'
+
+                        echo 'finally we get status cirse1 dev (should be running)'
                         sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                     }
                 }
                 sshagent(credentials: ['cirse2-dev-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-                        echo 'beginning : get status cirse2 dev (should be running)'
-                        sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        try {
+                            echo 'beginning : get status cirse2 dev (should be running)'
+                            sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse2 dev is not running'
+
+                            echo 'we try to start cirse2 dev'
+                            sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+
+                            echo 'get status cirse2 dev'
+                            sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+
+                        }
+
                         echo 'stop cirse2 dev'
                         sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+
                         echo 'start cirse2 dev'
                         sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
-                        echo 'then : get status cirse2 dev (should be running)'
+
+                        echo 'finally we get status cirse2 dev (should be running)'
                         sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
                     }
                 }
@@ -399,7 +417,7 @@ def notifySlack(String info = '' ) {
         Job name: `${env.JOB_NAME}`
         Build number: `#${env.BUILD_NUMBER}`
         Build status: `${currentBuild.result}`
-        Branch or tags: `${params.BRANCH_TAG}`
+        Branch or tag: `${params.BRANCH_TAG}`
         Target environment: `${params.ENV}`
         Informations: `${info}`
         Build details: <${env.BUILD_URL}/console|See in web console>
