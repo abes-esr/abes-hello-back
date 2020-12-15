@@ -116,7 +116,7 @@ public class HelloABESApplication extends SpringBootServletInitializer implement
 
 		List<Order> commandes = Arrays.asList(
 				new Order(
-						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("toto"))
+						listOfUsersDemo.stream().filter(u -> u.getUserName().contains("admin"))
 								.findAny().orElse(null),
 						listOfFournisseurs.stream().filter(f -> f.getName().contains("Abes"))
 								.findAny().orElse(null),
