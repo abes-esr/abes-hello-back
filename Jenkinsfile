@@ -35,7 +35,7 @@ node {
                     gitParameter(
                             branch: '',
                             branchFilter: 'origin/(.*)',
-                            defaultValue: 'main',
+                            defaultValue: '',
                             description: 'Sélectionner la branche ou le tag à déployer',
                             name: 'BRANCH_TAG',
                             quickFilterEnabled: false,
