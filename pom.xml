@@ -44,12 +44,12 @@
     <!-- =========================================================== -->
     <profiles>
         <profile>
-            <id>default</id>
+            <id>localhost</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring.profiles.active>default</spring.profiles.active>
+                <spring.profiles.active>localhost</spring.profiles.active>
             </properties>
         </profile>
         <profile>

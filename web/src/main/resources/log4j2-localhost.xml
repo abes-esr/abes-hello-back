@@ -2,7 +2,7 @@
 <!-- Doc : http://logging.apache.org/log4j/2.x/manual/appenders.html#CustomDeleteOnRollover -->
 <Configuration>
     <Properties>
-        <Property name="baseDir">${bundle:application-default:application.basedir}${bundle:application:application.finalname}/${bundle:application-default:log4j2.logdir}</Property>
+        <Property name="baseDir">${bundle:application-localhost:application.basedir}${bundle:application:application.finalname}/${bundle:application-localhost:log4j2.logdir}</Property>
         <Property name="logFileName">${bundle:application:application.name}</Property>
         <Property name="errorFileName">${bundle:application:application.name}_error</Property>
         <Property name="debugFileName">${bundle:application:application.name}_debug</Property>
