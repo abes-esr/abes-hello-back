@@ -3,6 +3,7 @@
 
 //3 places of tests skipping command -Dmaven.test.skip=true
 //it's necessary to see if a jenkins variable is usefull so to maybe allows conditionnal running and deploying test contexts
+import hudson.model.Result
 
 node {
 
@@ -88,8 +89,8 @@ node {
     }
 
     currentBuild.result = 'START'
+    build.@result = hudson.model.Result.SUCCESS
     notifySlack()
-
     echo "${currentBuild.result}"
     echo "${currentBuild.currentResult}"
 
