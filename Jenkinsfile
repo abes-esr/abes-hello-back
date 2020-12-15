@@ -42,7 +42,7 @@ node {
             ])
     ])
 
-    currentBuild.result = "START"
+    currentBuild.result = 'START'
     notifySlack()
 
     stage('Set environnement variables') {
@@ -82,15 +82,15 @@ node {
 
             echo "executeTests =  ${executeTests}"
 
-            currentBuild.result = "SUCCESS"
+            currentBuild.result = 'SUCCESS'
         } catch (e) {
-            currentBuild.result = "FAILURE"
+            currentBuild.result = 'FAILURE'
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
 
-    currentBuild.result = "RUNNING"
+    currentBuild.result = 'RUNNING'
 
     stage('SCM checkout') {
         try {
@@ -103,15 +103,15 @@ node {
                     userRemoteConfigs                : [[credentialsId: '', url: 'https://github.com/abes-esr/abes-hello-back.git']]
             ])
 
-            currentBuild.result = "SUCCESS"
+            currentBuild.result = 'SUCCESS'
         } catch (e) {
-            currentBuild.result = "FAILURE"
+            currentBuild.result = 'FAILURE'
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
 
-    currentBuild.result = "RUNNING"
+    currentBuild.result = 'RUNNING'
 
     if ("${executeTests}" == 'true') {
         stage('test') {
@@ -120,9 +120,9 @@ node {
                 rtMaven.run pom: 'pom.xml', goals: 'clean test'
                 junit allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml'
 
-                currentBuild.result = "SUCCESS"
+                currentBuild.result = 'SUCCESS'
             } catch (e) {
-                currentBuild.result = "FAILURE"
+                currentBuild.result = 'FAILURE'
                 notifySlack(e.getLocalizedMessage())
                 throw e
             }
@@ -131,7 +131,7 @@ node {
         echo "Tests are skipped"
     }
 
-    currentBuild.result = "RUNNING"
+    currentBuild.result = 'RUNNING'
 
     stage('compile-package') {
         try {
@@ -148,15 +148,15 @@ node {
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -Pprod"
             }
 
-            currentBuild.result = "SUCCESS"
+            currentBuild.result = 'SUCCESS'
         } catch(e) {
-            currentBuild.result = "FAILURE"
+            currentBuild.result = 'FAILURE'
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
 
-    currentBuild.result = "RUNNING"
+    currentBuild.result = 'RUNNING'
 
     //stage('sonarqube analysis'){
     //   withSonarQubeEnv('SonarQube Server2'){ cf : jenkins/configuration/sonarQube servers ==> between the quotes put the name we gave to the server
@@ -170,15 +170,15 @@ node {
             //the path is /var/lib/jenkins/jobs/indexationsolr_test_multibranch_pipeline/branches/develop/workspace/target/indexationsolr.war
             archive 'web/target/*.war'
 
-            currentBuild.result = "SUCCESS"
+            currentBuild.result = 'SUCCESS'
         } catch(e) {
-            currentBuild.result = "FAILURE"
+            currentBuild.result = 'FAILURE'
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
 
-    currentBuild.result = "RUNNING"
+    currentBuild.result = 'RUNNING'
 
     stage ('deploy to tomcat'){
         try {
@@ -216,15 +216,15 @@ node {
                 }
             }
 
-            currentBuild.result = "SUCCESS"
+            currentBuild.result = 'SUCCESS'
         } catch(e) {
-            currentBuild.result = "FAILURE"
+            currentBuild.result = 'FAILURE'
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
 
-    currentBuild.result = "RUNNING"
+    currentBuild.result = 'RUNNING'
 
     stage ('restart tomcat'){
 
@@ -320,15 +320,15 @@ node {
                 }
             }
 
-            currentBuild.result = "SUCCESS"
+            currentBuild.result = 'SUCCESS'
         } catch(e) {
-            currentBuild.result = "FAILURE"
+            currentBuild.result = 'FAILURE'
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
 
-    currentBuild.result = "RUNNING"
+    currentBuild.result = 'RUNNING'
 
     stage ('Artifactory configuration') {
         try {
@@ -369,15 +369,15 @@ node {
             buildInfo.env.capture = true
             server.publishBuildInfo buildInfo
 
-            currentBuild.result = "SUCCESS"
+            currentBuild.result = 'SUCCESS'
         } catch(e) {
-            currentBuild.result = "FAILURE"
+            currentBuild.result = 'FAILURE'
             notifySlack(e.getLocalizedMessage())
             throw e
         }
     }
 
-    currentBuild.result = "SUCCESS"
+    currentBuild.result = 'SUCCESS'
     notifySlack("Bravo !")
 }
 
