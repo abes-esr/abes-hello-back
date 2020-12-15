@@ -88,8 +88,13 @@ node {
         }
     }
 
-    currentBuild.result = 'START'
-    build.@result = hudson.model.Result.SUCCESS
+    //currentBuild.result = 'START'
+    currentBuild.result = hudson.model.Result.SUCCESS.toString()
+//    build.@result = hudson.model.Result.SUCCESS
+// build.@result = hudson.model.Result.NOT_BUILT
+// build.@result = hudson.model.Result.UNSTABLE
+// build.@result = hudson.model.Result.FAILURE
+// build.@result = hudson.model.Result.ABORTED
     notifySlack()
     echo "${currentBuild.result}"
     echo "${currentBuild.currentResult}"
