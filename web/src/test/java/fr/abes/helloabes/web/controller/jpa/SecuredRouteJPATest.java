@@ -4,7 +4,6 @@ import fr.abes.helloabes.core.entities.AppUser;
 import org.junit.Test;
 import org.springframework.test.annotation.IfProfileValue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,10 +27,10 @@ public class SecuredRouteJPATest extends SecuredControllerJPATestBase {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.[0].id").exists())
                 .andExpect(jsonPath("$.[0].id").isNumber())
-                .andExpect(jsonPath("$.[0].supplier").exists())
-                .andExpect(jsonPath("$.[0].supplier.id").isNumber())
-                .andExpect(jsonPath("$.[0].supplier.name").exists())
-                .andExpect(jsonPath("$.[0].supplier.name").isString())
+                .andExpect(jsonPath("$.[0].fournisseur").exists())
+                .andExpect(jsonPath("$.[0].fournisseur.id").isNumber())
+                .andExpect(jsonPath("$.[0].fournisseur.name").exists())
+                .andExpect(jsonPath("$.[0].fournisseur.name").isString())
                 .andExpect(jsonPath("$.[0]products").exists())
                 .andExpect(jsonPath("$.[0]products").isArray())
                 .andExpect(jsonPath("$.[0]products[0].id").isNumber())
