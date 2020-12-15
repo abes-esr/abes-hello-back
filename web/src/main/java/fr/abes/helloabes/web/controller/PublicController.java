@@ -5,20 +5,21 @@ import fr.abes.helloabes.core.service.IUserService;
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
 import fr.abes.helloabes.web.configuration.AuthenticationResponse;
 import fr.abes.helloabes.web.configuration.JwtUtility;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 import javax.validation.constraints.NotNull;
+import javax.websocket.server.PathParam;
 import java.util.Collections;
 import java.util.Map;
 
@@ -29,9 +30,9 @@ import java.util.Map;
  * @author Duy Tran
  */
 @Slf4j
-@CrossOrigin(origins = "http://localhost:8888")
+@CrossOrigin(origins = "${application.crossorigin}")
 @RestController
-@RequestMapping("/")
+@RequestMapping("${application.urlbase}/")
 public class PublicController {
 
     /** Service pour les utilisateurs du service web.  */
