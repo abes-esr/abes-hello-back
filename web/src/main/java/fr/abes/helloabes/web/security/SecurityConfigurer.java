@@ -3,7 +3,6 @@ package fr.abes.helloabes.web.security;
 import fr.abes.helloabes.web.configuration.JwtAuthenticationEntryPoint;
 import fr.abes.helloabes.web.configuration.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,10 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
-public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
-
-    @Value("${application.urlbase}")
-    private String urlBase;
+public class SecurityConfigurer extends WebSecurityConfigurerAdapter { 
     
     private JwtAuthenticationEntryPoint unauthorizedHandler;
 
@@ -77,7 +73,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests().antMatchers(this.urlBase +"/secured/**").authenticated()
+                .authorizeRequests().antMatchers("/api/secured/**").authenticated()
                 .and().exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()

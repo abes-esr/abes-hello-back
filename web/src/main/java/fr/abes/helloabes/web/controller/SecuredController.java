@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @CrossOrigin(origins = "${application.crossorigin}")
 @RestController
-@RequestMapping("${application.urlbase}/secured")
+@RequestMapping("/api/secured")
 public class SecuredController {
 
     private final IUserService userService;
