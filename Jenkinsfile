@@ -65,7 +65,7 @@ node {
                 echo "Target environnement =  ${ENV}"
             }
 
-            if (params.FINAL_NAME == null || println !(params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/)) {
+            if (params.FINAL_NAME == null || !(params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/)) {
                 throw new Exception("Variable FINAL_NAME is null or empty or contains special characters")
             } else {
                 finalName = params.FINAL_NAME
