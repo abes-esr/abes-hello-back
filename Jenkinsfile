@@ -65,6 +65,9 @@ node {
                 echo "Target environnement =  ${ENV}"
             }
 
+            echo  (params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/)
+            echo !(params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/)
+
             if (params.FINAL_NAME == null || !(params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/)) {
                 throw new Exception("Variable FINAL_NAME is null or empty or contains special characters")
             } else {
@@ -439,7 +442,7 @@ def notifySlack(String info = '' ) {
 
     switch (currentBuild.result) {
         case 'NOT_BUILT':
-            colorCode = '#36C5F0' // Blue
+            colorCode = '#FFA500' // Orange
             break
         case 'SUCCESS':
             colorCode = '#00FF00' // Green
