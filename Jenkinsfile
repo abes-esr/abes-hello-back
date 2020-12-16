@@ -67,7 +67,7 @@ node {
 
             echo "${params.FINAL_NAME}"
 
-            if (params.FINAL_NAME ==~ /^[a-zA-Z_]*/) {
+            if (params.FINAL_NAME ==~ /^[a-zA-Z_]+/) {
                 echo "== true"
             } else {
                 echo "== false"
