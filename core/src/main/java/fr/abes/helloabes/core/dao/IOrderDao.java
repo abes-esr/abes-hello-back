@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
 /**
  * Représente un dépôt de commande du service web.
  * Cette classe est basée sur le framework Spring avec le module Spring Data JPA.

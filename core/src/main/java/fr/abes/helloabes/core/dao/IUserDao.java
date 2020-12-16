@@ -2,10 +2,7 @@ package fr.abes.helloabes.core.dao;
 
 import fr.abes.helloabes.core.entities.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Représente un dépôt d'utilisateur du service web.

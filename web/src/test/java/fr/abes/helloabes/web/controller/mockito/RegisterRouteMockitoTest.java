@@ -23,7 +23,7 @@ public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void registerGetMethod() throws Exception {
-        mockMvc.perform(get("/register"))
+        mockMvc.perform(get("/api/register"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -37,7 +37,7 @@ public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void registerPostMethod() throws Exception {
-        mockMvc.perform(post("/register"))
+        mockMvc.perform(post("/api/register"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -51,7 +51,7 @@ public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void registerPutMethod() throws Exception {
-        mockMvc.perform(put("/register"))
+        mockMvc.perform(put("/api/register"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -65,7 +65,7 @@ public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void registerDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/register"))
+        mockMvc.perform(delete("/api/register"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -90,7 +90,7 @@ public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
             Mockito.when(userDao.findByUserName("admin")).thenReturn(null);
             Mockito.when(userDao.save(any(AppUser.class))).thenReturn(myDataBaseUser);
 
-        mockMvc.perform(post("/register")
+        mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.identityNumber").value(myDataBaseUser.getIdentityNumber()))
@@ -115,7 +115,7 @@ public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         Mockito.when(userDao.findByUserName(myUser.getUserName())).thenReturn(myUser);
 
-        mockMvc.perform(post("/register")
+        mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
@@ -142,7 +142,7 @@ public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         Mockito.when(userDao.findByUserName("admin")).thenReturn(null);
 
-        mockMvc.perform(post("/register")
+        mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
@@ -161,7 +161,7 @@ public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         String json = "{}";
 
-        mockMvc.perform(post("/register")
+        mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
@@ -180,7 +180,7 @@ public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         String json = "{ \"username\" : \"toto\"}";
 
-        mockMvc.perform(post("/register")
+        mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))

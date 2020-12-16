@@ -18,7 +18,7 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void homeGetMethod() throws Exception {
-        mockMvc.perform(get("/"))
+        mockMvc.perform(get("/api"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.response").value("Hello from ABES - PUBLIC API PAGE"));
     }
@@ -29,7 +29,7 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void homePostMethod() throws Exception {
-        mockMvc.perform(post("/"))
+        mockMvc.perform(post("/api"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -43,7 +43,7 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void homePutMethod() throws Exception {
-        mockMvc.perform(put("/"))
+        mockMvc.perform(put("/api"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -57,7 +57,7 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void homeDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/"))
+        mockMvc.perform(delete("/api"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -73,7 +73,7 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
     public void homeEmptyBody() throws Exception {
 
         String json = "{ }";
-        mockMvc.perform(get("/").contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(get("/api").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.response").value("Hello from ABES - PUBLIC API PAGE"));
     }

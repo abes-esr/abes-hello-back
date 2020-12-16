@@ -22,7 +22,7 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void loginGetMethod() throws Exception {
-        mockMvc.perform(get("/login"))
+        mockMvc.perform(get("/api/login"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -36,7 +36,7 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void loginPostMethod() throws Exception {
-        mockMvc.perform(post("/login"))
+        mockMvc.perform(post("/api/login"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -50,7 +50,7 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void loginPutMethod() throws Exception {
-        mockMvc.perform(put("/login"))
+        mockMvc.perform(put("/api/login"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -64,7 +64,7 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
      */
     @Test
     public void loginDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/login"))
+        mockMvc.perform(delete("/api/login"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -90,7 +90,7 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         Mockito.when(userDao.findByUserName(myUser.getUserName())).thenReturn(myDataBaseUser);
 
-         mockMvc.perform(post("/login")
+         mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
@@ -113,7 +113,7 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         Mockito.when(userDao.findByUserName(myTestingUser.getUserName())).thenReturn(null);
 
-        mockMvc.perform(post("/login")
+        mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
@@ -138,7 +138,7 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         Mockito.when(userDao.findByUserName("admin")).thenReturn(null);
 
-        mockMvc.perform(post("/login")
+        mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
@@ -156,7 +156,7 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         String json = "{}";
 
-        mockMvc.perform(post("/login")
+        mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))

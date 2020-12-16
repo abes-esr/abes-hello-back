@@ -17,9 +17,7 @@ import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @RunWith(SpringRunner.class)
 public class SecuredControllerJPATestBase extends ApplicationJPATestBase {
@@ -54,7 +52,7 @@ public class SecuredControllerJPATestBase extends ApplicationJPATestBase {
         ObjectMapper Obj = new ObjectMapper();
         String json = Obj.writeValueAsString(myUser);
 
-        MvcResult result = mockMvc.perform(post("/login")
+        MvcResult result = mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON).content(json)).andReturn();
 
         return JsonPath.read(result.getResponse().getContentAsString(), "$.accessToken");

@@ -1,12 +1,9 @@
 package fr.abes.helloabes.core.dao;
 
-import fr.abes.helloabes.core.entities.Order;
-import fr.abes.helloabes.core.entities.Product;
 import fr.abes.helloabes.core.entities.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
 
 /**
  * Représente un dépôt de Fournisseur du service web.

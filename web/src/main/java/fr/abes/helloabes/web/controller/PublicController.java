@@ -32,7 +32,7 @@ import java.util.Map;
  * @author Duy Tran
  */
 @Slf4j
-@CrossOrigin(origins = "${application.crossorigin}")
+//@CrossOrigin(origins = "${application.crossorigin}")
 @RestController
 @RequestMapping("/api")
 public class PublicController {

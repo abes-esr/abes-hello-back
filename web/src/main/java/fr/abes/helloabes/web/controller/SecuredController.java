@@ -11,7 +11,6 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +25,7 @@ import java.util.Map;
  * @since 0.0.1
  * @author Duy Tran
  */
-@CrossOrigin(origins = "${application.crossorigin}")
+//@CrossOrigin(origins = "${application.crossorigin}")
 @RestController
 @RequestMapping("/api/secured")
 public class SecuredController {

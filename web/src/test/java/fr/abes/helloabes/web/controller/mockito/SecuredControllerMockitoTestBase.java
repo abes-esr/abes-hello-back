@@ -70,12 +70,12 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
      */
     @Test
     public void wrongRouteGetMethod() throws Exception {
-        mockMvc.perform(get("/secured/test"))
+        mockMvc.perform(get("/api/secured/test"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
-                .andExpect(jsonPath("$.path").value("/secured/test"));
+                .andExpect(jsonPath("$.path").value("/api/secured/test"));
     }
 
     /**
@@ -84,11 +84,11 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
      */
     @Test
     public void wrongRoutePostMethod() throws Exception {
-        mockMvc.perform(post("/secured/test"))  .andExpect(status().isUnauthorized())
+        mockMvc.perform(post("/api/secured/test"))  .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
-                .andExpect(jsonPath("$.path").value("/secured/test"));
+                .andExpect(jsonPath("$.path").value("/api/secured/test"));
     }
 
     /**
@@ -97,11 +97,11 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
      */
     @Test
     public void wrongRoutePutMethod() throws Exception {
-        mockMvc.perform(put("/secured/test"))  .andExpect(status().isUnauthorized())
+        mockMvc.perform(put("/api/secured/test"))  .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
-                .andExpect(jsonPath("$.path").value("/secured/test"));
+                .andExpect(jsonPath("$.path").value("/api/secured/test"));
     }
 
     /**
@@ -110,11 +110,11 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
      */
     @Test
     public void wrongRouteDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/secured/test"))  .andExpect(status().isUnauthorized())
+        mockMvc.perform(delete("/api/secured/test"))  .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
-                .andExpect(jsonPath("$.path").value("/secured/test"));
+                .andExpect(jsonPath("$.path").value("/api/secured/test"));
     }
 
     /**
@@ -127,7 +127,7 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
         AppUser adminUser = getTotoUser();
         String token = authenticate(adminUser);
 
-        mockMvc.perform(get("/secured/test")
+        mockMvc.perform(get("/api/secured/test")
                 .header("Authorization","Bearer "+token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
@@ -146,7 +146,7 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
         AppUser adminUser = getTotoUser();
         String token = authenticate(adminUser);
 
-        mockMvc.perform(post("/secured/test")
+        mockMvc.perform(post("/api/secured/test")
                 .header("Authorization","Bearer "+token))
                 .andExpect(status().isNotFound()).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
@@ -165,7 +165,7 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
         AppUser adminUser = getTotoUser();
         String token = authenticate(adminUser);
 
-        mockMvc.perform(put("/secured/test")
+        mockMvc.perform(put("/api/secured/test")
                 .header("Authorization","Bearer "+token))
                 .andExpect(status().isNotFound()).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
@@ -184,7 +184,7 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
         AppUser adminUser = getTotoUser();
         String token = authenticate(adminUser);
 
-        mockMvc.perform(delete("/secured/test")
+        mockMvc.perform(delete("/api/secured/test")
                 .header("Authorization","Bearer "+token))
                 .andExpect(status().isNotFound()).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))

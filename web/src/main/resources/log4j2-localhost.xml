@@ -2,6 +2,7 @@
 <!-- Doc : http://logging.apache.org/log4j/2.x/manual/appenders.html#CustomDeleteOnRollover -->
 <Configuration>
     <Properties>
+        <!-- Les proprietes suivantes correspondent a des cles dans les fichiers application.properties et application-localhost.properties -->
         <Property name="baseDir">${bundle:application-localhost:application.basedir}${bundle:application:application.finalname}/${bundle:application-localhost:log4j2.logdir}</Property>
         <Property name="logFileName">${bundle:application:application.name}</Property>
         <Property name="errorFileName">${bundle:application:application.name}_error</Property>

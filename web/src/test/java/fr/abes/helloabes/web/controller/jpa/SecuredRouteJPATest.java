@@ -21,7 +21,7 @@ public class SecuredRouteJPATest extends SecuredControllerJPATestBase {
         AppUser adminUser = getTotoUser();
         String token = authenticate(adminUser);
 
-        mockMvc.perform(get("/secured/commande")
+        mockMvc.perform(get("/api/secured/commande")
                 .header("Authorization","Bearer "+token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
