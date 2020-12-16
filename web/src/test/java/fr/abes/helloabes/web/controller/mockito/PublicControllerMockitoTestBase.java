@@ -1,12 +1,15 @@
-package fr.abes.helloabes.web.controller;
+package fr.abes.helloabes.web.controller.mockito;
 
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
-import fr.abes.helloabes.web.ApplicationTestBase;
+import fr.abes.helloabes.web.controller.PublicController;
+import fr.abes.helloabes.web.controller.mockito.ApplicationMockitoTestBase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -18,14 +21,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * On injecte le mock du dépot DAO dans le controlleur. 
  */
 @RunWith(SpringRunner.class)
-public class PublicControllerTestBase extends ApplicationTestBase {
+public class PublicControllerMockitoTestBase extends ApplicationMockitoTestBase {
 
     @InjectMocks
     protected PublicController publicController;
 
     @Before
     public void setup(){
-        publicController = new PublicController(new UserServiceImpl(userRepository,encoder()),authenticationManager,jwtUtility);
+        publicController = new PublicController(new UserServiceImpl(userDao,encoder()),authenticationManager,jwtUtility);
     }
 
     @Test

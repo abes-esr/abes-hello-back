@@ -15,8 +15,8 @@ public interface IUserDao extends JpaRepository<AppUser, String> {
 
     /**
      * Recherche un utilisateur du service web dans le dépot à partir de son nom d'utilisateur.
-     * @param userName Nom d'utilisateur.
-     * @return Un utilisateur du service web.
+     * @param userName String Nom d'utilisateur.
+     * @return Un utilisateur du service web ou null si l'utilisateur n'a pas été trouvé.
      */
     AppUser findByUserName(String userName);
 

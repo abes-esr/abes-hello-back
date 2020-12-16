@@ -5,25 +5,22 @@ Les fonctionalités mise en oeuvre dans 'abes-hello-back' sont :
 1. Un service web RESTful permettant d'obtenir un message public pour tous les utilisateurs et un message privé pour les utilisateurs authentifiés sur le  service.
 2. Un service de tâches de fond 
 
-## 1. Service web RESTful
+## 1. Usage
 
-Le service web RESTful permet d'exposer un message public de bienvenue et un message privé aux utilisateurs authentifiés sur le service.
-Les échanges s'opèrent via des requêtes HTTP contenant des fichiers JSON dans le corps des requêtes (Body) et une clé 'Authorization' dans l'entête des requêtes pour les appels à des services sécurisés. 
+Dans l'environnement local, il convient d'utiliser la commande :
 
-### 1.1 Routes d'accès public
+    mvn clean package   
+    
+puis d'exécuter le service web selon :
  
-| Méthode | Route | Description | Entrées | Sorties | 
-|:---------|:------|:-------------|:------|:------|
-| GET | / | Retourne un message de bienvenue.|  |@Body `json {"response": "Hello from ABES - PUBLIC API PAGE" }` |
-| POST | /register | Enregistrer un nouvel utilisateur. |@Body  `json { "userName" : "identifiant","passWord" : "monmotdepasse"}` | @Body `json {"id": "number","userName": "identifiant","passWord": "monmotdepassehash"}` |
-| POST | /login | Service d'authentification d'un utilisateur. Ce service retourne un token. |@Body  `json { "userName" : "identifiant","passWord" : "monmotdepasse"}` | @Body `raw montoken` |
+    cd web
+    mvn spring-boot:run
+    
+Il existe 3 profils d'environnement différents que sont 'dev', 'test' et 'prod'. Pour exécuter un environnement en particulier : 
 
-### 1.2 Routes d'accès privée
- 
-| Méthode | Route | Description | Entrés | Sorties | 
-|:--------|:------|:------------|:------|:------|
-| GET | /secured | Retourne un message privé. | @Header `Authorization = "Bearer montoken"` | @Body `raw Hello from Abes - Voici est private API` |
-
+    mvn clean package -Pdev
+    cd web
+    mvn spring-boot:run -Pdev   
 
 ## 2. Partie batch
 

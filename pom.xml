@@ -22,6 +22,13 @@
     <name>Hello ABES Back</name>
     <description>Application d'exemple pour illustrer la politique de développement au sein de l'ABES</description>
 
+    <!-- ===================================================== -->
+    <!--     Proprietes du projet                              -->
+    <!-- ===================================================== -->
+    <properties>
+        <finalName>helloabes-${project.artifactId}-${project.version}</finalName>
+    </properties>
+
     <!-- =========================================================== -->
     <!--     Description des modules                                 -->
     <!-- =========================================================== -->
@@ -31,6 +38,39 @@
         <module>batch</module>
     </modules>
     <packaging>pom</packaging>
+
+    <!-- =========================================================== -->
+    <!--     Profile                                                 -->
+    <!-- =========================================================== -->
+    <profiles>
+        <profile>
+            <id>localhost</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>localhost</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <spring.profiles.active>test</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
 
     <!-- =========================================================== -->
     <!--     Dependances heritees pour tous les modules.             -->
@@ -50,17 +90,6 @@
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
 
-        <!--- === Documentation API === -->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.9.2</version>
-        </dependency>
     </dependencies>
 
     <distributionManagement>
@@ -90,7 +119,7 @@
     <!--     Configuration de la compilation                         -->
     <!-- =========================================================== -->
     <build>
-        <finalName>Hello Abes back-end</finalName>
+        <finalName>${finalName}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -73,7 +73,7 @@ public class UserServiceImplIntegrationTest {
 
         Mockito.when(userRepository.findByUserName("admin")).thenReturn(myCandidate);
 
-        AppUser myUser = userService.findUserByUserName(myCandidate);
+        AppUser myUser = userService.findUser(myCandidate);
 
         assertEquals("admin", myUser.getUserName());
     }

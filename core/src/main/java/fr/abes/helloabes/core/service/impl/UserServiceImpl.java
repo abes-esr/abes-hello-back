@@ -2,12 +2,19 @@ package fr.abes.helloabes.core.service.impl;
 
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.dao.IUserDao;
+import fr.abes.helloabes.core.entities.Order;
+import fr.abes.helloabes.core.entities.Product;
+import fr.abes.helloabes.core.entities.Supplier;
 import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import fr.abes.helloabes.core.service.IUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Book;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,22 +24,23 @@ import java.util.List;
  * @author Duy Tran
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements IUserService {
 
     /** Dépot d'utilisateurs du service web. */
-    private final IUserDao userRepository;
+    private final IUserDao userDao;
 
     /** Encodeur de mots de passe selon un algorithmede crpytage. */
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /**
      * Construit un service pour les utilisateurs du service web.
-     * @param userRepository Dépot d'utilisateurs du service web
+     * @param userDao Dépot d'utilisateurs du service web
      * @param bCryptPasswordEncoder Encodeur de mots de passe selon un algorithmede crpytage.
      */
     @Autowired
-    public UserServiceImpl(IUserDao userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(IUserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userDao = userDao;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -44,36 +52,59 @@ public class UserServiceImpl implements IUserService {
     @Override
     public AppUser createUser(AppUser user) throws UserAlreadyExistsException {
 
-        AppUser candidate = findUserByUserName(user);
+        AppUser candidate = findUser(user);
 
         if (candidate != null) { 
             throw new UserAlreadyExistsException("Username already exists");
         }
 
+        log.info("User password is encoded");
         String passHash = bCryptPasswordEncoder.encode(user.getPassWord());
         user.setPassWord(passHash);
-        return userRepository.save(user);
+        return userDao.save(user);
+    }
+
+    /**
+     * Recherche un utilisateur.
+     * @param user Utilisateur du service web à rechercher.
+     * @return L'utilisateur du service web trouvé ou null si l'utilisateur n'a pas été trouvé.
+     */
+    @Override
+    public AppUser findUser(AppUser user) {
+        return userDao.findByUserName(user.getUserName());
     }
 
     /**
      * Recherche un utilisateur par son nom d'utilisateur dans le dépot des utilisateurs du service web.
-     * @param user Utilisateur du service web à rechercher.
-     * @return L'utilisateur du service web trouvé.
+     * @param userName String Nom de l'utilisateur à rechercher.
+     * @return L'utilisateur du service web trouvé ou null si l'utilisateur n'a pas été trouvé.
      */
     @Override
-    public AppUser findUserByUserName(AppUser user) {
-        return userRepository.findByUserName(user.getUserName());
-    }
-
-    @Override
     public AppUser findUserByUserName(String userName) {
-        return userRepository.findByUserName(userName);
+        return userDao.findByUserName(userName);
     }
 
+    /**
+     * Récupère la liste de tous les utilisateurs.
+     * @return List<AppUser> Liste des utilisateurs.
+     */
     @Override
     public List<AppUser> getAllUsers() {
-        return userRepository.findAll();
+        return userDao.findAll();
     }
 
+    @Transactional
+    public void addOrderToUser(AppUser user, Order order) {
+        user.addOrder(order);
+    }
 
+    @Transactional
+    public void removeOrderToUser(AppUser user, Order order) {        
+        user.removeOrder(order); 
+    }
+
+    @Transactional
+    public void removeUser(AppUser user) {
+        user.removeOrders();
+    }
 }

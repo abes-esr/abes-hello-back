@@ -1,16 +1,16 @@
 package fr.abes.helloabes.web.controller;
 
 import fr.abes.helloabes.core.entities.AppUser;
-import fr.abes.helloabes.core.entities.Commandes;
-import fr.abes.helloabes.core.service.ICommandeService;
+import fr.abes.helloabes.core.service.IOrderService;
 import fr.abes.helloabes.core.service.IUserService;
+import fr.abes.helloabes.web.configuration.DtoMapperUtility;
+import fr.abes.helloabes.web.dto.OrderDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,26 +25,28 @@ import java.util.Map;
  * @since 0.0.1
  * @author Duy Tran
  */
-@CrossOrigin(origins = "http://localhost:8888")
+//@CrossOrigin(origins = "${application.crossorigin}")
 @RestController
-@RequestMapping("/secured")
+@RequestMapping("/api/secured")
 public class SecuredController {
 
     private final IUserService userService;
 
-    private final ICommandeService commandeService;
-
+    private final IOrderService orderService;
 
     @Autowired
-    public SecuredController(IUserService userService, ICommandeService commandeService) {
+    private DtoMapperUtility dtoMapper;
+
+    @Autowired
+    public SecuredController(IUserService userService, IOrderService orderService) {
         this.userService = userService;
 
-        this.commandeService = commandeService;
+        this.orderService = orderService;
     }
 
     /**
      * Traitement d'une requête GET sur la route '/secured'.
-     * @return Une chaîne de caractère.
+     * @return Map map avec la réponse.
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(
@@ -63,7 +65,7 @@ public class SecuredController {
 
     /**
      * Traitement d'une requête GET sur la route '/secured'.
-     * @return Une chaîne de caractère.
+     * @return Liste de commande.
      */
     @GetMapping("/commande")
     @ApiOperation(
@@ -75,9 +77,13 @@ public class SecuredController {
             @ApiResponse(code = 400, message = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronnée..."),
             @ApiResponse(code = 404, message = "Opération a échoué."),
     })
-    public List<Commandes> displaySecureCommandes(Authentication authentication) {
+    public List<OrderDto> displaySecureCommandes(Authentication authentication) {
 
         AppUser user = userService.findUserByUserName(authentication.getName());
-        return commandeService.findCommandeByUser(user);
+
+        return dtoMapper.mapList(orderService.findOrdersOfUser(user), OrderDto.class);
+
     }
+
+
 }
