@@ -1,13 +1,4 @@
 //this is the scripted method with groovy engine
-//https://www.youtube.com/watch?v=7KCS70sCoK0&feature=emb_rel_pause
-
-//3 places of tests skipping command -Dmaven.test.skip=true
-//it's necessary to see if a jenkins variable is usefull so to maybe allows conditionnal running and deploying test contexts
-//currentBuild.result = hudson.model.Result.SUCCESS.toString()
-//currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
-//currentBuild.result = hudson.model.Result.UNSTABLE.toString()
-//currentBuild.result = hudson.model.Result.FAILURE.toString()
-//currentBuild.result = hudson.model.Result.ABORTED.toString()
 import hudson.model.Result
 
 node {
@@ -36,7 +27,7 @@ node {
                     gitParameter(
                             branch: '',
                             branchFilter: 'origin/(.*)',
-                            defaultValue: '',
+                            defaultValue: 'develop',
                             description: 'Sélectionner la branche ou le tag à déployer',
                             name: 'BRANCH_TAG',
                             quickFilterEnabled: false,
@@ -74,8 +65,8 @@ node {
                 echo "Target environnement =  ${ENV}"
             }
 
-            if (params.FINAL_NAME == null) {
-                throw new Exception("Variable FINAL_NAME is null")
+            if (params.FINAL_NAME == null || params.FINAL_NAME =~ /^[a-zA-Z0-9_-]+\$/) {
+                throw new Exception("Variable FINAL_NAME is null or empty or contains special characters")
             } else {
                 finalName = params.FINAL_NAME
                 echo "Final WAR/JAR name =  ${params.FINAL_NAME}"
