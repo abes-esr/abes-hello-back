@@ -65,7 +65,9 @@ node {
                 echo "Target environnement =  ${ENV}"
             }
 
-            if (params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/) {
+            echo "${params.FINAL_NAME}"
+
+            if (params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]*\$/) {
                 echo "== true"
             } else {
                 echo "== false"
