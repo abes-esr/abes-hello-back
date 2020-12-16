@@ -65,8 +65,17 @@ node {
                 echo "Target environnement =  ${ENV}"
             }
 
-            echo String.valueOf(params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/)
-            echo String.valueOf(!(params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/))
+            if (params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/) {
+                echo "== true"
+            } else {
+                echo "== false"
+            }
+
+            if (!(params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/)) {
+                echo "!=true"
+            } else {
+                echo "!=false"
+            }
 
             if (params.FINAL_NAME == null || !(params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+\$/)) {
                 throw new Exception("Variable FINAL_NAME is null or empty or contains special characters")
