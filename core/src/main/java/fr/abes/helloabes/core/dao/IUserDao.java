@@ -2,7 +2,10 @@ package fr.abes.helloabes.core.dao;
 
 import fr.abes.helloabes.core.entities.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Représente un dépôt d'utilisateur du service web.
@@ -19,5 +22,8 @@ public interface IUserDao extends JpaRepository<AppUser, String> {
      * @return Un utilisateur du service web ou null si l'utilisateur n'a pas été trouvé.
      */
     AppUser findByUserName(String userName);
+
+    @Query("SELECT u FROM AppUser u LEFT JOIN FETCH u.orders o")
+    List<AppUser> findAll();
 
 }
