@@ -3,6 +3,7 @@ package fr.abes.helloabes.batch;
 import fr.abes.helloabes.batch.chunk.LineProcessor;
 import fr.abes.helloabes.batch.chunk.LineReader;
 import fr.abes.helloabes.batch.chunk.LinesWriter;
+import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.AppUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -22,7 +23,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-
 @Slf4j
 @Configuration
 @EnableRetry
@@ -35,12 +35,11 @@ public class BatchConfiguration {
     @Autowired
     protected StepBuilderFactory stepBuilderFactory;
 
-
     // ---------- JOB ---------------------------------------------
 
     @Bean
     public Job jobTraitement() {
-        log.info("debut du job : jobTraitement...");
+        log.info("debut du job : jobTraitement...");  
 
         return jobs
                 .get("chunksJob")
