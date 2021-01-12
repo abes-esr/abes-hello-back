@@ -9,6 +9,7 @@ node {
     def warName = "Hello_Abes_back_end"
     def tomcatWebappsDir = "/usr/local/tomcat9-abes-hello/webapps/"
     def tomcatServiceName = "tomcat9-abes-hello.service"
+    def slackChannel = "#notif-helloabes"
 
     // Variables globales
     def maventool
@@ -89,7 +90,7 @@ node {
 
         } catch (e) {
             currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
-            notifySlack(e.getLocalizedMessage())
+            notifySlack(slackChannel,e.getLocalizedMessage())
             throw e
         }
     }
@@ -107,7 +108,7 @@ node {
 
         } catch (e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(e.getLocalizedMessage())
+            notifySlack(slackChannel,e.getLocalizedMessage())
             throw e
         }
     }
@@ -121,7 +122,7 @@ node {
 
             } catch (e) {
                 currentBuild.result = hudson.model.Result.UNSTABLE.toString()
-                notifySlack(e.getLocalizedMessage())
+                notifySlack(slackChannel,e.getLocalizedMessage())
                 // Si les tests ne passent pas, on mets le build en UNSTABLE et on continue
                 //throw e
             }
@@ -150,7 +151,7 @@ node {
 
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(e.getLocalizedMessage())
+            notifySlack(slackChannel,e.getLocalizedMessage())
             throw e
         }
     }
@@ -169,7 +170,7 @@ node {
 
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(e.getLocalizedMessage())
+            notifySlack(slackChannel,e.getLocalizedMessage())
             throw e
         }
     }
@@ -217,7 +218,7 @@ node {
 
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(e.getLocalizedMessage())
+            notifySlack(slackChannel,e.getLocalizedMessage())
             throw e
         }
     }
@@ -414,7 +415,7 @@ node {
 
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(e.getLocalizedMessage())
+            notifySlack(slackChannel,e.getLocalizedMessage())
             throw e
         }
     }
@@ -432,16 +433,16 @@ node {
 
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(e.getLocalizedMessage())
+            notifySlack(slackChannel,e.getLocalizedMessage())
             throw e
         }
     }
 
     currentBuild.result = hudson.model.Result.SUCCESS.toString()
-    notifySlack("Congratulation !")
+    notifySlack(slackChannel,"Congratulation !")
 }
 
-def notifySlack(String info = '' ) {
+def notifySlack(String slackChannel, String info = '') {
     def colorCode = '#848484' // Gray
 
     switch (currentBuild.result) {
@@ -471,7 +472,7 @@ def notifySlack(String info = '' ) {
     """.stripIndent()
 
     return slackSend(tokenCredentialId: "slack_token",
-            channel: "#notif-helloabes",
+            channel: "${slackChannel}",
             color: colorCode,
             message: message)
 }
