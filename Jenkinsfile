@@ -3,6 +3,13 @@ import hudson.model.Result
 
 node {
 
+    //Configuration
+    def gitURL = "https://github.com/abes-esr/abes-hello-back.git"
+    def gitCredentials = ''
+    def warName = "Hello_Abes_back_end"
+    def tomcatWebappsDir = "/usr/local/tomcat9-abes-hello/webapps/"
+    def tomcatServiceName = "tomcat9-abes-hello.service"
+
     // Variables globales
     def maventool
     def rtMaven
@@ -36,7 +43,7 @@ node {
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV'),
-                    string(name: 'FINAL_NAME', defaultValue: 'Hello_Abes_back_end', description: 'Nom du war/jar à déployer', ),
+                    string(name: 'FINAL_NAME', defaultValue: "${warName}" , description: 'Nom du war/jar à déployer', ),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests')
             ])
     ])
@@ -95,7 +102,7 @@ node {
                     doGenerateSubmoduleConfigurations: false,
                     extensions                       : [],
                     submoduleCfg                     : [],
-                    userRemoteConfigs                : [[credentialsId: '', url: 'https://github.com/abes-esr/abes-hello-back.git']]
+                    userRemoteConfigs                : [[credentialsId: "${gitCredentials}", url: "${gitURL}"]]
             ])
 
         } catch (e) {
@@ -177,34 +184,34 @@ node {
 
                 echo 'deployment on cirse1-dev'
                 sshagent(credentials: ['cirse1-dev-ssh-key']) { //one key per tomcat
-                    sh 'scp web/target/*.war tomcat@cirse1-dev.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                    sh "scp web/target/*.war tomcat@cirse1-dev.v3.abes.fr:${tomcatWebappsDir}"
                 }
 
                 echo 'deployment on cirse2-dev'
                 sshagent(credentials: ['cirse2-dev-ssh-key']) {
-                    sh 'scp web/target/*.war tomcat@cirse2-dev.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                    sh "scp web/target/*.war tomcat@cirse2-dev.v3.abes.fr:${tomcatWebappsDir}"
                 }
             }
             if (ENV == 'TEST') {
                 echo 'deployment on cirse1-test'
                 sshagent(credentials: ['cirse1-test-ssh-key']) {
-                    sh 'scp web/target/*.war tomcat@cirse1-test.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                    sh "scp web/target/*.war tomcat@cirse1-test.v3.abes.fr:${tomcatWebappsDir}"
                 }
 
                 echo 'deployment on cirse2-test'
                 sshagent(credentials: ['cirse2-test-ssh-key']) {
-                    sh 'scp web/target/*.war tomcat@cirse2-test.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                    sh "scp web/target/*.war tomcat@cirse2-test.v3.abes.fr:${tomcatWebappsDir}"
                 }
             }
             if (ENV == 'PROD') {
                 echo 'deployment on cirse1-prod'
                 sshagent(credentials: ['cirse1-prod-ssh-key']) {
-                    sh 'scp web/target/*.war tomcat@cirse1.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                    sh "scp web/target/*.war tomcat@cirse1.v3.abes.fr:${tomcatWebappsDir}"
                 }
 
                 echo 'deployment on cirse2-prod'
                 sshagent(credentials: ['cirse2-prod-ssh-key']) {
-                    sh 'scp web/target/*.war tomcat@cirse2.v3.abes.fr:/usr/local/tomcat9-abes-hello/webapps/'
+                    sh "scp web/target/*.war tomcat@cirse2.v3.abes.fr:${tomcatWebappsDir}"
                 }
             }
 
@@ -226,30 +233,30 @@ node {
 
                         try {
                             echo 'get status cirse1 dev (should be running)'
-                            sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                         } catch(e) {
                             // Maybe the tomcat is not running
                             echo 'cirse1 dev is not running'
 
                             echo 'we try to start cirse1 dev'
-                            sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                             echo 'get status cirse1 dev'
-                            sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                         }
 
                         echo 'stop cirse1 dev'
-                        sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
                         //here, I wanted to get the status but since the status returned is code=exited, status=143 (normal because tomcat has been stopped)
                         //groovy is understanding that the script returned an error 143 and then stop the process
                         //so apart checking the logs, I don't so which manner allows us to get the stopped tomcat status
                         //echo 'get status 2 (should not be running)'
                         //sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-indexationSolr.service"'
                         echo 'start cirse1 dev'
-                        sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                         echo 'finally we get status cirse1 dev (should be running)'
-                        sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                     }
                 }
 
@@ -259,27 +266,27 @@ node {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
                         try {
                             echo 'beginning : get status cirse2 dev (should be running)'
-                            sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                         } catch(e) {
                             // Maybe the tomcat is not running
                             echo 'cirse2 dev is not running'
 
                             echo 'we try to start cirse2 dev'
-                            sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                             echo 'get status cirse2 dev'
-                            sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
 
                         }
 
                         echo 'stop cirse2 dev'
-                        sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
 
                         echo 'start cirse2 dev'
-                        sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                         echo 'finally we get status cirse2 dev (should be running)'
-                        sh 'ssh -tt tomcat@cirse2-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                     }
                 }
             }
@@ -291,27 +298,27 @@ node {
 
                         try {
                             echo 'beginning : get status cirse1 test (should be running)'
-                            sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                         } catch(e) {
                             // Maybe the tomcat is not running
                             echo 'cirse1 test is not running'
 
                             echo 'we try to start cirse1 test'
-                            sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                             echo 'get status cirse1 test'
-                            sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
 
                         }
 
                         echo 'stop cirse1 test'
-                        sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
 
                         echo 'start cirse1 test'
-                        sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                         echo 'finally we get status cirse1 test (should be running)'
-                        sh 'ssh -tt tomcat@cirse1-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                     }
                 }
 
@@ -321,26 +328,26 @@ node {
 
                         try {
                             echo 'beginning : get status cirse2 test (should be running)'
-                            sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                         } catch(e) {
                             // Maybe the tomcat is not running
                             echo 'cirse2 test is not running'
 
                             echo 'we try to start cirse2 test'
-                            sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                             echo 'get status cirse2 test'
-                            sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                         }
 
                         echo 'stop cirse2 test'
-                        sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
 
                         echo 'start cirse2 test'
-                        sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                         echo 'finally we get status cirse2 test (should be running)'
-                        sh 'ssh -tt tomcat@cirse2-test.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                     }
                 }
             }
@@ -352,26 +359,26 @@ node {
 
                         try {
                             echo 'beginning : get status cirse1 prod (should be running)'
-                            sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                         } catch(e) {
                             // Maybe the tomcat is not running
                             echo 'cirse1 prod is not running'
 
                             echo 'we try to start cirse1 prod'
-                            sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                             echo 'get status cirse1 prod'
-                            sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                         }
 
                         echo 'stop cirse1 prod'
-                        sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
 
                         echo 'start cirse1 prod'
-                        sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                         echo 'finally we get status cirse1 prod (should be running)'
-                        sh 'ssh -tt tomcat@cirse1-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                     }
                 }
 
@@ -381,26 +388,26 @@ node {
 
                         try {
                             echo 'beginning : get status cirse2 prod (should be running)'
-                            sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                         } catch(e) {
                             // Maybe the tomcat is not running
                             echo 'cirse2 prod is not running'
 
                             echo 'we try to start cirse2 prod'
-                            sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                             echo 'get status cirse2 prod'
-                            sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                         }
 
                         echo 'stop cirse2 prod'
-                        sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl stop tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
 
                         echo 'start cirse2 prod'
-                        sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && sudo systemctl start tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
                         echo 'finally we get status cirse2 prod (should be running)'
-                        sh 'ssh -tt tomcat@cirse2-prod.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-abes-hello.service"'
+                        sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
                     }
                 }
             }
