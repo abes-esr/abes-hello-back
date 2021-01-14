@@ -27,6 +27,7 @@
     <!-- ===================================================== -->
     <properties>
         <finalName>helloabes-${project.artifactId}-${project.version}</finalName>
+        <baseDir>./target/</baseDir>
     </properties>
 
     <!-- =========================================================== -->
