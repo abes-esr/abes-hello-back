@@ -4,7 +4,7 @@ import hudson.model.Result
 node {
 
     //Configuration
-    def gitURL = "https://github.com/abes-esr/periscope-back.git"
+    def gitURL = "https://github.com/abes-esr/abes-hello-back.git"
     def gitCredentials = ''
     def warDir = "web/target/"
     def warName = "Hello_Abes_back_end"
