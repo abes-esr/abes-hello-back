@@ -1,10 +1,11 @@
-package fr.abes.helloabes.web.controller;
+package fr.abes.helloabes.web.controller.mockito;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.abes.helloabes.core.entities.AppUser;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.IfProfileValue;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -14,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Classe de test pour la route /register
  */
-public class RegisterRouteTest extends PublicControllerTestBase {
+public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
 
     /**
      * Test la route /register avec la méthode GET
@@ -22,7 +23,7 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void registerGetMethod() throws Exception {
-        mockMvc.perform(get("/register"))
+        mockMvc.perform(get("/api/register"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -36,7 +37,7 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void registerPostMethod() throws Exception {
-        mockMvc.perform(post("/register"))
+        mockMvc.perform(post("/api/register"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -50,7 +51,7 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void registerPutMethod() throws Exception {
-        mockMvc.perform(put("/register"))
+        mockMvc.perform(put("/api/register"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -64,7 +65,7 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      */
     @Test
     public void registerDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/register"))
+        mockMvc.perform(delete("/api/register"))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value("METHOD_NOT_ALLOWED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -77,23 +78,23 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      * @throws Exception
      */
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-mockito")
     public void registerAdminUser() throws Exception {
 
-        AppUser myUser = getAdminUser();
+        AppUser myUser = getTotoUser();
         AppUser myTestingUser = new AppUser(myUser.getUserName(),myUser.getPassWord());
         AppUser myDataBaseUser = getDataBaseUser(myUser);
 
         ObjectMapper Obj = new ObjectMapper();
         String json = Obj.writeValueAsString(myTestingUser);
+            Mockito.when(userDao.findByUserName("admin")).thenReturn(null);
+            Mockito.when(userDao.save(any(AppUser.class))).thenReturn(myDataBaseUser);
 
-        Mockito.when(userRepository.findByUserName("admin")).thenReturn(null);
-        Mockito.when(userRepository.save(any(AppUser.class))).thenReturn(myDataBaseUser);
-
-        mockMvc.perform(post("/register")
+        mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.identityNumber").value(1))
-                .andExpect(jsonPath("$.userName").value(myUser.getUserName()))
+                .andExpect(jsonPath("$.identityNumber").value(myDataBaseUser.getIdentityNumber()))
+                .andExpect(jsonPath("$.userName").value(myDataBaseUser.getUserName()))
                 .andExpect(jsonPath("$.passWord").value(myDataBaseUser.getPassWord()));
     }
 
@@ -102,18 +103,19 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      * @throws Exception
      */
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-mockito")
     public void registerAlreadyExistingUser() throws Exception {
 
         registerAdminUser();
 
-        AppUser myUser = getAdminUser();
+        AppUser myUser = getTotoUser();
 
         ObjectMapper Obj = new ObjectMapper();
         String json = Obj.writeValueAsString(myUser);
 
-        Mockito.when(userRepository.findByUserName("admin")).thenReturn(myUser);
+        Mockito.when(userDao.findByUserName(myUser.getUserName())).thenReturn(myUser);
 
-        mockMvc.perform(post("/register")
+        mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
@@ -128,18 +130,19 @@ public class RegisterRouteTest extends PublicControllerTestBase {
      * @throws Exception
      */
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-mockito")
     public void registerWeakPassword() throws Exception {
 
-        AppUser myUser = getAdminUser();
+        AppUser myUser = getTotoUser();
 
         myUser.setPassWord("simple");
 
         ObjectMapper Obj = new ObjectMapper();
         String json = Obj.writeValueAsString(myUser);
 
-        Mockito.when(userRepository.findByUserName("admin")).thenReturn(null);
+        Mockito.when(userDao.findByUserName("admin")).thenReturn(null);
 
-        mockMvc.perform(post("/register")
+        mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
@@ -158,7 +161,7 @@ public class RegisterRouteTest extends PublicControllerTestBase {
 
         String json = "{}";
 
-        mockMvc.perform(post("/register")
+        mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
@@ -177,7 +180,7 @@ public class RegisterRouteTest extends PublicControllerTestBase {
 
         String json = "{ \"username\" : \"toto\"}";
 
-        mockMvc.perform(post("/register")
+        mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))

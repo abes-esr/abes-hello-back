@@ -4,21 +4,24 @@ import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.service.IUserService;
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
 import fr.abes.helloabes.web.configuration.AuthenticationResponse;
+import fr.abes.helloabes.web.configuration.DtoMapperUtility;
 import fr.abes.helloabes.web.configuration.JwtUtility;
-import io.swagger.annotations.*;
+import fr.abes.helloabes.web.dto.AppUserDto;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 import javax.validation.constraints.NotNull;
+import javax.websocket.server.PathParam;
 import java.util.Collections;
 import java.util.Map;
 
@@ -29,9 +32,9 @@ import java.util.Map;
  * @author Duy Tran
  */
 @Slf4j
-@CrossOrigin(origins = "http://localhost:8888")
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api")
 public class PublicController {
 
     /** Service pour les utilisateurs du service web.  */
@@ -42,6 +45,10 @@ public class PublicController {
 
     /** Gestionnaire des authentifications */
     private final AuthenticationManager authenticationManager;
+
+    /** Service pour le mapping DTO */
+    @Autowired
+    private DtoMapperUtility dtoMapper;
 
     /**
      * Construit un contrôlleur de l'API pour toutes les routes pupliques.
@@ -88,17 +95,21 @@ public class PublicController {
             @ApiResponse(code = 400, message = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronnée..."),
             @ApiResponse(code = 404, message = "Opération a échoué."),
     })
-    public AppUser register(
+    public AppUserDto register(
             @ApiParam(value = "Objet JSON contenant les informations sur l'utilisateur à enregistrer. Tous les champs sont nécessairese.", required = true)
             @PathParam("user")
-            @Valid @NotNull @RequestBody AppUser user) {
+            @Valid @NotNull @RequestBody AppUserDto user) {
 
-        return userService.createUser(user);
+        AppUser userApp = dtoMapper.map(user, AppUser.class);
+
+        AppUser savedUser = userService.createUser(userApp);
+
+        return dtoMapper.map(savedUser,AppUserDto.class);
     }
 
     /**
      * Traitement d'une requête POST sur la route '/login'.
-     * @param authRequest Utilisateur du service web à identifier.
+     * @param user Utilisateur du service web à identifier.
      * @return ResponseEntity<AuthenticationResponse> Une réponse en JSON contant un objet AuthentifcationResponse.
      */
     @PostMapping("/login")
@@ -114,7 +125,9 @@ public class PublicController {
     public ResponseEntity<AuthenticationResponse> generateToken(
             @ApiParam(value = "Objet JSON contenant les informations sur l'utilisateur à authentifier. Tous les champs sont nécessairese.", required = true)
             @PathParam("user")
-            @Valid @NotNull @RequestBody AppUser authRequest) {
+            @Valid @NotNull @RequestBody AppUserDto user) {
+
+        AppUser authRequest = dtoMapper.map(user, AppUser.class);
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassWord()));
@@ -122,5 +135,4 @@ public class PublicController {
 
         return ResponseEntity.ok(new AuthenticationResponse(token, authRequest.getUserName()));
     }
-
 }

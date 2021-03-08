@@ -2,16 +2,17 @@
 <!-- Doc : http://logging.apache.org/log4j/2.x/manual/appenders.html#CustomDeleteOnRollover -->
 <Configuration>
     <Properties>
-        <Property name="baseDir">../logs</Property>
-        <Property name="logFileName">helloabes_web_log</Property>
-        <Property name="errorFileName">helloabes_web_error</Property>
-        <Property name="debugFileName">helloabes_web_debug</Property>
+        <!-- Les proprietes suivantes correspondent a des cles dans les fichiers application.properties -->
+        <Property name="logBaseDir">${bundle:application:application.basedir}/${bundle:application:log4j2.logdir}</Property>
+        <Property name="logFileName">${bundle:application:application.name}</Property>
+        <Property name="errorFileName">${bundle:application:application.name}_error</Property>
+        <Property name="debugFileName">${bundle:application:application.name}_debug</Property>
 
         <!-- Politique de gestion des fichiers -->
         <Property name="sizeTriggerPolicy">100 MB</Property>
-        <Property name="deleteAgeFile">3d</Property>
+        <Property name="deleteAgeFile">1d</Property>
         <Property name="keepMostRecentFile">1</Property>
-        <Property name="keepMostRecentSize">100 MB</Property>
+        <Property name="keepMostRecentSize">10 MB</Property>
     </Properties>
     <Appenders>
 
@@ -23,8 +24,8 @@
 
         <!-- LOG FILE -->
         <RollingFile name="LogFile"
-                     fileName="${baseDir}/${logFileName}.log"
-                     filePattern="${baseDir}/$${date:yyyy-MM}/${logFileName}_%d{dd-MM-yyyy}_%i.log.gz">
+                     fileName="${logBaseDir}/${logFileName}.log"
+                     filePattern="${logBaseDir}/$${date:yyyy-MM}/${logFileName}_%d{dd-MM-yyyy}_%i.log.gz">
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
@@ -38,7 +39,7 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="${baseDir}" maxDepth="2">
+                <Delete basePath="${logBaseDir}" maxDepth="2">
                     <IfFileName glob="*/${logFileName}_*.log.gz">
                         <!-- On supprime les fichiers de plus de ${deleteAgeFile}
                          mais on garde les ${keepMostRecentFile} fichiers plus récent ou les ${keepMostRecentSize} plus récent-->
@@ -54,8 +55,10 @@
 
         <!-- ERROR FILE -->
         <RollingFile name="ErrorFile"
-                     fileName="${baseDir}/${errorFileName}.log"
-                     filePattern="${baseDir}/$${date:yyyy-MM}/${errorFileName}_%d{dd-MM-yyyy}_%i.log.gz">
+                     fileName="${logBaseDir}/${errorFileName}.log"
+                     filePattern="${logBaseDir}/$${date:yyyy-MM}/${errorFileName}_%d{dd-MM-yyyy}_%i.log.gz">
+            <!-- ErrorFile ne recoit que le niveau error -->
+            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
@@ -69,7 +72,7 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="${baseDir}/" maxDepth="2">
+                <Delete basePath="${logBaseDir}/" maxDepth="2">
                     <IfFileName glob="*/${errorFileName}_*.log.gz">
                         <!-- On supprime les fichiers de plus de ${deleteAgeFile}
                           mais on garde les ${keepMostRecentFile} fichier plus récent ou les ${keepMostRecentSize} plus récent-->
@@ -85,8 +88,10 @@
 
         <!-- DEBUG FILE -->
         <RollingFile name="DebugFile"
-                     fileName="${baseDir}/${debugFileName}.log"
-                     filePattern="${baseDir}/$${date:yyyy-MM}/${debugFileName}_%d{dd-MM-yyyy}_%i.log.gz">
+                     fileName="${logBaseDir}/${debugFileName}.log"
+                     filePattern="${logBaseDir}/$${date:yyyy-MM}/${debugFileName}_%d{dd-MM-yyyy}_%i.log.gz">
+            <!-- DebugFile ne recoit que le niveau debug et trace -->
+            <LevelRangeFilter minLevel="DEBUG" maxLevel="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
@@ -100,7 +105,7 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="${baseDir}/" maxDepth="2">
+                <Delete basePath="${logBaseDir}/" maxDepth="2">
                     <IfFileName glob="*/${debugFileName}_*.log.gz">
                         <!-- On supprime les fichiers de plus de ${deleteAgeFile}
                          mais on garde les ${keepMostRecentFile} fichiers plus récent ou les ${keepMostRecentSize} plus récent-->
@@ -117,18 +122,10 @@
     </Appenders>
 
     <Loggers>
-        <!-- On décrit l'utilisation des supports -->
-
-        <Logger name="fr.abes" level="debug">
-            <!-- Pour les paquets dans fr.abes, on écrit un journal pour les erreurs et un journal pour les boggues -->
-            <AppenderRef ref="ErrorFile" level="error" />
-            <AppenderRef ref="DebugFile" level="debug" />
-        </Logger>
-
-        <!-- Pour le niveau INFO, on écrit dans la console et le log -->
-        <Root level="info">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="LogFile"/>
+        <Root level="all">
+            <AppenderRef ref="DebugFile" />
+            <AppenderRef ref="LogFile" />
+            <AppenderRef ref="ErrorFile" />
         </Root>
     </Loggers>
 

@@ -1,10 +1,12 @@
-package fr.abes.helloabes.web.controller;
+package fr.abes.helloabes.web.controller.mockito;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.core.service.impl.OrderServiceImpl;
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
-import fr.abes.helloabes.web.ApplicationTestBase;
+import fr.abes.helloabes.web.controller.PublicController;
+import fr.abes.helloabes.web.controller.SecuredController;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -20,38 +23,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-public class SecuredControllerTestBase extends ApplicationTestBase {
+public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase {
 
     @InjectMocks
     protected SecuredController securedController;
+
     @InjectMocks
     protected PublicController publicController;
 
     @Before
     public void setup(){
-        publicController = new PublicController(new UserServiceImpl(userRepository,encoder()),authenticationManager,jwtUtility);
+        publicController = new PublicController(new UserServiceImpl(userDao,encoder()),authenticationManager,jwtUtility);
+        securedController = new SecuredController(new UserServiceImpl(userDao,encoder()),new OrderServiceImpl(orderDao));
     }
 
     /**
-     * Enregistre et authentifie l'utilisateur
+     * Authentifie l'utilisateur
      * @param myUser AppUser Utilisateur à enregistrer et à authentifier
      * @return String jeton
      * @throws Exception
      */
-    protected String createAndAuthenticate(AppUser myUser) throws Exception {
-      
-        AppUser myTestingUser = new AppUser(myUser.getUserName(),myUser.getPassWord());
+    protected String authenticate(AppUser myUser) throws Exception {
+
         AppUser myDataBaseUser = getDataBaseUser(myUser);
 
         ObjectMapper Obj = new ObjectMapper();
-        String json = Obj.writeValueAsString(myTestingUser);
+        String json = Obj.writeValueAsString(myUser);
 
-        Mockito.when(userRepository.findByUserName("admin")).thenReturn(myDataBaseUser);
+        Mockito.when(userDao.findByUserName(myUser.getUserName())).thenReturn(myDataBaseUser);
 
         MvcResult result = mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON).content(json)).andReturn();
 
-        return JsonPath.read(result.getResponse().getContentAsString(), "$.accessToken");       
+        return JsonPath.read(result.getResponse().getContentAsString(), "$.accessToken");
     }
 
     @Test
@@ -66,12 +70,12 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
      */
     @Test
     public void wrongRouteGetMethod() throws Exception {
-        mockMvc.perform(get("/secured/test"))
+        mockMvc.perform(get("/api/secured/test"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
-                .andExpect(jsonPath("$.path").value("/secured/test"));
+                .andExpect(jsonPath("$.path").value("/api/secured/test"));
     }
 
     /**
@@ -80,11 +84,11 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
      */
     @Test
     public void wrongRoutePostMethod() throws Exception {
-        mockMvc.perform(post("/secured/test"))  .andExpect(status().isUnauthorized())
+        mockMvc.perform(post("/api/secured/test"))  .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
-                .andExpect(jsonPath("$.path").value("/secured/test"));
+                .andExpect(jsonPath("$.path").value("/api/secured/test"));
     }
 
     /**
@@ -93,11 +97,11 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
      */
     @Test
     public void wrongRoutePutMethod() throws Exception {
-        mockMvc.perform(put("/secured/test"))  .andExpect(status().isUnauthorized())
+        mockMvc.perform(put("/api/secured/test"))  .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
-                .andExpect(jsonPath("$.path").value("/secured/test"));
+                .andExpect(jsonPath("$.path").value("/api/secured/test"));
     }
 
     /**
@@ -106,11 +110,11 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
      */
     @Test
     public void wrongRouteDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/secured/test"))  .andExpect(status().isUnauthorized())
+        mockMvc.perform(delete("/api/secured/test"))  .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
-                .andExpect(jsonPath("$.path").value("/secured/test"));
+                .andExpect(jsonPath("$.path").value("/api/secured/test"));
     }
 
     /**
@@ -118,11 +122,12 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
      * @throws Exception
      */
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-mockito")
     public void wrongRouteAuthenticateGetMethod() throws Exception {
-        AppUser adminUser = getAdminUser();
-        String token = createAndAuthenticate(adminUser);
+        AppUser adminUser = getTotoUser();
+        String token = authenticate(adminUser);
 
-        mockMvc.perform(get("/secured/test")
+        mockMvc.perform(get("/api/secured/test")
                 .header("Authorization","Bearer "+token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
@@ -136,11 +141,12 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
      * @throws Exception
      */
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-mockito")
     public void wrongRouteAuthenticatePostMethod() throws Exception {
-        AppUser adminUser = getAdminUser();
-        String token = createAndAuthenticate(adminUser);
+        AppUser adminUser = getTotoUser();
+        String token = authenticate(adminUser);
 
-        mockMvc.perform(post("/secured/test")
+        mockMvc.perform(post("/api/secured/test")
                 .header("Authorization","Bearer "+token))
                 .andExpect(status().isNotFound()).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
@@ -154,11 +160,12 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
      * @throws Exception
      */
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-mockito")
     public void wrongRouteAuthenticatePutMethod() throws Exception {
-        AppUser adminUser = getAdminUser();
-        String token = createAndAuthenticate(adminUser);
+        AppUser adminUser = getTotoUser();
+        String token = authenticate(adminUser);
 
-        mockMvc.perform(put("/secured/test")
+        mockMvc.perform(put("/api/secured/test")
                 .header("Authorization","Bearer "+token))
                 .andExpect(status().isNotFound()).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
@@ -172,11 +179,12 @@ public class SecuredControllerTestBase extends ApplicationTestBase {
      * @throws Exception
      */
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-mockito")
     public void wrongRouteAuthenticateDeleteMethod() throws Exception {
-        AppUser adminUser = getAdminUser();
-        String token = createAndAuthenticate(adminUser);
+        AppUser adminUser = getTotoUser();
+        String token = authenticate(adminUser);
 
-        mockMvc.perform(delete("/secured/test")
+        mockMvc.perform(delete("/api/secured/test")
                 .header("Authorization","Bearer "+token))
                 .andExpect(status().isNotFound()).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))

@@ -1,13 +1,14 @@
 package fr.abes.helloabes.web;
 
 import fr.abes.helloabes.HelloABESApplication;
-import fr.abes.helloabes.core.dao.IUserDao;
+import fr.abes.helloabes.core.dao.IOrderDao;
+import fr.abes.helloabes.core.dao.IProductDao;
+import fr.abes.helloabes.core.dao.ISupplierDao;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.web.configuration.JwtUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,8 +27,14 @@ public class ApplicationTestBase {
         return new BCryptPasswordEncoder();
     }
 
-    @MockBean
-    protected IUserDao userRepository;
+    @Autowired
+    protected IOrderDao orderDao;
+
+    @Autowired
+    protected ISupplierDao supplierDao;
+
+    @Autowired
+    protected IProductDao productDao;
 
     @Autowired
     protected JwtUtility jwtUtility;
@@ -36,25 +43,15 @@ public class ApplicationTestBase {
     protected AuthenticationManager authenticationManager;
 
     @Autowired
-    protected MockMvc mockMvc;   
+    protected MockMvc mockMvc;
 
     /**
      * Retourne un utilisateur avec un nom d'utilisateur admin
      * @return AppUser
      */
-    protected static AppUser getAdminUser() {
+    protected static AppUser getTotoUser() {
         final AppUser user;
-        user = new AppUser("admin", "@adminADMIN1234");
-        return user;
-    }
-
-    /**
-     * Retourne un utilisateur avec un nom d'utilisateur test
-     * @return AppUser
-     */
-    protected static AppUser getTestUser() {
-        final AppUser user;
-        user = new AppUser("test", "@testTEST1234");
+        user = new AppUser("toto", "@Totototo85");
         return user;
     }
 
@@ -68,7 +65,7 @@ public class ApplicationTestBase {
     protected AppUser getDataBaseUser(AppUser myUser) {
         final AppUser myDataBaseUser = new AppUser(myUser.getUserName(),myUser.getPassWord());
 
-        myDataBaseUser.setIdentityNumber(1);
+        myDataBaseUser.setIdentityNumber(5);
         myDataBaseUser.setPassWord(encoder().encode(myUser.getPassWord()));
         assertTrue(encoder().matches(myUser.getPassWord(), myDataBaseUser.getPassWord()));
 

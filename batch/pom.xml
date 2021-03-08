@@ -41,6 +41,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-batch</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.batch</groupId>
@@ -63,6 +69,18 @@
     <!--     Configuration de la compilation                         -->
     <!-- =========================================================== -->
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.sql</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <!-- ======================================================= -->
             <!--     Compilation de l'application Spring                 -->

@@ -18,10 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Component
 public class UneTasklet implements Tasklet, StepExecutionListener  {
 
-	List<AppUser> users = new ArrayList<AppUser>();
+	List<AppUser> users = new ArrayList<>();
 
 	@Autowired
 	IUserService service;
@@ -36,11 +35,10 @@ public class UneTasklet implements Tasklet, StepExecutionListener  {
 
 		log.info("DANS LA TASKLET");
 
-
 		try
 		{
 			users = service.getAllUsers();
-
+			log.debug("Users list size ="+Integer.toString(users.size()));
 		}
 		catch (Exception e)
 		{

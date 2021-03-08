@@ -1,6 +1,9 @@
 package fr.abes.helloabes.core.dao;
 
 import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.core.entities.Order;
+import fr.abes.helloabes.core.entities.Product;
+import fr.abes.helloabes.core.entities.Supplier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class IUserDaoTest {
 
     @Autowired
-    private IUserDao userRepository;
+    private IUserDao userDao;
 
     protected static AppUser getAdminUser() {
         final AppUser user;
@@ -45,7 +48,7 @@ public class IUserDaoTest {
      */
     @Test
     public void saveAdminUser() {
-        AppUser myNewUser = userRepository.save(getAdminUser());
+        AppUser myNewUser = userDao.save(getAdminUser());
         assertEquals("admin", myNewUser.getUserName());
         assertEquals("@totoTOTO1234", myNewUser.getPassWord());
     }
@@ -56,15 +59,15 @@ public class IUserDaoTest {
     @Test
     public void saveAlreadyExistingUserName() {
 
-        userRepository.save(getAdminUser());
+        userDao.save(getAdminUser());
 
         AppUser mySecondUser = getAdminUser();
         mySecondUser.setPassWord("1234TOTOtoto@");
 
-        userRepository.save(mySecondUser);
+        userDao.save(mySecondUser);
 
         Exception exception = assertThrows(IncorrectResultSizeDataAccessException.class, () -> {
-            userRepository.findByUserName("admin");
+            userDao.findByUserName("admin");
         });
     }
 
@@ -77,7 +80,7 @@ public class IUserDaoTest {
         myUser.setUserName(null);
 
         Exception exception = assertThrows(ConstraintViolationException.class, () -> {
-            userRepository.save(myUser);
+            userDao.save(myUser);
         });
 
         String expectedMessage = "Le nom d'utilisateur ne doit pas être null";
@@ -95,7 +98,7 @@ public class IUserDaoTest {
         myUser.setUserName("");
 
         Exception exception = assertThrows(ConstraintViolationException.class, () -> {
-            userRepository.save(myUser);
+            userDao.save(myUser);
         });
 
         String expectedMessage = "Le nom d'utilisateur ne doit pas être vide";
@@ -113,7 +116,7 @@ public class IUserDaoTest {
         myUser.setPassWord(null);
 
         Exception exception = assertThrows(ConstraintViolationException.class, () -> {
-            userRepository.save(myUser);
+            userDao.save(myUser);
         });
 
         String expectedMessage = "Le mot de passe ne doit pas être null";
@@ -130,7 +133,7 @@ public class IUserDaoTest {
 
         Exception exception = assertThrows(ConstraintViolationException.class, () -> {
             AppUser myUser = new AppUser("admin", "admin");
-            userRepository.save(myUser);
+            userDao.save(myUser);
         });
 
         String expectedMessage = "Le mot de passe ne respecte pas les règles de sécurité";
@@ -144,9 +147,9 @@ public class IUserDaoTest {
      */
     @Test
     public void findExistUserByUserName() {
-        userRepository.save(getAdminUser());
+        userDao.save(getAdminUser());
 
-        AppUser myCandidate = userRepository.findByUserName("admin");
+        AppUser myCandidate = userDao.findByUserName("admin");
         assertEquals("admin", myCandidate.getUserName());
         assertEquals("@totoTOTO1234", myCandidate.getPassWord());
     }
@@ -156,10 +159,10 @@ public class IUserDaoTest {
      */
     @Test
     public void findNotExistsUserByUserName() {
-        userRepository.save(getAdminUser());
+        userDao.save(getAdminUser());
 
-        AppUser myCandidate = userRepository.findByUserName("corentin");
+        AppUser myCandidate = userDao.findByUserName("corentin");
         assertNull(myCandidate);
     }
-
+    
 }

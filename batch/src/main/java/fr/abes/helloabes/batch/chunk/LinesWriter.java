@@ -20,10 +20,11 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
 
     @Value("${FILE.OUT.PUT}")
     private String source;
-    PrintWriter out;
-
+    private PrintWriter out;
+    private Long counTer;
     @Override
     public void beforeStep(StepExecution stepExecution) {
+        counTer = 0L;
         try {
             out = new PrintWriter(new FileWriter(source));
         } catch (IOException e) {
@@ -39,6 +40,7 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
         for (String line : lines) {
 			stringBuilder.append(line + "...");
             out.println(line);
+            counTer++;
         }
 		log.info("dans le writer : " + stringBuilder.toString());
 
@@ -46,6 +48,7 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
 	
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
+        out.println(String.format("===== Il y a %s utilisateurs dans la base =====", counTer));
         out.close();
         return ExitStatus.COMPLETED;
     }
