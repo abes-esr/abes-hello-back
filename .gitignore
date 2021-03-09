@@ -20,6 +20,7 @@ target/
 *.iws
 *.iml
 *.ipr
+*.gdsl
 
 ### NetBeans ###
 /nbproject/private/
@@ -36,4 +37,7 @@ build/
 
 ### Logs ###
 /logs/
+
+### Jenkins ###
+src/*.gdsl
 

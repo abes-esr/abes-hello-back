@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
-public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
+public class SecurityConfigurer extends WebSecurityConfigurerAdapter { 
     
     private JwtAuthenticationEntryPoint unauthorizedHandler;
 
@@ -73,12 +73,11 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests().antMatchers("/secured/**").authenticated()
+                .authorizeRequests().antMatchers("/api/secured/**").authenticated()
                 .and().exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
 
     }
 

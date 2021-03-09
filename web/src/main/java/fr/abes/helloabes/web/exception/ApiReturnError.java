@@ -36,4 +36,12 @@ public class ApiReturnError {
         this.message = message;
         this.debugMessage = ex.getLocalizedMessage();
     }
+
+    ApiReturnError(HttpStatus status, String message) {
+        this();
+        this.status = status;
+        this.message = message;
+
+    }
+
 }

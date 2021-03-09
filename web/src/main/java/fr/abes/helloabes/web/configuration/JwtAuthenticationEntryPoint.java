@@ -2,6 +2,7 @@ package fr.abes.helloabes.web.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.abes.helloabes.web.exception.ApplicationError;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private void sendInternalServerError(String urlPath, HttpServletResponse httpServletResponse) throws IOException{
 
         ObjectMapper mapper = new ObjectMapper();
-        ApplicationError errorMessageHandler = new ApplicationError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"INTERNAL_SERVER_ERROR",urlPath);
+        ApplicationError errorMessageHandler = new ApplicationError(HttpStatus.INTERNAL_SERVER_ERROR,"An internal error occurred",urlPath);
         String json = mapper.findAndRegisterModules().writeValueAsString(errorMessageHandler);
         httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         httpServletResponse.setContentType("application/json");
@@ -38,7 +39,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private void sendForbiddenError(String urlPath, HttpServletResponse httpServletResponse) throws IOException{
 
         ObjectMapper mapper = new ObjectMapper();
-        ApplicationError errorMessageHandler = new ApplicationError(HttpServletResponse.SC_FORBIDDEN,"FORBIDDEN",urlPath);
+        ApplicationError errorMessageHandler = new ApplicationError(HttpStatus.FORBIDDEN,"Access denied",urlPath);
         String json = mapper.findAndRegisterModules().writeValueAsString(errorMessageHandler);
         httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
         httpServletResponse.setContentType("application/json");
@@ -50,7 +51,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private void sendUnAuthorizedError(String urlPath, HttpServletResponse httpServletResponse) throws IOException{
 
         ObjectMapper mapper = new ObjectMapper();
-        ApplicationError errorMessageHandler = new ApplicationError(HttpServletResponse.SC_UNAUTHORIZED,"UNAUTHORIZED",urlPath);
+        ApplicationError errorMessageHandler = new ApplicationError(HttpStatus.UNAUTHORIZED,"This ressource requires an authentification",urlPath);
         String json = mapper.findAndRegisterModules().writeValueAsString(errorMessageHandler);
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         httpServletResponse.setContentType("application/json");

@@ -1,10 +1,14 @@
 package fr.abes.helloabes.batch.chunk;
 
+import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.core.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,12 +18,15 @@ import java.util.List;
 @Slf4j
 public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
 
-    PrintWriter out;
-
+    @Value("${FILE.OUT.PUT}")
+    private String source;
+    private PrintWriter out;
+    private Long counTer;
     @Override
     public void beforeStep(StepExecution stepExecution) {
+        counTer = 0L;
         try {
-            out = new PrintWriter(new FileWriter("C:\\dev\\abes-hello\\res.txt"));
+            out = new PrintWriter(new FileWriter(source));
         } catch (IOException e) {
             log.error(e.toString());
         }
@@ -33,6 +40,7 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
         for (String line : lines) {
 			stringBuilder.append(line + "...");
             out.println(line);
+            counTer++;
         }
 		log.info("dans le writer : " + stringBuilder.toString());
 
@@ -40,6 +48,7 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
 	
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
+        out.println(String.format("===== Il y a %s utilisateurs dans la base =====", counTer));
         out.close();
         return ExitStatus.COMPLETED;
     }

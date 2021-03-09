@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class JwtUtility {
         header.setType("JWT");
         return Jwts.builder().setClaims(claims).setSubject(subject).setHeader((Map<String, Object>)
                 header).setIssuer("ABES").setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(addHoursToDate(new Date(System.currentTimeMillis()),1))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 
@@ -55,7 +56,7 @@ public class JwtUtility {
      */
     private Claims extractAllClaims(String token) {
         /**
-         * TODO Corriger pour attraper io.jsonwebtoken.ExpiredJwtException
+         *
          * Actuellement cela provoque une erreur interne 500
          */
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
@@ -136,6 +137,17 @@ public class JwtUtility {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-
+    /**
+     * Ajoute un nombre d'heure à une date
+     * @param date Date date initiale
+     * @param hours int nombre d'heure à ajouter
+     * @return Date date avec le nombre d'heure en plus
+     */
+    public Date addHoursToDate(Date date, int hours) {       
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR_OF_DAY, hours);
+        return calendar.getTime();
+    }
 
 }
