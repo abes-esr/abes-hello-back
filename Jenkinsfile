@@ -20,7 +20,9 @@ node {
     def ENV
     def serverHostnames = []
     def serverCredentials = []
+    def isBuildAction
     def executeTests
+    def isDeployAction
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
@@ -34,6 +36,7 @@ node {
                             numToKeepStr: '5')
             ),
             parameters([
+                    choice(choices: ['Compiler', 'Compiler & Deployer'], description: 'Que voulez-vous faire ?', name: 'action'),
                     gitParameter(
                             branch: '',
                             branchFilter: 'origin/(.*)',
@@ -45,28 +48,55 @@ node {
                             sortMode: 'DESCENDING_SMART',
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
-                    choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV'),
-                    booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests')
+                    booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests'),
+                    choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV')
             ])
     ])
 
     stage('Set environnement variables') {
         try {
+
+            // Java
             env.JAVA_HOME = "${tool 'Open JDK 11'}"
             env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
+            // Maven
             maventool = tool 'Maven 3.3.9'
             rtMaven = Artifactory.newMavenBuild()
             server = Artifactory.server '-1137809952@1458918089773'
             rtMaven.tool = 'Maven 3.3.9'
             rtMaven.opts = '-Xms1024m -Xmx4096m'
 
+            // Action a faire
+            if (params.action == null) {
+                isBuildAction = false
+                isDeployAction = false
+            } else if (params.action == 'Compiler') {
+                isBuildAction = true
+                isDeployAction = false
+            } else if (params.action == 'Compiler & Deployer') {
+                isBuildAction = true
+                isDeployAction = true
+            }
+            echo "isBuildAction =  ${isBuildAction}"
+            echo "isDeployAction =  ${isDeployAction}"
+
+            // Branche a deployer
             if (params.BRANCH_TAG == null) {
                 throw new Exception("Variable BRANCH_TAG is null")
             } else {
                 echo "Branch to deploy =  ${params.BRANCH_TAG}"
             }
 
+            // Booleen d'execution des tests
+            if (params.executeTests == null) {
+                executeTests = false
+            } else {
+                executeTests = params.executeTests
+            }
+            echo "executeTests =  ${executeTests}"
+
+            // Environnement de deploiement
             if (params.ENV == null) {
                 throw new Exception("Variable ENV is null")
             } else {
@@ -96,14 +126,6 @@ node {
                 serverCredentials.add('cirse2-prod-ssh-key')
             }
 
-            if (params.executeTests == null) {
-                executeTests = false
-            } else {
-                executeTests = params.executeTests
-            }
-
-            echo "executeTests =  ${executeTests}"
-
         } catch (e) {
             currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
             notifySlack(slackChannel,e.getLocalizedMessage())
@@ -129,245 +151,255 @@ node {
         }
     }
 
-    if ("${executeTests}" == 'true') {
-        stage('test') {
+    if ("${isBuildAction}" == 'true') {
+        // Compilation du code
+
+        if ("${executeTests}" == 'true') {
+            // Execution des tests
+
+            stage('test') {
+                try {
+
+                    rtMaven.run pom: 'pom.xml', goals: 'clean test'
+                    junit allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml'
+
+                } catch (e) {
+                    currentBuild.result = hudson.model.Result.UNSTABLE.toString()
+                    notifySlack(slackChannel, e.getLocalizedMessage())
+                    // Si les tests ne passent pas, on mets le build en UNSTABLE et on continue
+                    //throw e
+                }
+            }
+        } else {
+            echo "Tests are skipped"
+        }
+
+        stage('edit-properties') {
             try {
-
-                rtMaven.run pom: 'pom.xml', goals: 'clean test'
-                junit allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml'
-
-            } catch (e) {
-                currentBuild.result = hudson.model.Result.UNSTABLE.toString()
-                notifySlack(slackChannel,e.getLocalizedMessage())
-                // Si les tests ne passent pas, on mets le build en UNSTABLE et on continue
-                //throw e
-            }
-        }
-    } else {
-        echo "Tests are skipped"
-    }
-
-    stage('edit-properties') {
-        try {
-            if (ENV == 'DEV') {
-                withCredentials([
-                        usernamePassword(credentialsId: 'helloabes.database', passwordVariable: 'pass', usernameVariable: 'username')
-                        //string(credentialsId: 'helloabes.oracle', variable: 'url')
-                ]) {
-                    echo 'Edition application-dev.properties'
-                    echo "--------------------------"
-
-                    original = readFile "web/src/main/resources/application-dev.properties"
-                    newconfig = original
-
-                    newconfig = newconfig.replaceAll("spring.datasource.username=sa", "spring.datasource.username=${username}")
-                    newconfig = newconfig.replaceAll("spring.datasource.password=password", "spring.datasource.password=${pass}")
-
-                    writeFile file: "web/src/main/resources/application-dev.properties", text: "${newconfig}"
-                }
-            }
-
-            if (ENV == 'TEST') {
-                withCredentials([
-                        usernamePassword(credentialsId: 'helloabes.database', passwordVariable: 'pass', usernameVariable: 'username')
-                        //string(credentialsId: 'helloabes.oracle', variable: 'url')
-                ]) {
-                    echo 'Edition application-test.properties'
-                    echo "--------------------------"
-
-                    original = readFile "web/src/main/resources/application-test.properties"
-                    newconfig = original
-
-                    newconfig = newconfig.replaceAll("spring.datasource.username=sa", "spring.datasource.username=${username}")
-                    newconfig = newconfig.replaceAll("spring.datasource.password=password", "spring.datasource.password=${pass}")
-
-                    writeFile file: "web/src/main/resources/application-test.properties", text: "${newconfig}"
-                }
-            }
-
-            if (ENV == 'PROD') {
-                withCredentials([
-                        usernamePassword(credentialsId: 'helloabes.database', passwordVariable: 'pass', usernameVariable: 'username')
-                        //string(credentialsId: 'helloabes.oracle', variable: 'url')
-                ]) {
-                    echo 'Edition application-prod.properties'
-                    echo "--------------------------"
-
-                    original = readFile "web/src/main/resources/application-prod.properties"
-                    newconfig = original
-
-                    newconfig = newconfig.replaceAll("spring.datasource.username=sa", "spring.datasource.username=${username}")
-                    newconfig = newconfig.replaceAll("spring.datasource.password=password", "spring.datasource.password=${pass}")
-
-                    writeFile file: "web/src/main/resources/application-prod.properties", text: "${newconfig}"
-                }
-            }
-
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
-        }
-    }
-
-    stage('compile-package') {
-        try {
-            if (ENV == 'DEV') {
-                echo 'Compile for dev profile'
-                echo "--------------------------"
-
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pdev"
-            }
-
-            if (ENV == 'TEST') {
-                echo 'Compile for test profile'
-                echo "--------------------------"
-
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Ptest"
-            }
-
-            if (ENV == 'PROD') {
-                echo 'Compile for prod profile'
-                echo "--------------------------"
-
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pprod"
-            }
-
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
-        }
-    }
-
-    //stage('sonarqube analysis'){
-    //   withSonarQubeEnv('SonarQube Server2'){ cf : jenkins/configuration/sonarQube servers ==> between the quotes put the name we gave to the server
-    //      sh "${maventool}/bin/mvn sonar:sonar"
-    //  }
-    // }
-
-    stage('artifact') {
-        try {
-            archive "${warDir}${warName}.war"
-
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
-        }
-    }
-
-    stage ('stop tomcat'){
-        for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
-            try {
-                sshagent(credentials: ["${serverCredentials[i]}"]) {
+                if (ENV == 'DEV') {
                     withCredentials([
-                            usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
-                            string(credentialsId: "${serverHostnames[i]}", variable: 'hostname'),
-                            string(credentialsId: 'service.status', variable: 'status'),
-                            string(credentialsId: 'service.stop', variable: 'stop'),
-                            string(credentialsId: 'service.start', variable: 'start')
+                            usernamePassword(credentialsId: 'helloabes.database', passwordVariable: 'pass', usernameVariable: 'username')
+                            //string(credentialsId: 'helloabes.oracle', variable: 'url')
                     ]) {
-                        echo "Stop service on ${serverHostnames[i]}"
+                        echo 'Edition application-dev.properties'
                         echo "--------------------------"
 
-                        try {
+                        original = readFile "web/src/main/resources/application-dev.properties"
+                        newconfig = original
 
-                            echo 'get service status'
-                            sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
+                        newconfig = newconfig.replaceAll("spring.datasource.username=sa", "spring.datasource.username=${username}")
+                        newconfig = newconfig.replaceAll("spring.datasource.password=password", "spring.datasource.password=${pass}")
 
-                            echo 'stop the service'
-                            sh "ssh -tt ${username}@${hostname} \"${stop} ${tomcatServiceName}\""
+                        writeFile file: "web/src/main/resources/application-dev.properties", text: "${newconfig}"
+                    }
+                }
 
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'maybe the service is not running'
+                if (ENV == 'TEST') {
+                    withCredentials([
+                            usernamePassword(credentialsId: 'helloabes.database', passwordVariable: 'pass', usernameVariable: 'username')
+                            //string(credentialsId: 'helloabes.oracle', variable: 'url')
+                    ]) {
+                        echo 'Edition application-test.properties'
+                        echo "--------------------------"
 
-                            echo 'we try to start the service'
+                        original = readFile "web/src/main/resources/application-test.properties"
+                        newconfig = original
+
+                        newconfig = newconfig.replaceAll("spring.datasource.username=sa", "spring.datasource.username=${username}")
+                        newconfig = newconfig.replaceAll("spring.datasource.password=password", "spring.datasource.password=${pass}")
+
+                        writeFile file: "web/src/main/resources/application-test.properties", text: "${newconfig}"
+                    }
+                }
+
+                if (ENV == 'PROD') {
+                    withCredentials([
+                            usernamePassword(credentialsId: 'helloabes.database', passwordVariable: 'pass', usernameVariable: 'username')
+                            //string(credentialsId: 'helloabes.oracle', variable: 'url')
+                    ]) {
+                        echo 'Edition application-prod.properties'
+                        echo "--------------------------"
+
+                        original = readFile "web/src/main/resources/application-prod.properties"
+                        newconfig = original
+
+                        newconfig = newconfig.replaceAll("spring.datasource.username=sa", "spring.datasource.username=${username}")
+                        newconfig = newconfig.replaceAll("spring.datasource.password=password", "spring.datasource.password=${pass}")
+
+                        writeFile file: "web/src/main/resources/application-prod.properties", text: "${newconfig}"
+                    }
+                }
+
+            } catch (e) {
+                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                notifySlack(slackChannel, e.getLocalizedMessage())
+                throw e
+            }
+        }
+
+        stage('compile-package') {
+            try {
+                if (ENV == 'DEV') {
+                    echo 'Compile for dev profile'
+                    echo "--------------------------"
+
+                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pdev"
+                }
+
+                if (ENV == 'TEST') {
+                    echo 'Compile for test profile'
+                    echo "--------------------------"
+
+                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Ptest"
+                }
+
+                if (ENV == 'PROD') {
+                    echo 'Compile for prod profile'
+                    echo "--------------------------"
+
+                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pprod"
+                }
+
+            } catch (e) {
+                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                notifySlack(slackChannel, e.getLocalizedMessage())
+                throw e
+            }
+        }
+
+        //stage('sonarqube analysis'){
+        //   withSonarQubeEnv('SonarQube Server2'){ cf : jenkins/configuration/sonarQube servers ==> between the quotes put the name we gave to the server
+        //      sh "${maventool}/bin/mvn sonar:sonar"
+        //  }
+        // }
+
+        stage('artifact') {
+            try {
+                archive "${warDir}${warName}.war"
+
+            } catch (e) {
+                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                notifySlack(slackChannel, e.getLocalizedMessage())
+                throw e
+            }
+        }
+    }
+
+    if ("${isDeployAction}" == 'true') {
+        // Deploiement sur les serveurs
+
+        stage('stop tomcat') {
+            for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
+                try {
+                    sshagent(credentials: ["${serverCredentials[i]}"]) {
+                        withCredentials([
+                                usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                                string(credentialsId: "${serverHostnames[i]}", variable: 'hostname'),
+                                string(credentialsId: 'service.status', variable: 'status'),
+                                string(credentialsId: 'service.stop', variable: 'stop'),
+                                string(credentialsId: 'service.start', variable: 'start')
+                        ]) {
+                            echo "Stop service on ${serverHostnames[i]}"
+                            echo "--------------------------"
+
+                            try {
+
+                                echo 'get service status'
+                                sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
+
+                                echo 'stop the service'
+                                sh "ssh -tt ${username}@${hostname} \"${stop} ${tomcatServiceName}\""
+
+                            } catch (e) {
+                                // Maybe the tomcat is not running
+                                echo 'maybe the service is not running'
+
+                                echo 'we try to start the service'
+                                sh "ssh -tt ${username}@${hostname} \"${start} ${tomcatServiceName}\""
+
+                                echo 'get service status'
+                                sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
+
+                                echo 'stop the service'
+                                sh "ssh -tt ${username}@${hostname} \"${stop} ${tomcatServiceName}\""
+                            }
+                        }
+                    }
+                } catch (e) {
+                    currentBuild.result = hudson.model.Result.FAILURE.toString()
+                    notifySlack(slackChannel, e.getLocalizedMessage())
+                    throw e
+                }
+            }
+        }
+
+        stage('deploy to tomcat') {
+            for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
+                try {
+                    sshagent(credentials: ["${serverCredentials[i]}"]) {
+                        withCredentials([
+                                usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                                string(credentialsId: "${serverHostnames[i]}", variable: 'hostname')
+                        ]) {
+                            echo "Deploy to ${serverHostnames[i]}"
+                            echo "--------------------------"
+
+                            sh "ssh -tt ${username}@${hostname} \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
+                            sh "scp ${warDir}${warName}.war ${username}@${hostname}:${tomcatWebappsDir}"
+                        }
+                    }
+                } catch (e) {
+                    currentBuild.result = hudson.model.Result.FAILURE.toString()
+                    notifySlack(slackChannel, e.getLocalizedMessage())
+                    throw e
+                }
+            }
+        }
+
+        stage('restart tomcat') {
+            for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
+                try {
+                    sshagent(credentials: ["${serverCredentials[i]}"]) {
+                        withCredentials([
+                                usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                                string(credentialsId: "${serverHostnames[i]}", variable: 'hostname'),
+                                string(credentialsId: 'service.status', variable: 'status'),
+                                string(credentialsId: 'service.start', variable: 'start')
+                        ]) {
+                            echo "Restart service on ${serverHostnames[i]}"
+                            echo "--------------------------"
+
+                            echo 'start service'
                             sh "ssh -tt ${username}@${hostname} \"${start} ${tomcatServiceName}\""
 
                             echo 'get service status'
                             sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
-
-                            echo 'stop the service'
-                            sh "ssh -tt ${username}@${hostname} \"${stop} ${tomcatServiceName}\""
                         }
                     }
+                } catch (e) {
+                    currentBuild.result = hudson.model.Result.FAILURE.toString()
+                    notifySlack(slackChannel, e.getLocalizedMessage())
+                    throw e
                 }
-            } catch(e) {
-                currentBuild.result = hudson.model.Result.FAILURE.toString()
-                notifySlack(slackChannel,e.getLocalizedMessage())
-                throw e
             }
         }
-    }
 
-    stage ('deploy to tomcat'){
-        for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
+        stage ('Artifactory configuration') {
             try {
-                sshagent(credentials: ["${serverCredentials[i]}"]) {
-                    withCredentials([
-                            usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
-                            string(credentialsId: "${serverHostnames[i]}", variable: 'hostname')
-                    ]) {
-                        echo "Deploy to ${serverHostnames[i]}"
-                        echo "--------------------------"
+                rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
+                buildInfo = Artifactory.newBuildInfo()
+                buildInfo = rtMaven.run pom: 'pom.xml', goals: '-U clean install -Dmaven.test.skip=true '
 
-                        sh "ssh -tt ${username}@${hostname} \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                        sh "scp ${warDir}${warName}.war ${username}@${hostname}:${tomcatWebappsDir}"
-                    }
-                }
+                rtMaven.deployer.deployArtifacts buildInfo
+                buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true'
+                buildInfo.env.capture = true
+                server.publishBuildInfo buildInfo
+
             } catch(e) {
                 currentBuild.result = hudson.model.Result.FAILURE.toString()
                 notifySlack(slackChannel,e.getLocalizedMessage())
                 throw e
             }
-        }
-    }
-
-    stage ('restart tomcat'){
-        for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
-            try {
-                sshagent(credentials: ["${serverCredentials[i]}"]) {
-                    withCredentials([
-                            usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
-                            string(credentialsId: "${serverHostnames[i]}", variable: 'hostname'),
-                            string(credentialsId: 'service.status', variable: 'status'),
-                            string(credentialsId: 'service.start', variable: 'start')
-                    ]) {
-                        echo "Restart service on ${serverHostnames[i]}"
-                        echo "--------------------------"
-
-                        echo 'start service'
-                        sh "ssh -tt ${username}@${hostname} \"${start} ${tomcatServiceName}\""
-
-                        echo 'get service status'
-                        sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
-                    }
-                }
-            } catch(e) {
-                currentBuild.result = hudson.model.Result.FAILURE.toString()
-                notifySlack(slackChannel,e.getLocalizedMessage())
-                throw e
-            }
-        }
-    }
-
-    stage ('Artifactory configuration') {
-        try {
-            rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-            buildInfo = Artifactory.newBuildInfo()
-            buildInfo = rtMaven.run pom: 'pom.xml', goals: '-U clean install -Dmaven.test.skip=true '
-
-            rtMaven.deployer.deployArtifacts buildInfo
-            buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true'
-            buildInfo.env.capture = true
-            server.publishBuildInfo buildInfo
-
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
         }
     }
 
