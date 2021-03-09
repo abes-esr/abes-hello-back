@@ -346,7 +346,7 @@ node {
                             echo "Deploy to ${serverHostnames[i]}"
                             echo "--------------------------"
 
-                            sh "ssh -tt ${username}@${hostname} \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
+                            sh "ssh -tt ${username}@${hostname} \"rm -rf ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
                             sh "scp ${warDir}${warName}.war ${username}@${hostname}:${tomcatWebappsDir}"
                         }
                     }
