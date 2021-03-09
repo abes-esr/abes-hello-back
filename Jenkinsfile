@@ -41,7 +41,7 @@ node {
                             branch: '',
                             branchFilter: 'origin/(.*)',
                             defaultValue: 'develop',
-                            description: 'Sélectionner la branche ou le tag à déployer',
+                            description: 'Sélectionner la branche ou le tag',
                             name: 'BRANCH_TAG',
                             quickFilterEnabled: false,
                             selectedValue: 'NONE',
