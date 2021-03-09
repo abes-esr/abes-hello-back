@@ -36,7 +36,7 @@ node {
                             numToKeepStr: '5')
             ),
             parameters([
-                    choice(choices: ['Compiler', 'Compiler & Deployer'], description: 'Que voulez-vous faire ?', name: 'action'),
+                    choice(choices: ['Compiler', 'Compiler & Deployer'], description: 'Que voulez-vous faire ?', name: 'ACTION'),
                     gitParameter(
                             branch: '',
                             branchFilter: 'origin/(.*)',
@@ -68,15 +68,17 @@ node {
             rtMaven.opts = '-Xms1024m -Xmx4096m'
 
             // Action a faire
-            if (params.action == null) {
+            if (params.ACTION == null) {
                 isBuildAction = false
                 isDeployAction = false
-            } else if (params.action == 'Compiler') {
+            } else if (params.ACTION == 'Compiler') {
                 isBuildAction = true
                 isDeployAction = false
-            } else if (params.action == 'Compiler & Deployer') {
+            } else if (params.ACTION == 'Compiler & Deployer') {
                 isBuildAction = true
                 isDeployAction = true
+            } else {
+                throw new Exception("Unable to decode variable ACTION")
             }
             echo "isBuildAction =  ${isBuildAction}"
             echo "isDeployAction =  ${isDeployAction}"
