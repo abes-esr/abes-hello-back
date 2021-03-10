@@ -22,57 +22,6 @@
     <name>Hello ABES Back</name>
     <description>Application d'exemple pour illustrer la politique de développement au sein de l'ABES</description>
 
-    <!-- ===================================================== -->
-    <!--     Proprietes du projet                              -->
-    <!-- ===================================================== -->
-    <properties>
-        <finalName>helloabes-${project.artifactId}-${project.version}</finalName>
-        <baseDir>./target/</baseDir>
-    </properties>
-
-    <!-- =========================================================== -->
-    <!--     Description des modules                                 -->
-    <!-- =========================================================== -->
-    <modules>
-        <module>core</module>
-        <module>web</module>
-        <module>batch</module>
-    </modules>
-    <packaging>pom</packaging>
-
-    <!-- =========================================================== -->
-    <!--     Profile                                                 -->
-    <!-- =========================================================== -->
-    <profiles>
-        <profile>
-            <id>localhost</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <spring.profiles.active>localhost</spring.profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <spring.profiles.active>dev</spring.profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>test</id>
-            <properties>
-                <spring.profiles.active>test</spring.profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <spring.profiles.active>prod</spring.profiles.active>
-            </properties>
-        </profile>
-    </profiles>
-
     <!-- =========================================================== -->
     <!--     Dependances heritees pour tous les modules.             -->
     <!-- =========================================================== -->
@@ -92,40 +41,12 @@
         </dependency>
 
     </dependencies>
-
-    <distributionManagement>
-        <site>
-            <id>abes</id>
-            <url>${url.doc.abes}doc${doc.root.path}/${doc.root.path}-${project.version}</url>
-        </site>
-    </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>artifactory-public</id>
-            <name>artifactory-public</name>
-            <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>artifactory-public</id>
-            <name>artifactory-public</name>
-            <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <!-- =========================================================== -->
-    <!--     Configuration de la compilation                         -->
-    <!-- =========================================================== -->
     <build>
-        <finalName>${finalName}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
+	<plugins>
+		<plugin>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-maven-plugin</artifactId>
+		</plugin>
+	</plugins>
     </build>
 </project>
