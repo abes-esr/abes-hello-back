@@ -1,15 +1,12 @@
 FROM maven:3-jdk-11 as build
 WORKDIR /workspace/app
- 
-COPY mvnw .
-COPY .mvn .mvn
+COPY src .
 COPY pom.xml .
-RUN ./mvnw dependency:go-offline
- 
-COPY src src
-RUN ./mvnw package -DskipTests
+RUN mvn dependency:go-offline
+# RUN mvn package -DskipTests
+RUN mvn -f pom.xml clean package
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
- 
+
 FROM openjdk:11-jre-alpine
 VOLUME /tmp
 ARG DEPENDENCY=/workspace/app/target/dependency
