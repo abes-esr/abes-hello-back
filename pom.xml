@@ -56,5 +56,37 @@
 			<artifactId>spring-boot-maven-plugin</artifactId>
 		</plugin>
 	</plugins>
-    </build>
+</build>
+<distributionManagement>
+    <site>
+        <id>abes</id>
+        <url>${url.doc.abes}doc${doc.root.path}/${doc.root.path}-${project.version}</url>
+    </site>
+</distributionManagement>
+<repositories>
+    <repository>
+        <id>artifactory-public</id>
+        <name>artifactory-public</name>
+        <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
+    </repository>
+</repositories>
+<pluginRepositories>
+    <pluginRepository>
+        <id>artifactory-public</id>
+        <name>artifactory-public</name>
+        <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
+    </pluginRepository>
+</pluginRepositories>
+<!-- =========================================================== -->
+<!--     Configuration de la compilation                         -->
+<!-- =========================================================== -->
+<build>
+    <finalName>${finalName}</finalName>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
 </project>
