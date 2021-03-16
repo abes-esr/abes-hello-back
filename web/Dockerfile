@@ -2,7 +2,7 @@ FROM maven:3-jdk-11 as build
 WORKDIR /workspace/app
 COPY src .
 COPY pom.xml .
-RUN mvn dependency:go-offline
+## RUN mvn dependency:go-offline
 ## RUN mvn package -DskipTests
 RUN mvn -Dmaven.test.skip=true clean package
 ## RUN mvn -f pom.xml clean package
