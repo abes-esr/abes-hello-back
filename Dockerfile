@@ -1,9 +1,10 @@
 FROM maven:3-jdk-11 as build
-WORKDIR /workspace/app
-COPY src .
-COPY pom.xml .
+WORKDIR /applis
+COPY * .
+#COPY pom.xml .
 ## RUN mvn dependency:go-offline
 ## RUN mvn package -DskipTests
+WORKDIR /applis/web
 RUN mvn -Dmaven.test.skip=true clean package
 ## RUN mvn -f pom.xml clean package
 #RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
