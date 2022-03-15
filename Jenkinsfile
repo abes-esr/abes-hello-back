@@ -107,7 +107,7 @@ node {
             }
 
             if (ENV == 'DEV') {
-                serverHostnames.add('hostname.server1-dev')
+                serverHostnames.add('hostname.server-back-1-dev')
                 serverCredentials.add('cirse1-dev-ssh-key')
 
                 serverHostnames.add('hostname.server2-dev')
