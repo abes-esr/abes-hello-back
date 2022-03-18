@@ -17,6 +17,7 @@
 	<!-- =========================================================== -->
 	<!--     Description du module                                   -->
 	<!-- =========================================================== -->
+	<groupId>fr.abes.helloabes</groupId>
 	<artifactId>web</artifactId>
 	<packaging>war</packaging>
 	<name>Web API</name>
@@ -29,9 +30,9 @@
 
 		<!-- === Module projet === -->
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>core</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
