@@ -75,7 +75,7 @@ docker run -d \
   --name abes-hello-batch \
   -e ABESHELLO_BATCH_CRON="0 * * * *" \
   -e ABESHELLO_BATCH_AT_STARTUP="1" \
-  abesesr/licencesnationales:develop-batch
+  abesesr/abes-hello:develop-batch
 ```
 
 Pour consulter les logs des deux conteneurs :
