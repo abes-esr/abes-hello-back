@@ -222,22 +222,6 @@
         </site>
     </distributionManagement>
 
-    <repositories>
-        <repository>
-            <id>artifactory-public</id>
-            <name>artifactory-public</name>
-            <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>artifactory-public</id>
-            <name>artifactory-public</name>
-            <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <!-- =========================================================== -->
     <!--     Configuration de la compilation                         -->
     <!-- =========================================================== -->
@@ -467,4 +451,8 @@
         </plugins>
 
     </build>
+    <scm>
+      <connection>scm:git:https://github.com/abes-esr/abes-hello-back.git</connection>
+      <tag>HEAD</tag>
+    </scm>
 </project>
