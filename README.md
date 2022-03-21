@@ -32,3 +32,16 @@ Il est configuré pour traiter les données par paquet de 10.
 Le processor fait appel à une méthode externe qui illustre l'utilisation du retry (on peut le configurer via l'annotation @Retry, elle permet d'essayer plusieurs fois un traitement qui est susceptible de renvoyer une erreur (par exemple un appel à un service web ou une connexion à une base de données).
 
 
+
+## Publier une nouvelle release de l'application
+
+Pour publier une nouvelle release (version) de l'application, voici comment procéder:
+1. Se rendre sur l'onglet "Actions" sur le dépôt github  
+   ![image](https://user-images.githubusercontent.com/328244/159044287-67c7131f-8663-4452-b7fa-55aa8c695692.png)
+2. Cliquer sur le workflow "Create release"  
+   ![image](https://user-images.githubusercontent.com/328244/159044427-d36ae0d6-51cc-4f69-a855-097c162ba100.png)
+3. Cliquez ensuite sur "Run workflow" sur la droite  
+   ![image](https://user-images.githubusercontent.com/328244/159044539-57b57fba-15b8-440d-94e7-1ee859566a04.png)
+4. Indiquez ensuite le numéro de la version à générer (doit respecter le sementic versionning) après avoir vérifié que votre numéro de version n'existe pas déjà dans la [liste des tags](./tags)  
+   ![image](https://user-images.githubusercontent.com/328244/159044729-e9cc0d7a-abe3-401f-a246-84e577670493.png)
+5. Validez et attendez que le build se termine dans le [workflow "build-test-pubtodockerhub"](./actions/workflows/build-test-pubtodockerhub.yml), ce qui aura pour conséquence  de générer et [publier sur dockerhub une image docker](https://hub.docker.com/r/abesesr/) ayant comme tag le numéro de version de votre release.
