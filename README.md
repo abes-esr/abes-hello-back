@@ -37,7 +37,7 @@ Le processor fait appel à une méthode externe qui illustre l'utilisation du re
 
 TODO : expliquer comment compiler et tester en local
 
-### Utilisation avec Docker
+### Utilisation en local avec Docker
 
 #### Génération des images docker
 
