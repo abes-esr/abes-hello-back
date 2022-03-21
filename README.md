@@ -66,8 +66,13 @@ https://git.abes.fr/depots/abes-hello-docker/ (TODO)
 
 Pour le déployer en local sur sa machine, une fois la génération des images terminée (cf section au dessus), voici les commandes que l'on peut utiliser (TODO, cette partie pourrait être améliorée en proposant un ``docker-compose.yml``):
 ```bash
+cd licencesnationales-back/
+
 docker run -d \
   --name abes-hello-web \
+  -e SPRING_PROFILES_ACTIVE=localhost \
+  -e SPRING_CONFIG_LOCATION=/config/ \
+  -v $(pwd)/web/src/main/resources/application-localhost.properties:/config/application-localhost.properties \
   -p 8080:8080 \
   abesesr/abes-hello:develop-web
 
@@ -75,8 +80,13 @@ docker run -d \
   --name abes-hello-batch \
   -e ABESHELLO_BATCH_CRON="0 * * * *" \
   -e ABESHELLO_BATCH_AT_STARTUP="1" \
+  -e SPRING_PROFILES_ACTIVE=localhost \
+  -e SPRING_CONFIG_LOCATION=/config/ \
+  -v $(pwd)/batch/src/main/resources/application-localhost.properties:/config/application-localhost.properties \
   abesesr/abes-hello:develop-batch
 ```
+Les fichiers de configurations spring sont injectés via un volume docker. Vous pouvez les modifier [ici pour le web](https://github.com/abes-esr/abes-hello-back/blob/main/batch/src/main/resources/application-localhost.properties) et [ici pour le batch](https://github.com/abes-esr/abes-hello-back/blob/main/batch/src/main/resources/application-localhost.properties) et relancer le conteneur pour qu'ils soient pris en compte.
+
 
 Pour consulter les logs des deux conteneurs :
 ```bash
