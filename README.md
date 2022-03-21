@@ -49,7 +49,7 @@ Les images docker sont générées automatiquement à chaque ``git push`` par la
 
 Il est aussi possible de générer ces images localement en tapant par exemple les commandes suivantes :
 ```bash
-cd licencesnationales-back/
+cd abes-hello-back/
 docker build . --target web-image -t abesesr/abes-hello:develop-web
 docker build . --target batch-image -t abesesr/abes-hello:develop-batch
 ```
@@ -66,7 +66,7 @@ https://git.abes.fr/depots/abes-hello-docker/ (TODO)
 
 Pour le déployer en local sur sa machine, une fois la génération des images terminée (cf section au dessus), voici les commandes que l'on peut utiliser (TODO, cette partie pourrait être améliorée en proposant un ``docker-compose.yml``):
 ```bash
-cd licencesnationales-back/
+cd abes-hello-back/
 
 docker run -d \
   --name abes-hello-web \
