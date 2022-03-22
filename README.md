@@ -1,5 +1,7 @@
 # abes-hello-back
 
+[![build-test-pubtodockerhub](https://github.com/abes-esr/abes-hello-back/actions/workflows/build-test-pubtodockerhub.yml/badge.svg)](https://github.com/abes-esr/abes-hello-back/actions/workflows/build-test-pubtodockerhub.yml) [![Docker Pulls](https://img.shields.io/docker/pulls/abesesr/abes-hello.svg)](https://hub.docker.com/r/abesesr/abes-hello/)
+
 Application exemple type "Hello World" qui illustre notre politique de développement avec des modèles pour la partie back : API et batch.
 
 Les fonctionalités mise en oeuvre dans ``abes-hello-back`` sont :
