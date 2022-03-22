@@ -1,8 +1,9 @@
 # abes-hello-back
 
-abes-hello-back est une application d'exemple qui a pour objectif d'illustrer la politique de développement au sein de l'ABES.
-Les fonctionalités mise en oeuvre dans 'abes-hello-back' sont :
-1. Un service web RESTful permettant d'obtenir un message public pour tous les utilisateurs et un message privé pour les utilisateurs authentifiés sur le  service.
+Application exemple type "Hello World" qui illustre notre politique de développement avec des modèles pour la partie back : API et batch.
+
+Les fonctionalités mise en oeuvre dans ``abes-hello-back`` sont :
+1. Un service web RESTful permettant d'obtenir un message public pour tous les utilisateurs et un message privé pour les utilisateurs authentifiés sur le  service
 2. Un service de tâches de fond 
 
 ## Développements
