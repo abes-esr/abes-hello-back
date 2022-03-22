@@ -8,7 +8,7 @@ Les fonctionalités mise en oeuvre dans ``abes-hello-back`` sont :
 1. Un service web RESTful permettant d'obtenir un message public pour tous les utilisateurs et un message privé pour les utilisateurs authentifiés sur le  service
 2. Un service de tâches de fond 
 
-Voir aussi le front : https://github.com/abes-esr/abes-hello-front
+Voir aussi le front ici : https://github.com/abes-esr/abes-hello-front
 
 ## Développements
 
