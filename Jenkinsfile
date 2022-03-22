@@ -107,24 +107,24 @@ node {
             }
 
             if (ENV == 'DEV') {
-                serverHostnames.add('hostname.server1-dev')
+                serverHostnames.add('hostname.server-back-1-dev')
                 serverCredentials.add('cirse1-dev-ssh-key')
 
-                serverHostnames.add('hostname.server2-dev')
+                serverHostnames.add('hostname.server-back-1-dev')
                 serverCredentials.add('cirse2-dev-ssh-key')
 
             } else if (ENV == 'TEST') {
-                serverHostnames.add('hostname.server1-test')
+                serverHostnames.add('hostname.server-back-1-test')
                 serverCredentials.add('cirse1-test-ssh-key')
 
-                serverHostnames.add('hostname.server2-test')
+                serverHostnames.add('hostname.server-back-2-test')
                 serverCredentials.add('cirse2-test-ssh-key')
 
             } else if (ENV == 'PROD') {
-                serverHostnames.add('hostname.server1-prod')
+                serverHostnames.add('hostname.server-back-1-prod')
                 serverCredentials.add('cirse1-prod-ssh-key')
 
-                serverHostnames.add('hostname.server2-prod')
+                serverHostnames.add('hostname.server-back-2-prod')
                 serverCredentials.add('cirse2-prod-ssh-key')
             }
 
