@@ -49,6 +49,11 @@ jobs:
             -DreleaseVersion=$NEW_TAG \
             -Darguments=-DskipTests \
             -DtagNameFormat="@{project.version}"
+          # merge la préparation de la nouvelle version sur develop
+          # (version X.X.X-SNAPSHOT)
+          git switch develop
+          git merge main
+          git push
 
 
       - name: 'Create the github release'
