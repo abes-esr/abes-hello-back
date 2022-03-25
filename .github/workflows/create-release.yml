@@ -2,6 +2,7 @@ name: 'Create release'
 
 on: 
   workflow_dispatch:
+    branches: [ main ]
     inputs:
       releaseVersion:
         description: 'Version de la release (semver)'
