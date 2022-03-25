@@ -53,7 +53,7 @@
 			</exclusions>
 		</dependency>
 
-		<!--- === Documentation API === -->
+		<!-- === Documentation API === -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
@@ -65,7 +65,7 @@
 			<version>2.9.2</version>
 		</dependency>
 
-		<!--- === Securite === -->
+		<!-- === Securite === -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -80,7 +80,7 @@
 			<version>0.9.1</version>
 		</dependency>
 
-		<!--- === Tests === -->
+		<!-- === Tests === -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

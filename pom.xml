@@ -198,7 +198,7 @@
     <!-- =========================================================== -->
     <dependencies>
 
-        <!--- === Annotations === -->
+        <!-- === Annotations === -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
