@@ -14,7 +14,7 @@
     <!-- ===================================================== -->
     <groupId>fr.abes.helloabes</groupId>
     <artifactId>helloabesbackoffice</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>Hello ABES Back</name>
     <description>Application d'exemple pour illustrer la politique de développement au sein de l'ABES</description>
 
@@ -79,7 +79,7 @@
             org.junit.vintage, org.assertj, org.powermock,
             org.junit.platform, org.mockito, org.opentest4j, junit
         </dependency.copy.exclude.groupIds>
-        <dependency.copy.exclude.artifactIds></dependency.copy.exclude.artifactIds>
+        <dependency.copy.exclude.artifactIds />
     </properties>
     <!-- ********************* DEPENDENCY MANAGEMENT ********************* -->
     <dependencyManagement>
@@ -453,6 +453,6 @@
     </build>
     <scm>
       <connection>scm:git:https://github.com/abes-esr/abes-hello-back.git</connection>
-      <tag>HEAD</tag>
+      <tag>1.0.0</tag>
     </scm>
 </project>
