@@ -110,6 +110,6 @@ Pour publier une nouvelle release (version) de l'application, voici comment proc
    ![image](https://user-images.githubusercontent.com/328244/159044427-d36ae0d6-51cc-4f69-a855-097c162ba100.png)
 3. Cliquez ensuite sur "Run workflow" sur la droite  
    ![image](https://user-images.githubusercontent.com/328244/159044539-57b57fba-15b8-440d-94e7-1ee859566a04.png)
-4. Indiquez ensuite le numéro de la version à générer (doit respecter le sementic versionning) après avoir vérifié que votre numéro de version n'existe pas déjà dans la [liste des tags](https://github.com/abes-esr/abes-hello-back/tags)  
+4. Choisisez la branche "main" et indiquez ensuite le numéro de la version à générer (doit respecter le sementic versionning) après avoir vérifié que votre numéro de version n'existe pas déjà dans la [liste des tags](https://github.com/abes-esr/abes-hello-back/tags)  
    ![image](https://user-images.githubusercontent.com/328244/159044729-e9cc0d7a-abe3-401f-a246-84e577670493.png)
 5. Validez et attendez que le build se termine dans le [workflow "build-test-pubtodockerhub"](https://github.com/abes-esr/abes-hello-back/actions/workflows/build-test-pubtodockerhub.yml), ce qui aura pour conséquence  de générer et [publier sur dockerhub une image docker](https://hub.docker.com/r/abesesr/abes-hello/) ayant comme tag le numéro de version de votre release.
