@@ -14,7 +14,7 @@
     <!-- ===================================================== -->
     <groupId>fr.abes.helloabes</groupId>
     <artifactId>helloabesbackoffice</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>Hello ABES Back</name>
     <description>Application d'exemple pour illustrer la politique de développement au sein de l'ABES</description>
 
@@ -453,6 +453,6 @@
     </build>
     <scm>
       <connection>scm:git:https://github.com/abes-esr/abes-hello-back.git</connection>
-      <tag>1.0.0</tag>
+      <tag>HEAD</tag>
     </scm>
 </project>
