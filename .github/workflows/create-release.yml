@@ -55,8 +55,10 @@ jobs:
             -DtagNameFormat="@{project.version}"
           # merge la préparation de la nouvelle version sur develop
           # (version X.X.X-SNAPSHOT)
+          # CURRENT_GIT_BRANCH vaut main ou master, c'est la où est créé la release
+          CURRENT_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           git switch develop
-          git merge main
+          git merge $CURRENT_GIT_BRANCH
           git push
 
 
