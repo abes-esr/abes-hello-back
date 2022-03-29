@@ -25,7 +25,7 @@ jobs:
         run: |
           CURRENT_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           echo $CURRENT_GIT_BRANCH
-          [[ $CURRENT_GIT_BRANCH" == "main" || "$CURRENT_GIT_BRANCH" == "master" ]] && exit 0 || exit 1
+          [[ "$CURRENT_GIT_BRANCH" == "main" || "$CURRENT_GIT_BRANCH" == "master" ]] && exit 0 || exit 1
           echo "test"
           exit 1
           
