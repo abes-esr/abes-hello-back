@@ -21,7 +21,9 @@ jobs:
           token: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
    
 
-
+      - name: 'Verify release is created on main or master git branch'
+        run: |
+          git rev-parse --abbrev-ref HEAD
       - name: 'Verify version is semver formatted (X.X.X)'
         env:
           NEW_TAG:  ${{ github.event.inputs.releaseVersion }}
