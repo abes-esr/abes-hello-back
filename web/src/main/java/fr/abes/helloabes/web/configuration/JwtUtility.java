@@ -22,7 +22,7 @@ import java.util.function.Function;
 public class JwtUtility {
 
     /** Clé privée de cryptage des jetons JWT. */
-    @Value("${secret.key}")
+    @Value("${jwt.token.secret}")
     private String secret ;
 
     /**
