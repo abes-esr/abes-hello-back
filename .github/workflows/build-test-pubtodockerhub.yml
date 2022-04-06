@@ -1,0 +1,48 @@
+name: "build-test-pubtodockerhub"
+
+# IMPORTANT : personnalisez cette variable pour que les images
+# de votre application soient pousées sur dockerhub
+# dans le repository ayant ce nom
+# exemple, si vous indiquez : abesesr/abes-hello
+#   alors l'image sera poussée sur https://hub.docker.com/r/abesesr/abes-hello
+env:
+  DOCKERHUB_IMAGE_PREFIX: abesesr/abes-hello
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build-test-pubtodockerhub:
+    runs-on: ubuntu-latest
+    steps:
+
+
+      - name: "Build: checkout source code"
+        uses: actions/checkout@v2          
+      - name: "Build: build docker image"
+        run: |
+          docker build . -t localimage:latest
+
+
+      - name: "Push: prepare version from git tags/branchs"
+        id: docker_tag_meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.DOCKERHUB_IMAGE_PREFIX }}
+      - name: "Push: login to DockerHub"
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin  
+      - name: "Push: push docker image"
+        if: github.event_name != 'pull_request'
+        run: |
+          DOCKER_TAGS="${{ steps.docker_tag_meta.outputs.tags }}"
+          for DOCKER_TAG in $DOCKER_TAGS
+          do
+            # publication de l'image pour l'API (module web)
+            docker build . --target web-image -t ${DOCKER_TAG}-web
+            docker push ${DOCKER_TAG}-web
+
+            # publication de l'image pour le batch
+            docker build . --target batch-image -t ${DOCKER_TAG}-batch
+            docker push ${DOCKER_TAG}-batch
+          done
