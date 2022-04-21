@@ -10,7 +10,7 @@
 	<parent>
 		<artifactId>helloabesbackoffice</artifactId>
 		<groupId>fr.abes.helloabes</groupId>
-		<version>1.0.5-SNAPSHOT</version>
+		<version>1.0.5</version>
 	</parent>
 
 	<!-- =========================================================== -->
