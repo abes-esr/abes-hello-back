@@ -8,7 +8,14 @@ name: "build-test-pubtodockerhub"
 env:
   DOCKERHUB_IMAGE_PREFIX: abesesr/abes-hello
 
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+  pull_request:
+  workflow_dispatch:
+
 
 jobs:
   build-test-pubtodockerhub:
