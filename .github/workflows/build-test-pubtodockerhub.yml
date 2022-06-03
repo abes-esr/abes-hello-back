@@ -2,13 +2,20 @@ name: "build-test-pubtodockerhub"
 
 # IMPORTANT : personnalisez cette variable pour que les images
 # de votre application soient pousées sur dockerhub
-# dans le repository ayant ce nom
+# dans l'organisation/image docker ayant ce nom
 # exemple, si vous indiquez : abesesr/abes-hello
 #   alors l'image sera poussée sur https://hub.docker.com/r/abesesr/abes-hello
 env:
   DOCKERHUB_IMAGE_PREFIX: abesesr/abes-hello
 
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+  pull_request:
+  workflow_dispatch:
+
 
 jobs:
   build-test-pubtodockerhub:
