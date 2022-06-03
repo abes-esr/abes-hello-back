@@ -50,14 +50,10 @@ jobs:
           # - pousser le tout sur le dépôt github
           git config --global user.email "github-action@noreply"
           git config --global user.name "Github Action"
-          #git config pull.rebase false
           mvn --batch-mode release:update-versions \
               -DautoVersionSubmodules=true \
               -DdevelopmentVersion=${NEW_TAG}-SNAPSHOT
-          
           git add -- pom.xml core/pom.xml batch/pom.xml web/pom.xml
-          git rev-parse --show-prefix
-          git status --porcelain .
           git commit -m '[Prepare version] [no ci]'
           git push
             
@@ -65,7 +61,6 @@ jobs:
           git commit --amend -m "Version $NEW_TAG"
           git tag $NEW_TAG
           git push origin $NEW_TAG
-          #gh release create $NEW_TAG --generate-notes
           
           # merge la préparation de la nouvelle version sur develop
           # (version X.X.X-SNAPSHOT)
