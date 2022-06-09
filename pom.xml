@@ -428,7 +428,7 @@
 
             </plugins>
         </pluginManagement>
-        <!-- ********************* PLUGINS ********************* -->
+        <!-- ********************* PLUGINS *********************
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -458,8 +458,8 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin> -->
-        </plugins>
+            </plugin>
+        </plugins> -->
 
     </build>
     <scm>
