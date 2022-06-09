@@ -24,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-@Table(name= "_user")
+@Table(name="app_user")
 public class AppUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
