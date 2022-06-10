@@ -10,7 +10,7 @@
 	<parent>
 		<artifactId>helloabesbackoffice</artifactId>
 		<groupId>fr.abes.helloabes</groupId>
-		<version>1.0.5-SNAPSHOT</version>
+		<version>1.0.9-SNAPSHOT</version>
 	</parent>
 
 	<!-- =========================================================== -->
@@ -111,6 +111,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.2.6.RELEASE</version>
 			</plugin>
 		</plugins>
 	</build>

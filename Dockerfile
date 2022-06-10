@@ -17,7 +17,8 @@ COPY ./pom.xml /build/pom.xml
 COPY ./core/   /build/core/
 COPY ./batch/  /build/batch/
 COPY ./web/    /build/web/
-RUN mvn -Dmaven.test.skip=false \
+RUN mvn --batch-mode \
+        -Dmaven.test.skip=false \
         -Duser.timezone=Europe/Paris \
         -Duser.language=fr \
         package

@@ -14,7 +14,7 @@
     <!-- ===================================================== -->
     <groupId>fr.abes.helloabes</groupId>
     <artifactId>helloabesbackoffice</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.9-SNAPSHOT</version>
     <name>Hello ABES Back</name>
     <description>Application d'exemple pour illustrer la politique de développement au sein de l'ABES</description>
 
@@ -44,7 +44,6 @@
         <maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
         <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
         <maven.install.plugin.version>3.0.0-M1</maven.install.plugin.version>
-        <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
         <maven.deploy.plugin.version>3.0.0-M1 </maven.deploy.plugin.version>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven.failsafe.plugin.vesrion>${maven.surefire.plugin.version}</maven.failsafe.plugin.vesrion>
@@ -415,9 +414,21 @@
                         <locale>fr</locale>
                     </configuration>
                 </plugin>
+
+                <!-- Pour que maven se charge de générer les releases -->
+                <plugin>
+                  <artifactId>maven-release-plugin</artifactId>
+                  <version>3.0.0-M5</version>
+                  <configuration>
+                    <pushChanges>no</pushChanges>
+                    <scmReleaseCommitComment>@{prefix} Version @{releaseLabel}</scmReleaseCommitComment>
+                    <scmCommentPrefix>[maven-release-plugin] [no ci]</scmCommentPrefix>
+                  </configuration>
+                </plugin>
+
             </plugins>
         </pluginManagement>
-        <!-- ********************* PLUGINS ********************* -->
+        <!-- ********************* PLUGINS *********************
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -448,11 +459,14 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
+        </plugins> -->
 
     </build>
     <scm>
       <connection>scm:git:https://github.com/abes-esr/abes-hello-back.git</connection>
       <tag>HEAD</tag>
     </scm>
+
+        
+        
 </project>
