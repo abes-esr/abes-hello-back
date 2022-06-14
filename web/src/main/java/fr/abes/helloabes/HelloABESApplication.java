@@ -164,25 +164,4 @@ public class HelloABESApplication extends SpringBootServletInitializer implement
 		log.error("Error Message!");
 	}
 
-
-	/**
-	 * Réglages des CORS (très ouverts) qui permettent au front en javascript (abes-hello-front) de s'y connecter
-	 * depuis nimporte quel domaine : localhost, dev, test, prod, ou même depuis d'autres domaines.
-	 */
-	@Bean
-	public FilterRegistrationBean simpleCorsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
-		// *** URL below needs to match the Vue client URL and port ***
-
-		// Config for allowing CORS for all (local, dev, test, prod, external ...)
-		config.setAllowedOriginPatterns(Collections.singletonList("*"));
-		config.setAllowedMethods(Collections.singletonList("*"));
-		config.setAllowedHeaders(Collections.singletonList("*"));
-		source.registerCorsConfiguration("/**", config);
-		FilterRegistrationBean bean = new FilterRegistrationBean<>(new CorsFilter(source));
-		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-		return bean;
-	}
 }
