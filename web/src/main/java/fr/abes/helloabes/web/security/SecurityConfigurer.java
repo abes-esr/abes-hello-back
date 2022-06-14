@@ -19,6 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 /**
  * La classe {@code SecurityConfigurer} permet de configurer la sécurité du service web.
  * Cette classe est basée sur le framework Spring avec le module Spring Security.
@@ -75,8 +77,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .cors().configurationSource((this::corsConfigurationSource))
-                .and()
+                .cors(withDefaults())
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests().antMatchers("/api/secured/**").authenticated()
@@ -91,13 +92,16 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
      * Réglages des CORS (très ouverts) qui permettent au front en javascript (abes-hello-front) de s'y connecter
      * depuis nimporte quel domaine : localhost, dev, test, prod, ou même depuis d'autres domaines.
      */
-    private CorsConfiguration corsConfigurationSource(HttpServletRequest httpServletRequest) {
+    @Bean
+    CorsConfigurationSource corsConfigurationSource(HttpServletRequest httpServletRequest) {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowedMethods(Collections.singletonList("*"));
-        return config;
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
 }
