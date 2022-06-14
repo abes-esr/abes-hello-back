@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    /**
+    /**♥
      * Récupère un utilisateur dans le dépot d'utilisateurs à partir de son nom d'utilisateur.
      * @param userName String Nom d'utilisateur à récupérer
      * @return Objet UserDetails de Spring Security
