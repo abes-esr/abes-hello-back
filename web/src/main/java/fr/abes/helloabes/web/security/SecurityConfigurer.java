@@ -3,8 +3,10 @@ package fr.abes.helloabes.web.security;
 import fr.abes.helloabes.web.configuration.JwtAuthenticationEntryPoint;
 import fr.abes.helloabes.web.configuration.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,13 +15,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
  * La classe {@code SecurityConfigurer} permet de configurer la sécurité du service web.
@@ -77,7 +76,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .cors(withDefaults())
+                .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests().antMatchers("/api/secured/**").authenticated()
@@ -93,15 +92,20 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
      * depuis nimporte quel domaine : localhost, dev, test, prod, ou même depuis d'autres domaines.
      */
     @Bean
-    CorsConfigurationSource corsConfigurationSource(HttpServletRequest httpServletRequest) {
+    public FilterRegistrationBean simpleCorsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("*"));
-        config.setAllowedHeaders(Collections.singletonList("*"));
+        // *** URL below needs to match the Vue client URL and port ***
+
+        // Config for allowing CORS for all (local, dev, test, prod, external ...)
+        config.setAllowedOriginPatterns(Collections.singletonList("*"));
         config.setAllowedMethods(Collections.singletonList("*"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        config.setAllowedHeaders(Collections.singletonList("*"));
         source.registerCorsConfiguration("/**", config);
-        return source;
+        FilterRegistrationBean bean = new FilterRegistrationBean<>(new CorsFilter(source));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
     }
 
 }
