@@ -53,6 +53,11 @@ FROM tomcat:9-jdk11 as web-image
 COPY --from=build-image /build/web/target/*.war /usr/local/tomcat/webapps/ROOT.war
 CMD [ "catalina.sh", "run" ]
 
+# pour avoir le manager de tomcat
+# https://hub.docker.com/r/bitnami/tomcat
+# FROM bitnami/tomcat:9.0 as web-image
+# COPY --from=build-image /build/web/target/*.war /opt/bitnami/tomcat/webapps/ROOT.war
+
 #FROM openjdk:11 as back-server
 #COPY --from=web-build /app/web/target/*.jar /app/licences-nationales.jar
 #ENTRYPOINT ["java","-jar","/app/licences-nationales.jar"]
