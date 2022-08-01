@@ -24,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-@Table(name= "_user")
+@Table(name="app_user")
 public class AppUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,7 +44,7 @@ public class AppUser implements Serializable {
     /** Mot de passe */
     @Column(name = "user_password")
     @NotNull(message = "Le mot de passe ne doit pas être null")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
+    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=]).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
     private String passWord;
 
     /** Liste des commandes de l'utilisateur */
