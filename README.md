@@ -44,64 +44,9 @@ TODO : expliquer comment compiler et tester en local
 
 ### Utilisation en local avec Docker
 
-#### Génération des images docker
+Voir https://github.com/abes-esr/abes-hello-docker qui propose les configurations docker pour déployer en local ou sur des env de dev, test ou prod.
 
-Les images docker sont générées automatiquement à chaque ``git push`` par la [chaîne d'intégration continue](https://github.com/abes-esr/abes-hello-back/actions/workflows/build-test-pubtodockerhub.yml). Les images suivantes sont [disponibles sur dockerhub](https://hub.docker.com/r/abesesr/abes-hello/tags) (idem pour ``batch``) :
-- ``abesesr/abes-hello:main-web`` : l'image du dernier git push sur la branche ``main`` ("tag glissant")
-- ``abesesr/abes-hellos:develop-web`` : l'image du dernier git push sur la branche ``develop`` ("tag glissant")
-- ``abesesr/abes-hello:X.X.X-web`` : l'image dont le n° de version est ``X.X.X``
-- ``abesesr/abes-hello:latest-web`` : l'image de la dernière version publiée
-
-Il est aussi possible de générer ces images localement en tapant par exemple les commandes suivantes :
-```bash
-cd abes-hello-back/
-docker build . --target web-image -t abesesr/abes-hello:develop-web
-docker build . --target batch-image -t abesesr/abes-hello:develop-batch
-```
-
-Remarque : utilisation de ``--target`` car le Dockerfile crée 3 images (multi-stage),
-- une première (``build-image``) pour la compilation de tout abes-hello-back (core, web et batch),
-- une seconde (``batch-image``) pour l'image du batch qui contient la crontab avec le JAR du batch de abes-hello,
-- et une troisième (``web-image``) pour l'image du web qui contient tomcat9 avec le WAR de abes-hello.
-
-#### Démarrage des conteneurs docker
-
-Pour un déploiement dans le SI de l'Abes, il faut se référer aux configurations suivantes :
-https://git.abes.fr/depots/abes-hello-docker/ (TODO)
-
-Pour le déployer en local sur sa machine, une fois la génération des images terminée (cf section au dessus), voici les commandes que l'on peut utiliser (TODO, cette partie pourrait être améliorée en proposant un ``docker-compose.yml``):
-```bash
-cd abes-hello-back/
-
-docker run -d \
-  --name abes-hello-web \
-  -e SPRING_PROFILES_ACTIVE=localhost \
-  -e SPRING_CONFIG_LOCATION=/config/ \
-  -v $(pwd)/web/src/main/resources/application-localhost.properties:/config/application-localhost.properties \
-  -p 8080:8080 \
-  abesesr/abes-hello:develop-web
-
-docker run -d \
-  --name abes-hello-batch \
-  -e ABESHELLO_BATCH_CRON="0 * * * *" \
-  -e ABESHELLO_BATCH_AT_STARTUP="1" \
-  -e SPRING_PROFILES_ACTIVE=localhost \
-  -e SPRING_CONFIG_LOCATION=/config/ \
-  -v $(pwd)/batch/src/main/resources/application-localhost.properties:/config/application-localhost.properties \
-  abesesr/abes-hello:develop-batch
-```
-Les fichiers de configurations spring sont injectés via un volume docker. Vous pouvez les modifier [ici pour le web](https://github.com/abes-esr/abes-hello-back/blob/main/batch/src/main/resources/application-localhost.properties) et [ici pour le batch](https://github.com/abes-esr/abes-hello-back/blob/main/batch/src/main/resources/application-localhost.properties) et relancer le conteneur pour qu'ils soient pris en compte.
-
-
-Pour consulter les logs des deux conteneurs :
-```bash
-docker logs -n 100 -f abes-hello-web
-docker logs -n 100 -f abes-hello-batch
-```
-
-
-
-## Publier une nouvelle release de l'application
+### Publier une nouvelle release de l'application
 
 Se référer à la procédure commune à toutes les applications opensource de l'Abes ici :  
 https://github.com/abes-esr/abes-politique-developpement/blob/main/01-Gestion%20du%20code%20source.md#publier-une-nouvelle-release-dune-application
