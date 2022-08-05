@@ -1,6 +1,6 @@
 ###
 # Image pour la compilation
-FROM maven:3-jdk-11 as build-image
+FROM maven:3-eclipse-temurin-11 as build-image
 WORKDIR /build/
 # Installation et configuration de la locale FR
 RUN apt update && DEBIAN_FRONTEND=noninteractive apt -y install locales
@@ -65,6 +65,6 @@ CMD [ "catalina.sh", "run" ]
 # FROM bitnami/tomcat:9.0 as web-image
 # COPY --from=build-image /build/web/target/*.war /opt/bitnami/tomcat/webapps/ROOT.war
 
-#FROM openjdk:11 as back-server
+#FROM eclipse-temurin:11-jre as back-server
 #COPY --from=web-build /app/web/target/*.jar /app/licences-nationales.jar
 #ENTRYPOINT ["java","-jar","/app/licences-nationales.jar"]
