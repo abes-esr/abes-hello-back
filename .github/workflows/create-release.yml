@@ -50,6 +50,7 @@ jobs:
           # - pousser le tout sur le dépôt github et faire la fusion avec la branche develop
           git config --global user.email "github-action@noreply"
           git config --global user.name "Github Action"
+          sudo apt-get install -y libxml2-utils
           xmllint --version
           mvn --batch-mode release:update-versions \
               -DautoVersionSubmodules=true \
