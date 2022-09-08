@@ -52,9 +52,7 @@ jobs:
           git config --global user.name "Github Action"
           mvn --batch-mode release:update-versions \
               -DautoVersionSubmodules=true \
-              -DreleaseVersion=${NEW_TAG} \
-              -DdevelopmentVersion=${NEW_TAG}-SNAPSHOT \
-              -DupdateDependencies=false
+              -DdevelopmentVersion=${NEW_TAG}-SNAPSHOT
           git add -- pom.xml core/pom.xml batch/pom.xml web/pom.xml
           git add .
           git commit -m "Version $NEW_TAG"
