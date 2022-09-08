@@ -14,7 +14,7 @@
     <!-- ===================================================== -->
     <groupId>fr.abes.helloabes</groupId>
     <artifactId>helloabesbackoffice</artifactId>
-    <version>1.0.12-SNAPSHOT</version>
+    <version>1.0.13-SNAPSHOT</version>
     <name>Hello ABES Back</name>
     <description>Application d'exemple pour illustrer la politique de développement au sein de l'ABES</description>
 
