@@ -50,13 +50,17 @@ jobs:
           # - pousser le tout sur le dépôt github et faire la fusion avec la branche develop
           git config --global user.email "github-action@noreply"
           git config --global user.name "Github Action"
+          # patch la version dans les pom.xml 
           sudo apt-get install -y libxml2-utils
-          xmllint --version
-          mvn --batch-mode release:update-versions \
-              -DautoVersionSubmodules=true \
-              -DdevelopmentVersion=${NEW_TAG}-SNAPSHOT
+          echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:parent/x:version\nset $NEW_TAG\nsave" \
+            | xmllint --shell ./pom.xml
+          for POM_FILE in $(ls */pom.xml)
+          do
+            echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:parent/x:version\nset $NEW_TAG\nsave" \
+              | xmllint --shell $POM_FILE
+          done
+          # création du tag
           git add -- pom.xml core/pom.xml batch/pom.xml web/pom.xml
-          git add .
           git commit -m "Version $NEW_TAG"
           git tag $NEW_TAG
           git push origin $NEW_TAG
