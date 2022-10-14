@@ -67,4 +67,7 @@ CMD [ "catalina.sh", "run" ]
 
 #FROM eclipse-temurin:11-jre as back-server
 #COPY --from=web-build /app/web/target/*.jar /app/licences-nationales.jar
+# # verifier que tzdata soit installé dans le contenair
+# ENV TZ=Europe/Paris
+# RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #ENTRYPOINT ["java","-jar","/app/licences-nationales.jar"]
