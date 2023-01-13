@@ -42,7 +42,7 @@ jobs:
       - name: 'Generate the new version (patch few files + git tag)'
         env:
           NEW_TAG: ${{ github.event.inputs.releaseVersion }}
-          NEW_TAG_SNAPSHOT: ${{ format('{0}-{1}' , github.event.inputs.releaseVersion , "SNAPSHOT" }}
+          NEW_TAG_SNAPSHOT: ${{ format('{0}-{1}' , github.event.inputs.releaseVersion , 'SNAPSHOT' }}
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
         run: |
           # préparation de la release qui va :
