@@ -11,7 +11,6 @@ on:
         description: 'Version de la Snapshot (semver)'
         required: true
         default: 'x.x.x-SNAPSHOT'
-        # TODO: AJOUTER UNE VERIF
 
 jobs:
   create-release:
@@ -26,16 +25,18 @@ jobs:
           token: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
    
 
-#       - name: 'Verify release is created only on "main" or "master" git branch'
-#         run: |
-#           CURRENT_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-#           echo $CURRENT_GIT_BRANCH
-#           [[ "$CURRENT_GIT_BRANCH" == "main" || "$CURRENT_GIT_BRANCH" == "master" ]] && exit 0 || exit 1
+      - name: 'Verify release is created only on "main" or "master" git branch'
+        run: |
+          CURRENT_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          echo $CURRENT_GIT_BRANCH
+          [[ "$CURRENT_GIT_BRANCH" == "main" || "$CURRENT_GIT_BRANCH" == "master" ]] && exit 0 || exit 1
       - name: 'Verify version is semver formatted (X.X.X)'
         env:
           NEW_TAG:  ${{ github.event.inputs.releaseVersion }}
+          NEW_TAG_SNAPSHOT: ${{ github.event.inputs.snapshotVersion }}
         run: |
           echo $NEW_TAG | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'
+          echo $NEW_TAG_SNAPSHOT | grep -E '^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$'
       - name: 'Verify version is not already used as a git tag'
         env:
           NEW_TAG:  ${{ github.event.inputs.releaseVersion }}
@@ -75,7 +76,7 @@ jobs:
           
           # merge la préparation de la nouvelle version sur develop
           git switch develop
-          git merge modif-create-release -m "Merge modif-create-release to develop [skip ci]"
+          git merge main -m "Merge main to develop [skip ci]"
           git push
           
           # switch version to snapshot version
