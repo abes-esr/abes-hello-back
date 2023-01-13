@@ -75,7 +75,7 @@ jobs:
           
           # merge la préparation de la nouvelle version sur develop
           git switch develop
-          git merge main -m "Merge main to develop [skip ci]"
+          git merge modif-create-release -m "Merge modif-create-release to develop [skip ci]"
           git push
           
           # switch version to snapshot version
