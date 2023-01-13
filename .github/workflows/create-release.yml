@@ -42,6 +42,7 @@ jobs:
       - name: 'Generate the new version (patch few files + git tag)'
         env:
           NEW_TAG: ${{ github.event.inputs.releaseVersion }}
+          NEW_TAG_SNAPSHOT: ${{ github.event.inputs.releaseVersion + "-SNAPSHOT" }}
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
         run: |
           # préparation de la release qui va :
@@ -69,7 +70,7 @@ jobs:
           # switch version to snapshot version
           for POM_FILE in $(ls */pom.xml)
           do
-            echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:parent/x:version\nset $NEW_TAG -SNAPSHOT\nsave" \
+            echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:parent/x:version\nset $NEW_TAG_SNAPSHOT\nsave" \
               | xmllint --shell $POM_FILE
           done
           # merge la préparation de la nouvelle version sur develop
