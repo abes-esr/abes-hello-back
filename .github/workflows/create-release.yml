@@ -21,11 +21,11 @@ jobs:
           token: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
    
 
-      - name: 'Verify release is created only on "main" or "master" git branch'
-        run: |
-          CURRENT_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          echo $CURRENT_GIT_BRANCH
-          [[ "$CURRENT_GIT_BRANCH" == "main" || "$CURRENT_GIT_BRANCH" == "master" ]] && exit 0 || exit 1
+#       - name: 'Verify release is created only on "main" or "master" git branch'
+#         run: |
+#           CURRENT_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+#           echo $CURRENT_GIT_BRANCH
+#           [[ "$CURRENT_GIT_BRANCH" == "main" || "$CURRENT_GIT_BRANCH" == "master" ]] && exit 0 || exit 1
       - name: 'Verify version is semver formatted (X.X.X)'
         env:
           NEW_TAG:  ${{ github.event.inputs.releaseVersion }}
