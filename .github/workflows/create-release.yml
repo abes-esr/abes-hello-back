@@ -87,7 +87,7 @@ jobs:
               | xmllint --shell $POM_FILE
           done
           git add .
-          git commit -m "Version $NEW_TAG_SNAPSHOT"
+          git commit -m "Version $NEW_TAG_SNAPSHOT [skip ci]"
           git push
 
       - name: 'Create the github release'
