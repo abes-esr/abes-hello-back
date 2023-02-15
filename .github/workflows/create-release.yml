@@ -17,13 +17,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-#       - name: 'Checkout source code'
-#         uses: 'actions/checkout@v3'
-#         with:
-#           fetch-depth: '0' # to get all the tags locally
-#           # https://stackoverflow.com/questions/67550727/push-event-doesnt-trigger-workflow-on-push-paths-github-actions
-#           token: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
-   
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v3'
+        with:
+          fetch-depth: '0' # to get all the tags locally
+          # https://stackoverflow.com/questions/67550727/push-event-doesnt-trigger-workflow-on-push-paths-github-actions
+          token: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
+      - name: Fetch tags
+        run: git fetch --tags
+
+      - name: Get latest tag
+        id: latest_tag
+        run: echo ::set-output name=tag::$(git describe --tags $(git rev-list --tags --max-count=1))
+
 
 #       - name: 'Verify release is created only on "main" or "master" git branch'
 #         run: |
@@ -101,3 +107,6 @@ jobs:
       - name: "Generate release changelog"
         uses: scottbrenner/generate-changelog-action@master
         id: Changelog
+        with:
+          from_tag: ${{ steps.latest_tag.outputs.tag }}
+          to-tag: ${{ github.event.inputs.releaseVersion }}
