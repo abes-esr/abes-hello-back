@@ -108,5 +108,5 @@ jobs:
         uses: scottbrenner/generate-changelog-action@master
         id: Changelog
         with:
-          from_tag: ${{ steps.latest_tag.outputs.tag }}
+          from-tag: ${{ steps.latest_tag.outputs.tag }}
           to-tag: ${{ github.event.inputs.releaseVersion }}
