@@ -99,6 +99,5 @@ jobs:
           token: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
           
       - name: "Generate release changelog"
-        uses: heinrichreimer/github-changelog-generator-action@v2.3
-        with:
-          token: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }} 
+        uses: scottbrenner/generate-changelog-action@master
+        id: Changelog
