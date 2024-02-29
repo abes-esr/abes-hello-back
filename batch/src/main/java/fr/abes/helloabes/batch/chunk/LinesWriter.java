@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
 
-    @Value("${FILE.OUT.PUT:data/out.txt}")
+    @Value("${FILE.OUT.PUT}")
     private String source;
     private PrintWriter out;
     private Long counTer;
