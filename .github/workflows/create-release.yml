@@ -1,16 +1,12 @@
 name: 'Create release'
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       releaseVersion:
         description: 'Version de la release (semver)'
         required: true
         default: 'x.x.x'
-      snapshotVersion:
-        description: 'Version de la Snapshot (semver)'
-        required: true
-        default: 'x.x.x-SNAPSHOT'
 
 jobs:
   create-release:
@@ -23,7 +19,6 @@ jobs:
           fetch-depth: '0' # to get all the tags locally
           # https://stackoverflow.com/questions/67550727/push-event-doesnt-trigger-workflow-on-push-paths-github-actions
           token: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
-   
 
       - name: 'Verify release is created only on "main" or "master" git branch'
         run: |
@@ -33,22 +28,42 @@ jobs:
       - name: 'Verify version is semver formatted (X.X.X)'
         env:
           NEW_TAG:  ${{ github.event.inputs.releaseVersion }}
-          NEW_TAG_SNAPSHOT: ${{ github.event.inputs.snapshotVersion }}
         run: |
           echo $NEW_TAG | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'
-          echo $NEW_TAG_SNAPSHOT | grep -E '^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$'
+
       - name: 'Verify version is not already used as a git tag'
         env:
           NEW_TAG:  ${{ github.event.inputs.releaseVersion }}
         run: |
           [[ "$(git tag --list | grep $NEW_TAG)" == "" ]] && exit 0 || exit 1
-        
 
+      - name: "Calculate versions"
+        id: calculate-version
+        run: |
+          releaseVersion=${{ inputs.releaseVersion }}
+          # Séparer les parties de la version
+          major=$(echo "${releaseVersion}" | cut -d. -f1)
+          minor=$(echo "${releaseVersion}" | cut -d. -f2)
+          patch=$(echo "${releaseVersion}" | cut -d. -f3)
+          # Incrémenter la partie patch
+          patch=$((patch + 1))
+          # Reconstituer la version snapshot
+          snapshotVersion="${major}.${minor}.${patch}-SNAPSHOT"
+          echo "${snapshotVersion}"
+          echo "snapshotVersion=${snapshotVersion}" >> $GITHUB_OUTPUT
+          echo "content :"
+          cat "$GITHUB_OUTPUT"
+
+      - name: 'Verify snapshot version is semver formatted (X.X.X)'
+        env:
+          NEW_SNAPSHOT_TAG: ${{ steps.calculate-version.outputs.snapshotVersion }}
+        run: |
+          echo $NEW_SNAPSHOT_TAG | grep -E '^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$'
 
       - name: 'Generate the new version (patch few files + git tag)'
         env:
           NEW_TAG: ${{ github.event.inputs.releaseVersion }}
-          NEW_TAG_SNAPSHOT: ${{ github.event.inputs.snapshotVersion }}
+          NEW_SNAPSHOT_TAG: ${{ steps.calculate-version.outputs.snapshotVersion }}
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
         run: |
           # préparation de la release qui va :
@@ -66,6 +81,7 @@ jobs:
             echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:parent/x:version\nset $NEW_TAG\nsave" \
               | xmllint --shell $POM_FILE
           done
+          sed -i "s#Version: [0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?#Version: $NEW_TAG#g" README.md
           # création du tag
           git add .
           git commit -m "Version $NEW_TAG"
@@ -80,15 +96,16 @@ jobs:
           git push
           
           # switch version to snapshot version
-          echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:version\nset $NEW_TAG_SNAPSHOT\nsave" \
+          echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:version\nset $NEW_SNAPSHOT_TAG\nsave" \
             | xmllint --shell ./pom.xml
           for POM_FILE in $(ls */pom.xml)
           do
-            echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:parent/x:version\nset $NEW_TAG_SNAPSHOT\nsave" \
+            echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:parent/x:version\nset $NEW_SNAPSHOT_TAG\nsave" \
               | xmllint --shell $POM_FILE
           done
+          sed -i "s#Version: [0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?#Version: $NEW_SNAPSHOT_TAG#g" README.md
           git add .
-          git commit -m "Version $NEW_TAG_SNAPSHOT [skip ci]"
+          git commit -m "Version $NEW_SNAPSHOT_TAG [skip ci]"
           git push
 
       - name: 'Create the github release'

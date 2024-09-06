@@ -10,6 +10,8 @@ Les fonctionalités mise en oeuvre dans ``abes-hello-back`` sont :
 
 Voir aussi le front ici : https://github.com/abes-esr/abes-hello-front
 
+Version: 0.0.0-SNAPSHOT
+
 ## Développements
 
 ### Utilisation en local
