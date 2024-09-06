@@ -81,6 +81,7 @@ jobs:
             echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:parent/x:version\nset $NEW_TAG\nsave" \
               | xmllint --shell $POM_FILE
           done
+          sed -i "s#Version: [0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?#Version: $NEW_TAG#g" README.md
           # création du tag
           git add .
           git commit -m "Version $NEW_TAG"
@@ -102,6 +103,7 @@ jobs:
             echo -e "setns x=http://maven.apache.org/POM/4.0.0\ncd /x:project/x:parent/x:version\nset $NEW_SNAPSHOT_TAG\nsave" \
               | xmllint --shell $POM_FILE
           done
+          sed -i "s#Version: [0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?#Version: $NEW_SNAPSHOT_TAG#g" README.md
           git add .
           git commit -m "Version $NEW_SNAPSHOT_TAG [skip ci]"
           git push
