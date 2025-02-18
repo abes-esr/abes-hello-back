@@ -24,7 +24,7 @@ jobs:
 
 
       - name: "Build: checkout source code"
-        uses: actions/checkout@v2          
+        uses: actions/checkout@v3          
       - name: "Build: build docker image"
         run: |
           docker build . -t localimage:latest
