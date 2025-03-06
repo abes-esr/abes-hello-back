@@ -4,6 +4,8 @@
 
 Application exemple type "Hello World" qui illustre la politique de développement de l'Abes avec des modèles pour la partie back : API et batch.
 
+**Utiliser une JDK 17**
+
 Les fonctionalités mise en oeuvre dans ``abes-hello-back`` sont :
 1. Un service web RESTful permettant d'obtenir un message public pour tous les utilisateurs et un message privé pour les utilisateurs authentifiés sur le  service
 2. Un service de tâches de fond 
