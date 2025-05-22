@@ -7,10 +7,7 @@ import fr.abes.helloabes.web.configuration.AuthenticationResponse;
 import fr.abes.helloabes.web.configuration.DtoMapperUtility;
 import fr.abes.helloabes.web.configuration.JwtUtility;
 import fr.abes.helloabes.web.dto.AppUserDto;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -35,6 +32,7 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
+@Api(value = "abes-hello-back")
 public class PublicController {
 
     /** Service pour les utilisateurs du service web.  */

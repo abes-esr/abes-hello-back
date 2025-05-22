@@ -52,3 +52,7 @@ Voir https://github.com/abes-esr/abes-hello-docker qui propose les configuration
 
 Se référer à la procédure commune à toutes les applications opensource de l'Abes ici :  
 https://github.com/abes-esr/abes-politique-developpement/blob/main/01-Gestion%20du%20code%20source.md#publier-une-nouvelle-release-dune-application
+
+### Accès au Swagger en local
+
+http://localhost:8081/swagger-ui/#/

@@ -1,6 +1,7 @@
 *.properties
 hibernate.cfg.xml
 HELP.md
+**/application-localhost.properties
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**
