@@ -34,7 +34,7 @@ import java.util.Map;
 @Slf4j
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class PublicController {
 
     /** Service pour les utilisateurs du service web.  */

@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/secured")
+@RequestMapping("/api/v1/secured")
 public class SecuredController {
 
     private final IUserService userService;
