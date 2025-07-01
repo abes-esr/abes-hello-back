@@ -3,7 +3,7 @@ name: 'Create release'
 on:
   workflow_dispatch:
     inputs:
-      bumpType:
+      versionType:
         description: 'Quel type de version ?'
         required: true
         default: 'patch'
@@ -24,10 +24,10 @@ jobs:
           fetch-depth: '0'
           token: ${{ secrets.TOKEN_GITHUB_FOR_GITHUB_ACTION }}
 
-      - name: "Calculate versions from bump type"
+      - name: "Calculate versions"
         id: calculate-version
         run: |
-          bumpType="${{ github.event.inputs.bumpType }}"
+          versionType="${{ github.event.inputs.versionType }}"
           latestTag=$(git tag --list --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
           echo "Latest tag: $latestTag"
 
@@ -38,11 +38,11 @@ jobs:
 
           IFS='.' read -r major minor patch <<< "$latestTag"
 
-          if [[ "$bumpType" == "major" ]]; then
+          if [[ "$versionType" == "major" ]]; then
             major=$((major + 1))
             minor=0
             patch=0
-          elif [[ "$bumpType" == "minor" ]]; then
+          elif [[ "$versionType" == "minor" ]]; then
             minor=$((minor + 1))
             patch=0
           else
