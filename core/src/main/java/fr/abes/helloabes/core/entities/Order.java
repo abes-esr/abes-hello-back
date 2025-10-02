@@ -54,7 +54,7 @@ public class Order implements Serializable {
      * Un produit peut être ajouté dans une ou plusieurs commandes
      * On ne supprime pas les produits si une commande est supprimée.
      */
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
             name =  "order_product",
             joinColumns  = {@JoinColumn(name="order_id")},

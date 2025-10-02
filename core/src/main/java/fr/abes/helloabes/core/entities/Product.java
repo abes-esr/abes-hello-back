@@ -47,7 +47,7 @@ public class Product implements Serializable {
      * Une commande peut avoir un ou plusieurs produits
      * Un produit peut êtrte ajouté dans une ou plusieurs commandes
      */
-    @ManyToMany(mappedBy = "products")
+    @ManyToMany(mappedBy = "products", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Order> orders = new ArrayList<>();
 
