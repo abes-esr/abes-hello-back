@@ -1,4 +1,4 @@
-*.properties
+application-localhost.properties
 hibernate.cfg.xml
 HELP.md
 target/

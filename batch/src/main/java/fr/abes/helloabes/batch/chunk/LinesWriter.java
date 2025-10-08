@@ -45,9 +45,10 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
 		log.info("dans le writer : " + stringBuilder.toString());
 
     }
-	
+
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
+
         out.println(String.format("===== Il y a %s utilisateurs dans la base =====", counTer));
         out.close();
         return ExitStatus.COMPLETED;
