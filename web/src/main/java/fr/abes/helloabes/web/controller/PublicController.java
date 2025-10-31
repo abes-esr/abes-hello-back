@@ -7,26 +7,29 @@ import fr.abes.helloabes.web.configuration.AuthenticationResponse;
 import fr.abes.helloabes.web.configuration.DtoMapperUtility;
 import fr.abes.helloabes.web.configuration.JwtUtility;
 import fr.abes.helloabes.web.dto.AppUserDto;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.websocket.server.PathParam;
+import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.Map;
 
 /**
- * Controlleur d'API RESTful pour toutes les routes publiques.
+ * Contrôleur d'API RESTful pour toutes les routes publiques.
  * Cette classe est basée sur le framework Spring avec le module Spring Web.
  * @since 0.0.1
  * @author Duy Tran
@@ -51,9 +54,9 @@ public class PublicController {
     private DtoMapperUtility dtoMapper;
 
     /**
-     * Construit un contrôlleur de l'API pour toutes les routes pupliques.
+     * Construit un contrôleur de l'API pour toutes les routes publiques.
      * @param userService Service pour les utilisateurs du service web.
-     * @param authenticationManager Gestionnaure des authentifications.
+     * @param authenticationManager Gestionnaire des authentifications.
      * @param jwtUtility Filtre pour les jetons JWT.
      */
     @Autowired
@@ -68,13 +71,13 @@ public class PublicController {
      * @return Une collection de chaîne de caractère
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(
-            value = "Message public",
-            notes = "Retourne un message de bienvenue")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Opération terminée avec succès."),
-            @ApiResponse(code = 503, message = "Service indisponible"),
+            @ApiResponse(responseCode = "200", description = "Opération terminée avec succès."),
+            @ApiResponse(responseCode = "503", description = "Service indisponible"),
     })
+    @Operation(
+            summary = "Message public",
+            description = "Retourne un message de bienvenue")
     public Map displayHome() {
 
         return Collections.singletonMap("response", "Hello from ABES - PUBLIC API PAGE");
@@ -86,17 +89,17 @@ public class PublicController {
      * @return L'utilisateur du service web enregistré.
      */
     @PostMapping("/register")
-    @ApiOperation(
-            value = "Enregistrer un utilisateur",
-            notes = "Enregistre un nouvel utilisateur")
+    @Operation(
+            summary = "Enregistrer un utilisateur",
+            description = "Enregistre un nouvel utilisateur")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Opération terminée avec succès."),
-            @ApiResponse(code = 503, message = "Service indisponible."),
-            @ApiResponse(code = 400, message = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronnée..."),
-            @ApiResponse(code = 404, message = "Opération a échoué."),
+            @ApiResponse(responseCode = "200", description = "Opération terminée avec succès."),
+            @ApiResponse(responseCode = "503", description = "Service indisponible."),
+            @ApiResponse(responseCode = "400", description = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronée..."),
+            @ApiResponse(responseCode = "404", description = "Opération a échoué."),
     })
     public AppUserDto register(
-            @ApiParam(value = "Objet JSON contenant les informations sur l'utilisateur à enregistrer. Tous les champs sont nécessairese.", required = true)
+            @Parameter(description = "Objet JSON contenant les informations sur l'utilisateur à enregistrer. Tous les champs sont nécessaire.", required = true)
             @PathParam("user")
             @Valid @NotNull @RequestBody AppUserDto user) {
 
@@ -109,28 +112,28 @@ public class PublicController {
 
     /**
      * Traitement d'une requête POST sur la route '/login'.
-     * @param user Utilisateur du service web à identifier.
-     * @return ResponseEntity<AuthenticationResponse> Une réponse en JSON contant un objet AuthentifcationResponse.
+     * @param userDto Utilisateur du service web à identifier.
+     * @return ResponseEntity<AuthenticationResponse> Une réponse en JSON contant un objet AuthenticationResponse.
      */
     @PostMapping("/login")
-    @ApiOperation(
-            value = "Authentifier un utilisateur",
-            notes = "Service d'authentification d'un utilisateur")
+    @Operation(
+            summary = "Authentifier un utilisateur",
+            description = "Service d'authentification d'un utilisateur")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Opération terminée avec succès."),
-            @ApiResponse(code = 503, message = "Service indisponible."),
-            @ApiResponse(code = 400, message = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronnée..."),
-            @ApiResponse(code = 404, message = "Opération a échoué."),
+            @ApiResponse(responseCode = "200", description = "Opération terminée avec succès."),
+            @ApiResponse(responseCode = "503", description = "Service indisponible."),
+            @ApiResponse(responseCode = "400", description = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronée..."),
+            @ApiResponse(responseCode = "404", description = "Opération a échoué."),
     })
     public ResponseEntity<AuthenticationResponse> generateToken(
-            @ApiParam(value = "Objet JSON contenant les informations sur l'utilisateur à authentifier. Tous les champs sont nécessairese.", required = true)
+            @Parameter(description = "Objet JSON contenant les informations sur l'utilisateur à authentifier. Tous les champs sont nécessaire.", required = true)
             @PathParam("user")
-            @Valid @NotNull @RequestBody AppUserDto user) {
+            @Valid @NotNull @RequestBody AppUserDto userDto) {
+        AppUser authRequest = dtoMapper.map(userDto, AppUser.class);
 
-        AppUser authRequest = dtoMapper.map(user, AppUser.class);
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassWord()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassWord()));
         String token = jwtUtility.generateToken(authRequest.getUserName());
 
         return ResponseEntity.ok(new AuthenticationResponse(token, authRequest.getUserName()));

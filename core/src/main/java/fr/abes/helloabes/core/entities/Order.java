@@ -1,12 +1,12 @@
 package fr.abes.helloabes.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,7 +23,7 @@ public class Order implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Identifiant unique d'une commande. Cette identifiant est géré automatiquement par la couche
+     * Identifiant unique d'une commande. Cet identifiant est géré automatiquement par la couche
      * Entity de Java.
      */
     @Id

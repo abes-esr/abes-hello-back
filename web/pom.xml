@@ -23,7 +23,7 @@
 	<description>API RESTful de l'application.</description>
 
 	<!-- =========================================================== -->
-	<!--     Gestion des dependances                                 -->
+	<!--     Gestion des dépendances                                 -->
 	<!-- =========================================================== -->
 	<dependencies>
 
@@ -47,27 +47,30 @@
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-autoconfigure</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-webmvc</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 
-		<!-- === Documentation API === -->
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.10.0</version>
-		</dependency>
-
-		<!-- === Securite === -->
+		<!-- === Sécurité === -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+			<version>3.5.7</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -77,6 +80,19 @@
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
+		</dependency>
+
+		<!-- === Documentation API === -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>3.0.0-M1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-webmvc</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- === Tests === -->
@@ -135,7 +151,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>2.2.6.RELEASE</version>
+				<version>4.0.0-RC1</version>
 			</plugin>
 		</plugins>
 	</build>

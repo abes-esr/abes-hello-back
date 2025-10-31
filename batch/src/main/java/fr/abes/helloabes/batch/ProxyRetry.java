@@ -1,9 +1,7 @@
 package fr.abes.helloabes.batch;
 
 import fr.abes.helloabes.core.entities.AppUser;
-import fr.abes.helloabes.core.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 

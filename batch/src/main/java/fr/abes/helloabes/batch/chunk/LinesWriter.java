@@ -1,13 +1,13 @@
 package fr.abes.helloabes.batch.chunk;
 
-import fr.abes.helloabes.core.entities.AppUser;
-import fr.abes.helloabes.core.service.IUserService;
+import jakarta.validation.constraints.NotNull;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.FileWriter;
@@ -33,8 +33,7 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
         log.info("Line Writer initialized.");
     }
 
-	@Override
-    public void write(List<? extends String>lines) throws Exception {
+    public void write(@NonNull List<? extends String>lines) {
 
         StringBuilder stringBuilder = new StringBuilder();
         for (String line : lines) {
@@ -42,7 +41,7 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
             out.println(line);
             counTer++;
         }
-		log.info("dans le writer : " + stringBuilder.toString());
+		log.info("dans le writer : " + stringBuilder);
 
     }
 
@@ -52,5 +51,10 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
         out.println(String.format("===== Il y a %s utilisateurs dans la base =====", counTer));
         out.close();
         return ExitStatus.COMPLETED;
+    }
+
+    @Override
+    public void write(Chunk<? extends String> chunk) {
+
     }
 }

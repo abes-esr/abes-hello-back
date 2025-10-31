@@ -5,9 +5,9 @@ import fr.abes.helloabes.core.service.IOrderService;
 import fr.abes.helloabes.core.service.IUserService;
 import fr.abes.helloabes.web.configuration.DtoMapperUtility;
 import fr.abes.helloabes.web.dto.OrderDto;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Controlleur d'API RESTful pour toutes les routes privées.
+ * Contrôleur d'API RESTful pour toutes les routes privées.
  * Cette classe est basée sur le framework Spring avec le module Spring Web.
  * @since 0.0.1
  * @author Duy Tran
@@ -50,14 +50,14 @@ public class SecuredController {
      * @return Map map avec la réponse.
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(
-            value = "Message privé",
-            notes = "Retourne un message privé")
+    @Operation(
+            summary = "Message privé",
+            description = "Retourne un message privé")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Opéaration terminée avec succès."),
-            @ApiResponse(code = 503, message = "Service indisponible."),
-            @ApiResponse(code = 400, message = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronnée..."),
-            @ApiResponse(code = 404, message = "Opération a échoué."),
+            @ApiResponse(responseCode = "200", description = "Opération terminée avec succès."),
+            @ApiResponse(responseCode = "503", description = "Service indisponible."),
+            @ApiResponse(responseCode = "400", description = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronée..."),
+            @ApiResponse(responseCode = "404", description = "Opération a échoué."),
     })
     public Map displaySecureHome() {
 
@@ -69,14 +69,14 @@ public class SecuredController {
      * @return Liste de commande.
      */
     @GetMapping("/commande")
-    @ApiOperation(
-            value = "Liste de commandes",
-            notes = "Retourne une liste de tous les commandes avec les produits et le fournisseur")
+    @Operation(
+            summary = "Liste de commandes",
+            description = "Retourne une liste de tous les commandes avec les produits et le fournisseur")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Opéaration terminée avec succès."),
-            @ApiResponse(code = 503, message = "Service indisponible."),
-            @ApiResponse(code = 400, message = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronnée..."),
-            @ApiResponse(code = 404, message = "Opération a échoué."),
+            @ApiResponse(responseCode = "200", description = "Opération terminée avec succès."),
+            @ApiResponse(responseCode = "503", description = "Service indisponible."),
+            @ApiResponse(responseCode = "400", description = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronée..."),
+            @ApiResponse(responseCode = "404", description = "Opération a échoué."),
     })
     public List<OrderDto> displaySecureCommandes(Authentication authentication) {
 
