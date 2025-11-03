@@ -16,7 +16,7 @@
 	<!-- =========================================================== -->
 	<!--     Description du module                                   -->
 	<!-- =========================================================== -->
-	<groupId>fr.abes.helloabes</groupId>
+<!--	<groupId>fr.abes.helloabes</groupId>-->
 	<artifactId>core</artifactId>
 	<packaging>jar</packaging>
 	<name>Core</name>

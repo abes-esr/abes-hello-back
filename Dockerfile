@@ -1,6 +1,6 @@
 ###
 # Image pour la compilation
-FROM maven:3-jdk-11 as build-image
+FROM maven:3-jdk-17 as build-image
 WORKDIR /build/
 # Installation et configuration de la locale FR
 RUN apt update && DEBIAN_FRONTEND=noninteractive apt -y install locales
@@ -56,7 +56,7 @@ CMD ["crond", "-n"]
 
 ###
 # Image pour le module web
-FROM tomcat:9-jdk11 as web-image
+FROM tomcat:9-jdk17 as web-image
 COPY --from=build-image /build/web/target/*.war /usr/local/tomcat/webapps/ROOT.war
 CMD [ "catalina.sh", "run" ]
 

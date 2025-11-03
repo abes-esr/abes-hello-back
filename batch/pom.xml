@@ -16,7 +16,7 @@
     <!-- =========================================================== -->
     <!--     Description du module                                   -->
     <!-- =========================================================== -->
-    <groupId>fr.abes.helloabes</groupId>
+<!--    <groupId>fr.abes.helloabes</groupId>-->
     <artifactId>batch</artifactId>
     <packaging>jar</packaging>
     <name>Batch</name>
