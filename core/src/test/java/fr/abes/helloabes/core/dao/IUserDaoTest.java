@@ -4,6 +4,7 @@ import fr.abes.helloabes.core.entities.AppUser;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -27,12 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = AppUser.class)
 public class IUserDaoTest {
 
-//    @Autowired
-    private final IUserDao userDao;
-
-    public IUserDaoTest(IUserDao userDao) {
-        this.userDao = userDao;
-    }
+    @Autowired
+    private IUserDao userDao;
 
     protected static AppUser getAdminUser() {
         final AppUser user;
