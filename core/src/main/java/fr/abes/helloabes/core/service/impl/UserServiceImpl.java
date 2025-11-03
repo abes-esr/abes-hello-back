@@ -3,18 +3,13 @@ package fr.abes.helloabes.core.service.impl;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.Order;
-import fr.abes.helloabes.core.entities.Product;
-import fr.abes.helloabes.core.entities.Supplier;
 import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import fr.abes.helloabes.core.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Book;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,7 +33,6 @@ public class UserServiceImpl implements IUserService {
      * @param userDao Dépot d'utilisateurs du service web
      * @param bCryptPasswordEncoder Encodeur de mots de passe selon un algorithmede crpytage.
      */
-    @Autowired
     public UserServiceImpl(IUserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;

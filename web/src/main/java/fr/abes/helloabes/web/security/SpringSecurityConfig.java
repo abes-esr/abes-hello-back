@@ -3,7 +3,6 @@ package fr.abes.helloabes.web.security;
 import fr.abes.helloabes.core.service.CustomUserDetailsService;
 import fr.abes.helloabes.web.configuration.JwtAuthenticationEntryPoint;
 import fr.abes.helloabes.web.configuration.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,7 +49,6 @@ public class SpringSecurityConfig {
      * Construit une nouvelle configuration de sécurité pour le service web avec un filtre pour les jetons JWT.
      * @param jwtFilter Filtre pour les jetons JWT.
      */
-    @Autowired
     public SpringSecurityConfig(JwtAuthenticationFilter jwtFilter, JwtAuthenticationEntryPoint unauthorizedHandler, CustomUserDetailsService customUserDetailsService) {
         this.jwtFilter = jwtFilter;
         this.unauthorizedHandler = unauthorizedHandler;

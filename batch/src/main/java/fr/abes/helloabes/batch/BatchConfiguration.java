@@ -47,7 +47,7 @@ public class BatchConfiguration {
 
     @Bean
     public ItemProcessor<AppUser, String> processor() {
-        return new LineProcessor();
+        return new LineProcessor(new ProxyRetry());
     }
 
     @Bean

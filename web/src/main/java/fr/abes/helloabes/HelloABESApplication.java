@@ -11,7 +11,6 @@ import fr.abes.helloabes.core.entities.Supplier;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -46,15 +45,22 @@ public class HelloABESApplication extends SpringBootServletInitializer implement
 	 * La base de donnée du projet est une base de donnée volatile H2 qui nécessite de remplir la base à chaque démarrage.
 	 * <p> Note : il est important de supprimer cet attribut dans une version de production.</p>
 	 */
-	@Autowired
-	private IUserDao userDao;
-	@Autowired
-	private IOrderDao orderDao;
-	@Autowired
-	private ISupplierDao supplierDao;
-	@Autowired
-	private IProductDao productDao;
 
+	private final IUserDao userDao;
+
+	private final IOrderDao orderDao;
+
+	private final ISupplierDao supplierDao;
+
+	private final IProductDao productDao;
+
+
+	public HelloABESApplication(IUserDao userDao, IOrderDao orderDao, ISupplierDao supplierDao, IProductDao productDao) {
+		this.userDao = userDao;
+		this.orderDao = orderDao;
+		this.supplierDao = supplierDao;
+		this.productDao = productDao;
+	}
 
 	/**
 	 * Fonction principale exécutée à l'initialisation du framework Spring.
@@ -79,7 +85,6 @@ public class HelloABESApplication extends SpringBootServletInitializer implement
 	 * le comportement original du démarrage afin d'ajouter un utilisateur par défaut.
 	 * <p> Note : il est important de supprimer cette fonction dans une version de production.</p>
 	 * @param args Tableau des arguments passés à l'appel de la fonction. Par défaut, il ne contient rien.
-	 * @throws Exception si l'utilisateur ne peut pas être créé ou s'il ne peut pas être ajouté à la collection des utilisateurs.
 	 */
 	@Override
 	@Transactional

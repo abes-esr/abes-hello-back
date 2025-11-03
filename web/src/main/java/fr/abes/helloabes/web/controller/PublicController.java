@@ -15,7 +15,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +23,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -50,8 +48,7 @@ public class PublicController {
     private final AuthenticationManager authenticationManager;
 
     /** Service pour le mapping DTO */
-    @Autowired
-    private DtoMapperUtility dtoMapper;
+    private final DtoMapperUtility dtoMapper;
 
     /**
      * Construit un contrôleur de l'API pour toutes les routes publiques.
@@ -59,11 +56,11 @@ public class PublicController {
      * @param authenticationManager Gestionnaire des authentifications.
      * @param jwtUtility Filtre pour les jetons JWT.
      */
-    @Autowired
-    public PublicController(UserServiceImpl userService, AuthenticationManager authenticationManager, JwtUtility jwtUtility) {
+    public PublicController(UserServiceImpl userService, AuthenticationManager authenticationManager, JwtUtility jwtUtility, DtoMapperUtility dtoMapper) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtUtility = jwtUtility;
+        this.dtoMapper = dtoMapper;
     }
 
     /**

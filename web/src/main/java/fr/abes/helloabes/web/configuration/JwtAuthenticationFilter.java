@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,7 +36,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @param jwtUtility Service utilitaire pour les jetons JWT.
      * @param service Service d'authentification des utilisateurs.
      */
-    @Autowired
     public JwtAuthenticationFilter(JwtUtility jwtUtility, CustomUserDetailsService service) {
         this.jwtUtility = jwtUtility;
         this.service = service;

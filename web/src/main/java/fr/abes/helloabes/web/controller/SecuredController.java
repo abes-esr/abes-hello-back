@@ -8,7 +8,6 @@ import fr.abes.helloabes.web.dto.OrderDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -35,14 +34,12 @@ public class SecuredController {
 
     private final IOrderService orderService;
 
-    @Autowired
-    private DtoMapperUtility dtoMapper;
+    private final DtoMapperUtility dtoMapper;
 
-    @Autowired
-    public SecuredController(IUserService userService, IOrderService orderService) {
+    public SecuredController(IUserService userService, IOrderService orderService, DtoMapperUtility dtoMapper) {
         this.userService = userService;
-
         this.orderService = orderService;
+        this.dtoMapper = dtoMapper;
     }
 
     /**
