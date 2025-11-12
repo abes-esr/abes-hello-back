@@ -124,6 +124,9 @@
         <Logger name="fr.abes.helloabes" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
+        <Logger name="org.zaxxer.hikari">
+            <level value="error"/>
+        </Logger>
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="DebugFile" />
