@@ -56,10 +56,12 @@ CMD ["crond", "-n"]
 
 ###
 # Image pour le module web
-#FROM maven:3.8.5-openjdk-17 as web-image
 FROM tomcat:9-jdk17 AS web-image
-COPY --from=build-image /build/web/target/*.war /usr/local/tomcat/webapps/ROOT.war
-CMD [ "catalina.sh", "run" ]
+WORKDIR /app/
+COPY --from=build-image /build/web/target/*.jar /app/abeshello.jar
+ENV TZ=Europe/Paris
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+ENTRYPOINT ["java","-jar","/app/abeshello.jar"]
 
 # pour avoir le manager de tomcat
 # https://hub.docker.com/r/bitnami/tomcat

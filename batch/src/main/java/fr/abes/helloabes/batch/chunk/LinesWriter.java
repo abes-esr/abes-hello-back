@@ -1,7 +1,5 @@
 package fr.abes.helloabes.batch.chunk;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 @Slf4j
 public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
@@ -33,18 +30,6 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
         log.info("Line Writer initialized.");
     }
 
-    public void write(@NonNull List<? extends String>lines) {
-
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String line : lines) {
-			stringBuilder.append(line + "...");
-            out.println(line);
-            counTer++;
-        }
-		log.info("dans le writer : " + stringBuilder);
-
-    }
-
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
 
@@ -55,6 +40,12 @@ public class LinesWriter implements ItemWriter<String>, StepExecutionListener {
 
     @Override
     public void write(Chunk<? extends String> chunk) {
-
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String line : chunk) {
+            stringBuilder.append(line + "...");
+            out.println(line);
+            counTer++;
+        }
+        log.info("dans le writer : " + stringBuilder);
     }
 }

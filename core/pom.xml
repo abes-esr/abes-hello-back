@@ -114,20 +114,20 @@
 		</dependency>
 	</dependencies>
 
-	<!-- =========================================================== -->
-	<!--     Configuration de la compilation                         -->
-	<!-- =========================================================== -->
-	<build>
-		<plugins>
-			<!-- ======================================================= -->
-			<!--     Compilation de l'application Spring                 -->
-			<!-- ======================================================= -->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>4.0.0-RC1</version>
-			</plugin>
-		</plugins>
-	</build>
+<!--	&lt;!&ndash; =========================================================== &ndash;&gt;-->
+<!--	&lt;!&ndash;     Configuration de la compilation                         &ndash;&gt;-->
+<!--	&lt;!&ndash; =========================================================== &ndash;&gt;-->
+<!--	<build>-->
+<!--		<plugins>-->
+<!--			&lt;!&ndash; ======================================================= &ndash;&gt;-->
+<!--			&lt;!&ndash;     Compilation de l'application Spring                 &ndash;&gt;-->
+<!--			&lt;!&ndash; ======================================================= &ndash;&gt;-->
+<!--			<plugin>-->
+<!--				<groupId>org.springframework.boot</groupId>-->
+<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--				<version>4.0.0-RC1</version>-->
+<!--			</plugin>-->
+<!--		</plugins>-->
+<!--	</build>-->
 
 </project>

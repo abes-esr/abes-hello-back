@@ -57,7 +57,9 @@ public class BatchConfiguration {
 
     // ------------- TASKLETS -----------------------
     @Bean
-    public UneTasklet uneTasklet() { return new UneTasklet(service); }
+    public UneTasklet uneTasklet() {
+        return new UneTasklet(service);
+    }
 
     // ---------- STEP --------------------------------------------
 
@@ -70,7 +72,7 @@ public class BatchConfiguration {
     }
 
     @Bean
-    protected Step stepProcessLines(ItemReader<AppUser> reader, ItemProcessor<AppUser, String> processor, ItemWriter<String> writer, PlatformTransactionManager transactionManager) {
+    protected Step stepProcessLines(PlatformTransactionManager transactionManager, ItemReader<AppUser> reader, ItemProcessor<AppUser, String> processor, ItemWriter<String> writer) {
         log.info("Dans stepProcessLines");
         return new StepBuilder("stepProcessLines", jobRepository)
                 .<AppUser, String> chunk(10, transactionManager)
