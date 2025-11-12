@@ -1,12 +1,9 @@
 package fr.abes.helloabes.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,7 @@ public class Product implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Identifiant unique d'un produit. Cette identifiant est géré automatiquement par la couche
+     * Identifiant unique d'un produit. Cet identifiant est géré automatiquement par la couche
      * Entity de Java.
      */
     @Id
@@ -45,7 +42,7 @@ public class Product implements Serializable {
     /**
      * La relation avec la table commande
      * Une commande peut avoir un ou plusieurs produits
-     * Un produit peut êtrte ajouté dans une ou plusieurs commandes
+     * Un produit peut être ajouté dans une ou plusieurs commandes
      */
     @ManyToMany(mappedBy = "products", fetch = FetchType.EAGER)
     @JsonIgnore

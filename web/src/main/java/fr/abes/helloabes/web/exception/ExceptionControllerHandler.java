@@ -2,8 +2,6 @@ package fr.abes.helloabes.web.exception;
 
 import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,26 +13,24 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
-@Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
-public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
+public class ExceptionControllerHandler {
 
     private ResponseEntity<Object> buildResponseEntity(ApiReturnError apiReturnError) {
         return new ResponseEntity<>(apiReturnError, apiReturnError.getStatus());
     }
 
     /**
-     * Vérifier le Token passé dans le header avec une format correcte
+     * Vérifier le Token passé dans le header avec un format correct
      * @param ex
      * @param headers
      * @param status
      * @param request
      * @return
      */
-    @Override
+    @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         String error = "Malformed JSON request";
@@ -50,7 +46,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
      * @param request
      * @return
      */
-    @Override
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Method is not supported for this request";
         log.error(error);
@@ -65,7 +61,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
      * @param request
      * @return
      */
-    @Override
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "The credentials are not valid";
         log.error(error);
@@ -80,7 +76,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
      * @param request
      * @return
      */
-    @Override
+    @ExceptionHandler(NoHandlerFoundException.class)
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Page not found";
         log.error(error);
@@ -110,7 +106,5 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         log.error(error);
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
-
-
 
 }

@@ -2,7 +2,7 @@
 <!-- Doc : http://logging.apache.org/log4j/2.x/manual/appenders.html#CustomDeleteOnRollover -->
 <Configuration>
     <Properties>
-        <!-- Les proprietes suivantes correspondent a des cles dans les fichiers application.properties -->
+        <!-- Les propriétés suivantes correspondent à des cl&s dans les fichiers application.properties -->
         <Property name="logBaseDir">${bundle:application:application.basedir}/${bundle:application:log4j2.logdir}</Property>
         <Property name="logFileName">${bundle:application:application.name}</Property>
         <Property name="errorFileName">${bundle:application:application.name}_error</Property>
@@ -15,11 +15,10 @@
         <Property name="keepMostRecentSize">10 MB</Property>
     </Properties>
     <Appenders>
-
         <!-- CONSOLE -->
         <Console name="Console">
             <PatternLayout
-                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{dark,yellow}: %msg%n%throwable" />
+                    pattern="%style{%d{ISO8601}}{white} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{yellow}: %msg%n%throwable" />
         </Console>
 
         <!-- LOG FILE -->
@@ -30,7 +29,7 @@
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
             <Policies>
-                <!-- On exécute les stratégies de création de nouveaux fichiers et de suppresion :
+                <!-- On exécute les stratégies de création de nouveaux fichiers et de suppression :
                 - Au démarrage de l'application
                 - Si l'un des fichiers atteint ${sizeTriggerPolicy}
                 - Si la date du filePattern nécessite un nouveau fichier -->
@@ -63,9 +62,9 @@
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
             <Policies>
-                <!-- On exécute les stratégies de création de nouveau fichier et de suppresion :
+                <!-- On exécute les stratégies de création de nouveau fichier et de suppression :
                 - Au démarrage de l'application
-                - Si l'un des fichiers atteint 10 MB
+                - Si l'un des fichiers atteint ${sizeTriggerPolicy}
                 - Si la date du filePattern nécessite un nouveau fichier -->
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}" />
@@ -96,9 +95,9 @@
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
             <Policies>
-                <!-- On exécute les stratégies de création de nouveau fichier et de suppresion :
+                <!-- On exécute les stratégies de création de nouveau fichier et de suppression :
                 - Au démarrage de l'application
-                - Si l'un des fichiers atteint 10 MB
+                - Si l'un des fichiers atteint ${sizeTriggerPolicy}
                 - Si la date du filePattern nécessite un nouveau fichier -->
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}" />
@@ -122,7 +121,11 @@
     </Appenders>
 
     <Loggers>
-        <Root level="all">
+        <Logger name="fr.abes.helloabes" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
             <AppenderRef ref="DebugFile" />
             <AppenderRef ref="LogFile" />
             <AppenderRef ref="ErrorFile" />

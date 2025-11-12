@@ -2,7 +2,6 @@ package fr.abes.helloabes.core.service;
 
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.dao.IUserDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,7 +27,6 @@ public class CustomUserDetailsService implements UserDetailsService {
      * à partir d'un dépot d'utilisateur du service web.
      * @param userRepository Dépot d'utilisateurs du service web.
      */
-    @Autowired
     public CustomUserDetailsService(IUserDao userRepository) {
         this.userRepository = userRepository;
     }

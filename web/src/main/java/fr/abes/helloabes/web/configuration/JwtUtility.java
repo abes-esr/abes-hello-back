@@ -1,15 +1,12 @@
 package fr.abes.helloabes.web.configuration;
 
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -18,7 +15,8 @@ import java.util.function.Function;
  * @since 0.0.1
  * @author Duy Tran
  */
-@Service
+//@Service
+@Component
 public class JwtUtility {
 
     /** Clé privée de cryptage des jetons JWT. */
@@ -41,11 +39,13 @@ public class JwtUtility {
      * @return Jeton JWT en chaîne de caractère.
      */
     private String createToken(Map<String, Object> claims, String subject) {
-        Header header = Jwts.header();
-        header.setType("JWT");
-        return Jwts.builder().setClaims(claims).setSubject(subject).setHeader((Map<String, Object>)
-                header).setIssuer("ABES").setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(addHoursToDate(new Date(System.currentTimeMillis()),1))
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setHeaderParam("typ", "JWT")
+                .setIssuer("ABES")
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 
@@ -55,10 +55,6 @@ public class JwtUtility {
      * @return Champs standard JWT (claims).
      */
     private Claims extractAllClaims(String token) {
-        /**
-         *
-         * Actuellement cela provoque une erreur interne 500
-         */
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
@@ -107,16 +103,10 @@ public class JwtUtility {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
-        } catch (SignatureException ex) {
-            httpServletRequest.setAttribute("token-invalid", "Token invalid");
-        } catch (MalformedJwtException ex) {
+        } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
             httpServletRequest.setAttribute("token-invalid", "Token invalid");
         } catch (ExpiredJwtException ex) {
             httpServletRequest.setAttribute("expired", "Token Exipred");
-        } catch (UnsupportedJwtException ex) {
-            httpServletRequest.setAttribute("token-invalid", "Token invalid");
-        } catch (IllegalArgumentException ex) {
-            httpServletRequest.setAttribute("token-invalid", "Token invalid");
         }
 
         return false;
@@ -136,18 +126,4 @@ public class JwtUtility {
         final String username = extractSubject(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
-
-    /**
-     * Ajoute un nombre d'heure à une date
-     * @param date Date date initiale
-     * @param hours int nombre d'heure à ajouter
-     * @return Date date avec le nombre d'heure en plus
-     */
-    public Date addHoursToDate(Date date, int hours) {       
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.HOUR_OF_DAY, hours);
-        return calendar.getTime();
-    }
-
 }
