@@ -18,7 +18,7 @@
 	<!-- =========================================================== -->
 <!--	<groupId>fr.abes.helloabes</groupId>-->
 	<artifactId>web</artifactId>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>Web API</name>
 	<description>API RESTful de l'application.</description>
 
@@ -153,6 +153,16 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>4.0.0-RC1</version>
+				<configuration>
+					<mainClass>fr.abes.helloabes.HelloABESApplication</mainClass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
