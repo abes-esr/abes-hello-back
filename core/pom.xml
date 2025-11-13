@@ -16,7 +16,7 @@
 	<!-- =========================================================== -->
 	<!--     Description du module                                   -->
 	<!-- =========================================================== -->
-	<groupId>fr.abes.helloabes</groupId>
+<!--	<groupId>fr.abes.helloabes</groupId>-->
 	<artifactId>core</artifactId>
 	<packaging>jar</packaging>
 	<name>Core</name>
@@ -31,6 +31,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+			<version>3.5.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -46,11 +53,17 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.3.6</version>
+			<version>42.3.9</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -62,11 +75,6 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-		<!--<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>runtime</scope>
-		</dependency>-->
 
 		<!-- === Tests === -->
 		<dependency>
@@ -96,6 +104,7 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.12.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -105,20 +114,20 @@
 		</dependency>
 	</dependencies>
 
-	<!-- =========================================================== -->
-	<!--     Configuration de la compilation                         -->
-	<!-- =========================================================== -->
-	<build>
-		<plugins>
-			<!-- ======================================================= -->
-			<!--     Compilation de l'application Spring                 -->
-			<!-- ======================================================= -->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>2.2.6.RELEASE</version>
-			</plugin>
-		</plugins>
-	</build>
+<!--	&lt;!&ndash; =========================================================== &ndash;&gt;-->
+<!--	&lt;!&ndash;     Configuration de la compilation                         &ndash;&gt;-->
+<!--	&lt;!&ndash; =========================================================== &ndash;&gt;-->
+<!--	<build>-->
+<!--		<plugins>-->
+<!--			&lt;!&ndash; ======================================================= &ndash;&gt;-->
+<!--			&lt;!&ndash;     Compilation de l'application Spring                 &ndash;&gt;-->
+<!--			&lt;!&ndash; ======================================================= &ndash;&gt;-->
+<!--			<plugin>-->
+<!--				<groupId>org.springframework.boot</groupId>-->
+<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--				<version>4.0.0-RC1</version>-->
+<!--			</plugin>-->
+<!--		</plugins>-->
+<!--	</build>-->
 
 </project>

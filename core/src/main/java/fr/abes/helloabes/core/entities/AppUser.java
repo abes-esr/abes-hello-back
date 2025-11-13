@@ -1,14 +1,14 @@
 package fr.abes.helloabes.core.entities;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Représente un utilisateur du service web. {@code AppUser} est synchronisé avec une base de données via Entity.
- * La framework lombok permet de générer des méthodes courantes comme Getter/Setter directement à la compilation.
+ * Le framework lombok permet de générer des méthodes courantes comme Getter/Setter directement à la compilation.
  * @since 0.0.1
  * @author Duy Tran
  */
@@ -72,7 +72,7 @@ public class AppUser implements Serializable {
 
     /**
      * Supprime une commande à l'utilisateur.
-     * @param order Order la commande à suprimmer.
+     * @param order Order la commande à supprimmer.
      */
     public void removeOrder(Order order) {
         order.setUser(null);

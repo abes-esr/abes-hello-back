@@ -11,8 +11,6 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,35 +20,35 @@ public class UneTasklet implements Tasklet, StepExecutionListener  {
 
 	List<AppUser> users = new ArrayList<>();
 
-	@Autowired
-	IUserService service;
+
+	private final IUserService service;
+
+	public UneTasklet(IUserService service) {
+		this.service = service;
+	}
 
 	@Override
 	public void beforeStep(StepExecution stepExecution) {
-
+        log.info("UneTasklet.java/beforeStep. Nom du step en cours : {}", stepExecution.getStepName());
 	}
 
 	@Override
 	public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) {
-
-		log.info("DANS LA TASKLET");
-
-		try
-		{
+		log.info("UneTasklet.java/execute");
+		try {
 			users = service.getAllUsers();
-			log.debug("Users list size ="+Integer.toString(users.size()));
+            log.debug("Taille de la liste utilisateurs : {}", users.size());
 		}
-		catch (Exception e)
-		{
-			log.error("erreur dans la tasklet :" + e);
+		catch (Exception e) {
+            log.error("Erreur dans la tasklet : {}", String.valueOf(e));
 		}
-
 		return RepeatStatus.FINISHED;
 	}
 
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
+		log.info("UneTasklet.java/afterStep");
 		ExecutionContext executionContext = stepExecution
 				.getJobExecution()
 				.getExecutionContext();

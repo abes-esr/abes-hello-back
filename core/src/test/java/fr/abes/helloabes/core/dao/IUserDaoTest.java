@@ -1,9 +1,7 @@
 package fr.abes.helloabes.core.dao;
 
 import fr.abes.helloabes.core.entities.AppUser;
-import fr.abes.helloabes.core.entities.Order;
-import fr.abes.helloabes.core.entities.Product;
-import fr.abes.helloabes.core.entities.Supplier;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,21 +12,17 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.validation.ConstraintViolationException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test la couche DAO de l'entité AppUser avec la base de données.
  * Les tests ne concernent que l'insertion et la lecture.
+ * Le module core ne contient aucun Boot d'application Spring car il n'est jamais exécuté seul.
+ * Les annotations suivantes permettent de simuler un Boot de Spring. *
  * @since 0.0.1
  */
 @ExtendWith(SpringExtension.class)
 @DataJpaTest // Permet d'utiliser une base de données H2 en mémoire pour les tests.
-/**
- * Le module core ne contient aucun Boot d'application Spring car il n'est jamais exécuté seul.
- * Les annotations suivantes permettent de simuler un Boot de Spring. *
- */
 @EnableAutoConfiguration
 @EntityScan(basePackages = "fr.abes.helloabes.core.entities")
 @ContextConfiguration(classes = AppUser.class)

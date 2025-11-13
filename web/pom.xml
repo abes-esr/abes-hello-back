@@ -16,14 +16,14 @@
 	<!-- =========================================================== -->
 	<!--     Description du module                                   -->
 	<!-- =========================================================== -->
-	<groupId>fr.abes.helloabes</groupId>
+<!--	<groupId>fr.abes.helloabes</groupId>-->
 	<artifactId>web</artifactId>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>Web API</name>
 	<description>API RESTful de l'application.</description>
 
 	<!-- =========================================================== -->
-	<!--     Gestion des dependances                                 -->
+	<!--     Gestion des dépendances                                 -->
 	<!-- =========================================================== -->
 	<dependencies>
 
@@ -47,27 +47,30 @@
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-autoconfigure</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-webmvc</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 
-		<!-- === Documentation API === -->
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-
-		<!-- === Securite === -->
+		<!-- === Sécurité === -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+			<version>3.5.7</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -77,6 +80,19 @@
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
+		</dependency>
+
+		<!-- === Documentation API === -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>3.0.0-M1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-webmvc</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- === Tests === -->
@@ -103,6 +119,7 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.12.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -135,7 +152,17 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>2.2.6.RELEASE</version>
+				<version>4.0.0-RC1</version>
+				<configuration>
+					<mainClass>fr.abes.helloabes.HelloABESApplication</mainClass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

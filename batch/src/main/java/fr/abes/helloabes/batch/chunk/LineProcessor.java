@@ -7,13 +7,15 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
 public class LineProcessor implements ItemProcessor<AppUser, String>, StepExecutionListener {
 
-    @Autowired
-    ProxyRetry proxyRetry;
+    private final ProxyRetry proxyRetry;
+
+    public LineProcessor(ProxyRetry proxyRetry) {
+        this.proxyRetry = proxyRetry;
+    }
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
@@ -21,7 +23,7 @@ public class LineProcessor implements ItemProcessor<AppUser, String>, StepExecut
     }
 
     @Override
-    public String process(AppUser user) throws Exception {
+    public String process(AppUser user) {
         String line = null;
         try {
 

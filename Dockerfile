@@ -1,6 +1,6 @@
 ###
 # Image pour la compilation
-FROM maven:3-jdk-11 as build-image
+FROM maven:3-eclipse-temurin-17 AS build-image
 WORKDIR /build/
 # Installation et configuration de la locale FR
 RUN apt update && DEBIAN_FRONTEND=noninteractive apt -y install locales
@@ -35,7 +35,7 @@ RUN mvn --batch-mode \
 # Image pour le module batch
 # Remarque: l'image openjdk:11 n'est pas utilisée car nous avons besoin de cronie
 #           qui n'est que disponible sous centos/rockylinux.
-FROM rockylinux:8 as batch-image
+FROM rockylinux:8 AS batch-image
 WORKDIR /scripts/
 # systeme pour les crontab
 # cronie: remplacant de crond qui support le CTRL+C dans docker (sans ce système c'est compliqué de stopper le conteneur)
@@ -56,9 +56,12 @@ CMD ["crond", "-n"]
 
 ###
 # Image pour le module web
-FROM tomcat:9-jdk11 as web-image
-COPY --from=build-image /build/web/target/*.war /usr/local/tomcat/webapps/ROOT.war
-CMD [ "catalina.sh", "run" ]
+FROM tomcat:9-jdk17 AS web-image
+WORKDIR /app/
+COPY --from=build-image /build/web/target/*.jar /app/abeshello.jar
+ENV TZ=Europe/Paris
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+ENTRYPOINT ["java","-jar","/app/abeshello.jar"]
 
 # pour avoir le manager de tomcat
 # https://hub.docker.com/r/bitnami/tomcat
