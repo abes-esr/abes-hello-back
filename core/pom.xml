@@ -10,7 +10,7 @@
 	<parent>
 		<artifactId>helloabesbackoffice</artifactId>
 		<groupId>fr.abes.helloabes</groupId>
-		<version>2.0.0</version>
+		<version>2.0.1-SNAPSHOT</version>
 	</parent>
 
 	<!-- =========================================================== -->
@@ -113,21 +113,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-<!--	&lt;!&ndash; =========================================================== &ndash;&gt;-->
-<!--	&lt;!&ndash;     Configuration de la compilation                         &ndash;&gt;-->
-<!--	&lt;!&ndash; =========================================================== &ndash;&gt;-->
-<!--	<build>-->
-<!--		<plugins>-->
-<!--			&lt;!&ndash; ======================================================= &ndash;&gt;-->
-<!--			&lt;!&ndash;     Compilation de l'application Spring                 &ndash;&gt;-->
-<!--			&lt;!&ndash; ======================================================= &ndash;&gt;-->
-<!--			<plugin>-->
-<!--				<groupId>org.springframework.boot</groupId>-->
-<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--				<version>4.0.0-RC1</version>-->
-<!--			</plugin>-->
-<!--		</plugins>-->
-<!--	</build>-->
-
 </project>
