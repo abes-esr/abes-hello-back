@@ -56,7 +56,7 @@ public class SecuredController {
             @ApiResponse(responseCode = "400", description = "Mauvaise requête. Le paramètre problématique sera précisé par le message d'erreur. Par exemple : paramètre manquant, adresse erronée..."),
             @ApiResponse(responseCode = "404", description = "Opération a échoué."),
     })
-    public Map displaySecureHome() {
+    public Map<String, String> displaySecureHome() {
 
         return Collections.singletonMap("response", "Hello from ABES - {* PRIVATE *} API PAGE");
     }

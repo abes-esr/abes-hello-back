@@ -44,6 +44,10 @@ Le processor fait appel à une méthode externe qui illustre l'utilisation du re
 
 TODO : expliquer comment compiler et tester en local
 
+#### Lancement des tests unitaires
+
+Il est impératif de créer un fichier `application-localhost.properties` dans le répertoire `resources` (chemin d'accès `web/src/test/`) et de renseigner le paramètre `jwt.token.secret=` avec un token valide avant de lancer les TU.
+
 ### Utilisation en local avec Docker
 
 Voir https://github.com/abes-esr/abes-hello-docker qui propose les configurations docker pour déployer en local ou sur des env de dev, test ou prod.

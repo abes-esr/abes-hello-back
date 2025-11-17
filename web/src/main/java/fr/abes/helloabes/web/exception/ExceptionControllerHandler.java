@@ -2,7 +2,6 @@ package fr.abes.helloabes.web.exception;
 
 import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -11,7 +10,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
@@ -25,13 +24,10 @@ public class ExceptionControllerHandler {
     /**
      * Vérifier le Token passé dans le header avec un format correct
      * @param ex
-     * @param headers
-     * @param status
-     * @param request
      * @return
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
 
         String error = "Malformed JSON request";
         log.error(error);
@@ -41,13 +37,10 @@ public class ExceptionControllerHandler {
     /**
      * Vérifier les méthodes correspondent avec les URI dans le controller
      * @param ex
-     * @param headers
-     * @param status
-     * @param request
      * @return
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
         String error = "Method is not supported for this request";
         log.error(error);
         return buildResponseEntity(new ApiReturnError(HttpStatus.METHOD_NOT_ALLOWED, error, ex));
@@ -56,13 +49,10 @@ public class ExceptionControllerHandler {
     /**
      * Vérifier le nom d'utilisateur et le mot de passe lors de l'inscription
      * @param ex
-     * @param headers
-     * @param status
-     * @param request
      * @return
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    @ExceptionHandler({MethodArgumentNotValidException.class, HandlerMethodValidationException.class})
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(Exception ex) {
         String error = "The credentials are not valid";
         log.error(error);
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
@@ -71,13 +61,10 @@ public class ExceptionControllerHandler {
     /**
      * Page 404
      * @param ex
-     * @param headers
-     * @param status
-     * @param request
      * @return
      */
     @ExceptionHandler(NoHandlerFoundException.class)
-    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex) {
         String error = "Page not found";
         log.error(error);
         return buildResponseEntity(new ApiReturnError(HttpStatus.NOT_FOUND, error, ex));
