@@ -1,12 +1,19 @@
 package fr.abes.helloabes.web.controller.jpa;
 
 import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.web.CustomTestExecutionListener;
 import org.junit.Test;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@TestExecutionListeners(value = {
+        CustomTestExecutionListener.class,
+        DependencyInjectionTestExecutionListener.class
+})
 public class SecuredRouteJPATest extends SecuredControllerJPATestBase {
 
     /**

@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.service.impl.OrderServiceImpl;
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
+import fr.abes.helloabes.web.CustomTestExecutionListener;
 import fr.abes.helloabes.web.controller.PublicController;
 import fr.abes.helloabes.web.controller.SecuredController;
 import org.junit.Assert;
@@ -13,12 +14,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @RunWith(SpringRunner.class)
+@TestExecutionListeners(value = {
+        CustomTestExecutionListener.class,
+        DependencyInjectionTestExecutionListener.class
+})
 public class SecuredControllerJPATestBase extends ApplicationJPATestBase {
 
     @InjectMocks
