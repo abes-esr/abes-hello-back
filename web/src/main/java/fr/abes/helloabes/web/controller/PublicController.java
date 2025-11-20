@@ -75,7 +75,7 @@ public class PublicController {
     @Operation(
             summary = "Message public",
             description = "Retourne un message de bienvenue")
-    public Map displayHome() {
+    public Map<String, String> displayHome() {
 
         return Collections.singletonMap("response", "Hello from ABES - PUBLIC API PAGE");
     }

@@ -1,7 +1,9 @@
 package fr.abes.helloabes.core.dao;
 
 import fr.abes.helloabes.core.entities.AppUser;
+
 import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +12,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test la couche DAO de l'entité AppUser avec la base de données.
@@ -28,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = AppUser.class)
 public class IUserDaoTest {
 
+//    @MockitoBean
     @Autowired
     private IUserDao userDao;
 
@@ -43,8 +46,8 @@ public class IUserDaoTest {
     @Test
     public void saveAdminUser() {
         AppUser myNewUser = userDao.save(getAdminUser());
-        assertEquals("admin", myNewUser.getUserName());
-        assertEquals("@totoTOTO1234", myNewUser.getPassWord());
+        Assertions.assertEquals("admin", myNewUser.getUserName());
+        Assertions.assertEquals("@totoTOTO1234", myNewUser.getPassWord());
     }
 
     /**
@@ -60,7 +63,7 @@ public class IUserDaoTest {
 
         userDao.save(mySecondUser);
 
-        Exception exception = assertThrows(IncorrectResultSizeDataAccessException.class, () -> {
+        Exception exception = Assertions.assertThrows(IncorrectResultSizeDataAccessException.class, () -> {
             userDao.findByUserName("admin");
         });
     }
@@ -73,14 +76,14 @@ public class IUserDaoTest {
         AppUser myUser = getAdminUser();
         myUser.setUserName(null);
 
-        Exception exception = assertThrows(ConstraintViolationException.class, () -> {
+        Exception exception = Assertions.assertThrows(ConstraintViolationException.class, () -> {
             userDao.save(myUser);
         });
 
         String expectedMessage = "Le nom d'utilisateur ne doit pas être null";
         String actualMessage = exception.getMessage();
 
-        assertTrue(actualMessage.contains(expectedMessage));
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
     }
 
     /**
@@ -91,14 +94,14 @@ public class IUserDaoTest {
         AppUser myUser = getAdminUser();
         myUser.setUserName("");
 
-        Exception exception = assertThrows(ConstraintViolationException.class, () -> {
+        Exception exception = Assertions.assertThrows(ConstraintViolationException.class, () -> {
             userDao.save(myUser);
         });
 
         String expectedMessage = "Le nom d'utilisateur ne doit pas être vide";
         String actualMessage = exception.getMessage();
 
-        assertTrue(actualMessage.contains(expectedMessage));
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
     }
 
     /**
@@ -109,14 +112,14 @@ public class IUserDaoTest {
         AppUser myUser = getAdminUser();
         myUser.setPassWord(null);
 
-        Exception exception = assertThrows(ConstraintViolationException.class, () -> {
+        Exception exception = Assertions.assertThrows(ConstraintViolationException.class, () -> {
             userDao.save(myUser);
         });
 
         String expectedMessage = "Le mot de passe ne doit pas être null";
         String actualMessage = exception.getMessage();
 
-        assertTrue(actualMessage.contains(expectedMessage));
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
     }
 
     /**
@@ -125,7 +128,7 @@ public class IUserDaoTest {
     @Test
     public void saveWeakPassword() {
 
-        Exception exception = assertThrows(ConstraintViolationException.class, () -> {
+        Exception exception = Assertions.assertThrows(ConstraintViolationException.class, () -> {
             AppUser myUser = new AppUser("admin", "admin");
             userDao.save(myUser);
         });
@@ -133,7 +136,7 @@ public class IUserDaoTest {
         String expectedMessage = "Le mot de passe ne respecte pas les règles de sécurité";
         String actualMessage = exception.getMessage();
 
-        assertTrue(actualMessage.contains(expectedMessage));
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
     }
 
     /**
@@ -144,8 +147,8 @@ public class IUserDaoTest {
         userDao.save(getAdminUser());
 
         AppUser myCandidate = userDao.findByUserName("admin");
-        assertEquals("admin", myCandidate.getUserName());
-        assertEquals("@totoTOTO1234", myCandidate.getPassWord());
+        Assertions.assertEquals("admin", myCandidate.getUserName());
+        Assertions.assertEquals("@totoTOTO1234", myCandidate.getPassWord());
     }
 
     /**
@@ -156,7 +159,7 @@ public class IUserDaoTest {
         userDao.save(getAdminUser());
 
         AppUser myCandidate = userDao.findByUserName("corentin");
-        assertNull(myCandidate);
+        Assertions.assertNull(myCandidate);
     }
     
 }

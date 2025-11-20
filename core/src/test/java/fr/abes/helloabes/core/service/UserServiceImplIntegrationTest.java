@@ -4,38 +4,35 @@ import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Test d'intégration de la couche service des utilisateurs de l'application.
  * La base de données est remplacée par un Mock.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(SpringExtension.class)
 public class UserServiceImplIntegrationTest {
 
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Mock
+    @MockitoBean
     IUserDao userRepository;
 
     @InjectMocks
     UserServiceImpl userService;
 
-    @Before
+    @BeforeEach
     public void setup(){
         userService = new UserServiceImpl(userRepository,encoder());
     }
@@ -58,7 +55,7 @@ public class UserServiceImplIntegrationTest {
 
         myDataBaseUser.setIdentityNumber(1);
         myDataBaseUser.setPassWord(encoder().encode(myUser.getPassWord()));
-        assertTrue(encoder().matches(myUser.getPassWord(), myDataBaseUser.getPassWord()));
+        Assertions.assertTrue(encoder().matches(myUser.getPassWord(), myDataBaseUser.getPassWord()));
 
         return myDataBaseUser;
     }
@@ -75,7 +72,7 @@ public class UserServiceImplIntegrationTest {
 
         AppUser myUser = userService.findUser(myCandidate);
 
-        assertEquals("admin", myUser.getUserName());
+        Assertions.assertEquals("admin", myUser.getUserName());
     }
 
     /**
@@ -94,23 +91,20 @@ public class UserServiceImplIntegrationTest {
 
         AppUser myCandidate = userService.createUser(myTestingUser);
 
-        /**
-         * On test si le mot de passe de l'utilisateur passé en paramètre
-         * a bien été crypté et correspond au mot de passe clair.
-         */
-        assertTrue(encoder().matches(myUser.getPassWord(),myTestingUser.getPassWord()));
 
-        /**
-         * On test si le mapping DAO a bien fonctionné.
-         * Les noms d'utilisateur doivent correspondrent.
-         */
+        //On test si le mot de passe de l'utilisateur passé en paramètre
+        //a bien été crypté et correspond au mot de passe clair.
+        Assertions.assertTrue(encoder().matches(myUser.getPassWord(),myTestingUser.getPassWord()));
+
+
+        //On test si le mapping DAO a bien fonctionné.
+        //Les noms d'utilisateur doivent correspondrent.
         Assertions.assertEquals(myUser.getUserName(),myCandidate.getUserName());
 
-        /**
-         * On test si le mapping DAO a bien fonctionné.
-         * Le mot de passe crypté du candidat doit correspondre au mot de passe clair.
-         */
-        assertTrue(encoder().matches(myUser.getPassWord(),myCandidate.getPassWord()));
+
+        //On test si le mapping DAO a bien fonctionné.
+        //Le mot de passe crypté du candidat doit correspondre au mot de passe clair.
+        Assertions.assertTrue(encoder().matches(myUser.getPassWord(),myCandidate.getPassWord()));
     }
 
     /**
@@ -124,7 +118,8 @@ public class UserServiceImplIntegrationTest {
         // On mocke la DAO avec l'utilisateur à tester
         Mockito.when(userRepository.findByUserName("admin")).thenReturn(myTestingUser);
 
-        Exception exception = assertThrows(UserAlreadyExistsException.class, () -> {
+        // TODO rédiger un test correct en remplacement de celui ci-dessous :
+        Exception exception = Assertions.assertThrows(UserAlreadyExistsException.class, () -> {
             userService.createUser(myTestingUser);
         });
 

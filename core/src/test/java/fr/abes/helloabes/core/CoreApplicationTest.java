@@ -8,43 +8,34 @@ import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.entities.Order;
 import fr.abes.helloabes.core.entities.Product;
 import fr.abes.helloabes.core.entities.Supplier;
-import fr.abes.helloabes.core.service.impl.UserServiceImpl;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Iterator;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test la couche Core avec la base de données.
+ * Le module core ne contient aucun Boot d'application Spring car il n'est jamais exécuté seul.
+ * Les annotations suivantes permettent de simuler un Boot de Spring. *
  * @since 0.0.1
  */
 @ExtendWith(SpringExtension.class)
 @DataJpaTest // Permet d'utiliser une base de données H2 en mémoire pour les tests.
-/**
- * Le module core ne contient aucun Boot d'application Spring car il n'est jamais exécuté seul.
- * Les annotations suivantes permettent de simuler un Boot de Spring. *
- */
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 @EntityScan(basePackages = "fr.abes.helloabes.core.entities")
+@ComponentScan(basePackages = {"fr.abes.helloabes.core.dao", "fr.abes.helloabes.core.repositories"})
 @ContextConfiguration(classes = { CoreApplicationTest.class })
 public class CoreApplicationTest {
 
@@ -91,9 +82,9 @@ public class CoreApplicationTest {
         orderDao.save(myOrder2);
 
         List<Order> adminOrders = orderDao.findOrdersOfUser(admin);
-        assertEquals(2,adminOrders.size());
-        assertEquals(myOrder,adminOrders.get(0));
-        assertEquals(myOrder2,adminOrders.get(1));
+        Assertions.assertEquals(2,adminOrders.size());
+        Assertions.assertEquals(myOrder,adminOrders.get(0));
+        Assertions.assertEquals(myOrder2,adminOrders.get(1));
     }
 
     /**
@@ -115,9 +106,9 @@ public class CoreApplicationTest {
         orderDao.save(myOrder2);
 
         List<Order> adminOrders = orderDao.findOrdersOfUser(admin);
-        assertEquals(2,adminOrders.size());
-        assertEquals(myOrder,adminOrders.get(0));
-        assertEquals(myOrder2,adminOrders.get(1));
+        Assertions.assertEquals(2,adminOrders.size());
+        Assertions.assertEquals(myOrder,adminOrders.get(0));
+        Assertions.assertEquals(myOrder2,adminOrders.get(1));
     }
 
     /**
@@ -150,7 +141,7 @@ public class CoreApplicationTest {
         admin.removeOrders();
         userDao.flush();
 
-        assertEquals(0,admin.getOrders().size());
+        Assertions.assertEquals(0,admin.getOrders().size());
     }
 
     /**
@@ -184,7 +175,7 @@ public class CoreApplicationTest {
         orderDao.flush();
 
         List<Order> orders = orderDao.findOrdersOfUser(admin);
-        assertEquals(2,orders.size());
-        assertEquals(orders.get(0),myOrder1);
+        Assertions.assertEquals(2,orders.size());
+        Assertions.assertEquals(orders.get(0),myOrder1);
     }
 }
