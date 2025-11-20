@@ -6,6 +6,7 @@ import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.entities.Order;
 import fr.abes.helloabes.core.entities.Product;
 import fr.abes.helloabes.core.entities.Supplier;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.boot.json.JsonParseException;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
@@ -37,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = Supplier.class)
 public class ISupplierDaoTest {
 
+//    @MockitoBean
     @Autowired
     private ISupplierDao supplierDao;
 
@@ -54,6 +57,6 @@ public class ISupplierDaoTest {
     public void saveSupplier() {
         Supplier transientSupplier = getAbesSupplier();
         Supplier persistentSupplier = supplierDao.save(transientSupplier);
-        assertEquals(transientSupplier,persistentSupplier);
+        Assertions.assertEquals(transientSupplier,persistentSupplier);
     }
 }

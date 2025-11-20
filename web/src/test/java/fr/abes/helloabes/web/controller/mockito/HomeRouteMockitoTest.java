@@ -1,6 +1,6 @@
 package fr.abes.helloabes.web.controller.mockito;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

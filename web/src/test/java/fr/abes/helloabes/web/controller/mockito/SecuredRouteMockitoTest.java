@@ -1,9 +1,9 @@
 package fr.abes.helloabes.web.controller.mockito;
 
 import fr.abes.helloabes.core.entities.AppUser;
-import org.junit.Test;
-import org.mockito.Mockito;
 
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

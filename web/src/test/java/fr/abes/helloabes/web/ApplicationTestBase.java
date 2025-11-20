@@ -4,21 +4,17 @@ import fr.abes.helloabes.HelloABESApplication;
 import fr.abes.helloabes.core.dao.IOrderDao;
 import fr.abes.helloabes.core.dao.IProductDao;
 import fr.abes.helloabes.core.dao.ISupplierDao;
-import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.web.configuration.DtoMapperUtility;
 import fr.abes.helloabes.web.configuration.JwtUtility;
+
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Classe de test général pour l'application.
@@ -78,7 +74,7 @@ public class ApplicationTestBase {
 
         myDataBaseUser.setIdentityNumber(5);
         myDataBaseUser.setPassWord(encoder().encode(myUser.getPassWord()));
-        assertTrue(encoder().matches(myUser.getPassWord(), myDataBaseUser.getPassWord()));
+        Assertions.assertTrue(encoder().matches(myUser.getPassWord(), myDataBaseUser.getPassWord()));
 
         return myDataBaseUser;
     }

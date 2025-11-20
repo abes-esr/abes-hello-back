@@ -2,30 +2,31 @@ package fr.abes.helloabes.core.service;
 
 import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.AppUser;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.userdetails.UserDetails;
-import static org.junit.Assert.assertEquals;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Test d'intégration de la couche service utilisateur de Spring.
  * La base de données est remplacée par un Mock.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(SpringExtension.class)
 public class CustomUserDetailServiceIntegrationTest {
 
-    @Mock
+    @MockitoBean
     IUserDao userRepository;
 
     @InjectMocks
     CustomUserDetailsService userService;
 
-    @Before
+    @BeforeEach
     public void setup(){
         userService = new CustomUserDetailsService(userRepository);
     }
@@ -48,7 +49,7 @@ public class CustomUserDetailServiceIntegrationTest {
 
         UserDetails myCandidate = userService.loadUserByUsername(myUser.getUserName());
 
-        assertEquals("admin", myCandidate.getUsername());
+        Assertions.assertEquals("admin", myCandidate.getUsername());
 
     }
 }

@@ -7,21 +7,26 @@ import fr.abes.helloabes.core.service.impl.OrderServiceImpl;
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
 import fr.abes.helloabes.web.controller.PublicController;
 import fr.abes.helloabes.web.controller.SecuredController;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+//import org.junit.Assert;
+//import org.junit.Before;
+//import org.junit.Test;
+//import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 
 import org.springframework.test.annotation.IfProfileValue;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 //@TestExecutionListeners(value = {
 //        CustomTestExecutionListener.class,
 //        DependencyInjectionTestExecutionListener.class
@@ -34,7 +39,7 @@ public class SecuredControllerJPATestBase extends ApplicationJPATestBase {
     @InjectMocks
     protected PublicController publicController;
 
-    @Before
+    @BeforeEach
     public void setup(){
         publicController = new PublicController(new UserServiceImpl(userDao,encoder()),authenticationManager,jwtUtility, dtoMapper);
         securedController = new SecuredController(new UserServiceImpl(userDao,encoder()),new OrderServiceImpl(orderDao), dtoMapper);
@@ -43,8 +48,8 @@ public class SecuredControllerJPATestBase extends ApplicationJPATestBase {
     @Test
     @IfProfileValue(name ="spring.profiles.active", value ="test-jpa")
     public void contextLoads() {
-        Assert.assertNotNull(securedController);
-        Assert.assertNotNull(publicController);
+        Assertions.assertNotNull(securedController);
+        Assertions.assertNotNull(publicController);
     }
 
     /**

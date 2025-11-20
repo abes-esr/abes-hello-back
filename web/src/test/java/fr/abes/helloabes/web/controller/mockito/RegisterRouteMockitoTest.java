@@ -1,9 +1,10 @@
 package fr.abes.helloabes.web.controller.mockito;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
-import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 

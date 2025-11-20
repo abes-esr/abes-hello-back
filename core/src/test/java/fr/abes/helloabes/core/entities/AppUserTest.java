@@ -1,7 +1,7 @@
 package fr.abes.helloabes.core.entities;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AppUserTest {
 
@@ -17,8 +17,8 @@ public class AppUserTest {
     @Test
     public void TotoUser() {
         AppUser myUser = getTotoUser();
-        assertEquals("toto", myUser.getUserName());
-        assertEquals("tata", myUser.getPassWord());
+        Assertions.assertEquals("toto", myUser.getUserName());
+        Assertions.assertEquals("tata", myUser.getPassWord());
     }
 
     /**
@@ -28,7 +28,7 @@ public class AppUserTest {
     public void setIdentifyNumber() {
         AppUser myUser = getTotoUser();
         myUser.setIdentityNumber(10);
-        assertEquals(Integer.valueOf(10), Integer.valueOf(myUser.getIdentityNumber()));
+        Assertions.assertEquals(Integer.valueOf(10), Integer.valueOf(myUser.getIdentityNumber()));
     }
 
     /**
@@ -38,7 +38,7 @@ public class AppUserTest {
     public void setUsername() {
         AppUser myUser = getTotoUser();
         myUser.setUserName("monNouveauNom");
-        assertEquals("monNouveauNom", myUser.getUserName());
+        Assertions.assertEquals("monNouveauNom", myUser.getUserName());
     }
 
     /**
@@ -48,8 +48,7 @@ public class AppUserTest {
     public void setPassword() {
         AppUser myUser = getTotoUser();
         myUser.setPassWord("monNouveauPass");
-        assertEquals("monNouveauPass", myUser.getPassWord());
+        Assertions.assertEquals("monNouveauPass", myUser.getPassWord());
     }
-
 
 }

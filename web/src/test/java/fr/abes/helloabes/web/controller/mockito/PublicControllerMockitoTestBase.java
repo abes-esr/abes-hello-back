@@ -2,11 +2,16 @@ package fr.abes.helloabes.web.controller.mockito;
 
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
 import fr.abes.helloabes.web.controller.PublicController;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+//import org.junit.Assert;
+//import org.junit.Before;
+//import org.junit.Test;
+//import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -17,20 +22,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Classe de test pour le controlleur publique.
  * On injecte le mock du dépot DAO dans le controlleur.
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class PublicControllerMockitoTestBase extends ApplicationMockitoTestBase {
 
     @InjectMocks
     protected PublicController publicController;
 
-    @Before
+    @BeforeEach
     public void setup(){
         publicController = new PublicController(new UserServiceImpl(userDao,encoder()),authenticationManager,jwtUtility, dtoMapper);
     }
 
     @Test
     public void contextLoads() {
-        Assert.assertNotNull(publicController);
+        Assertions.assertNotNull(publicController);
     }
 
     /**
