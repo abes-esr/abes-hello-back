@@ -5,7 +5,6 @@ import com.jayway.jsonpath.JsonPath;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.service.impl.OrderServiceImpl;
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
-import fr.abes.helloabes.web.CustomTestExecutionListener;
 import fr.abes.helloabes.web.controller.PublicController;
 import fr.abes.helloabes.web.controller.SecuredController;
 import org.junit.Assert;
@@ -13,19 +12,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestExecutionListeners;
+
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @RunWith(SpringRunner.class)
-@TestExecutionListeners(value = {
-        CustomTestExecutionListener.class,
-        DependencyInjectionTestExecutionListener.class
-})
+//@TestExecutionListeners(value = {
+//        CustomTestExecutionListener.class,
+//        DependencyInjectionTestExecutionListener.class
+//})
 public class SecuredControllerJPATestBase extends ApplicationJPATestBase {
 
     @InjectMocks
@@ -41,6 +41,7 @@ public class SecuredControllerJPATestBase extends ApplicationJPATestBase {
     }
 
     @Test
+    @IfProfileValue(name ="spring.profiles.active", value ="test-jpa")
     public void contextLoads() {
         Assert.assertNotNull(securedController);
         Assert.assertNotNull(publicController);
@@ -54,11 +55,16 @@ public class SecuredControllerJPATestBase extends ApplicationJPATestBase {
      */
     protected String authenticate(AppUser myUser) throws Exception {
 
+        AppUser myDataBaseUser = getDataBaseUser(myUser);
+
         ObjectMapper Obj = new ObjectMapper();
         String json = Obj.writeValueAsString(myUser);
 
+        Mockito.when(userDao.findByUserName(myUser.getUserName())).thenReturn(myDataBaseUser);
+
         MvcResult result = mockMvc.perform(post("/api/v1/login")
-                .contentType(MediaType.APPLICATION_JSON).content(json)).andReturn();
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andReturn();
 
         return JsonPath.read(result.getResponse().getContentAsString(), "$.accessToken");
     }

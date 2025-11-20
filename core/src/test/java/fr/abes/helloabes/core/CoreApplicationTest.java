@@ -21,9 +21,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +46,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Le module core ne contient aucun Boot d'application Spring car il n'est jamais exécuté seul.
  * Les annotations suivantes permettent de simuler un Boot de Spring. *
  */
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 @EntityScan(basePackages = "fr.abes.helloabes.core.entities")
+@ComponentScan(basePackages = {"fr.abes.helloabes.core.dao", "fr.abes.helloabes.core.repositories"})
 @ContextConfiguration(classes = { CoreApplicationTest.class })
 public class CoreApplicationTest {
 

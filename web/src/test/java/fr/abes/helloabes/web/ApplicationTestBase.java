@@ -4,6 +4,7 @@ import fr.abes.helloabes.HelloABESApplication;
 import fr.abes.helloabes.core.dao.IOrderDao;
 import fr.abes.helloabes.core.dao.IProductDao;
 import fr.abes.helloabes.core.dao.ISupplierDao;
+import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.web.configuration.DtoMapperUtility;
 import fr.abes.helloabes.web.configuration.JwtUtility;
@@ -12,7 +13,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.Assert.assertTrue;
@@ -23,7 +26,6 @@ import static org.junit.Assert.assertTrue;
  */
 @AutoConfigureMockMvc
 @SpringBootTest(classes = HelloABESApplication.class)
-@TestPropertySource({"classpath:application.properties", "classpath:application-localhost.properties"})
 public class ApplicationTestBase {
 
     protected BCryptPasswordEncoder encoder() {
@@ -31,12 +33,15 @@ public class ApplicationTestBase {
     }
 
     @Autowired
+//    @MockitoBean
     protected IOrderDao orderDao;
 
     @Autowired
+//    @MockitoBean
     protected ISupplierDao supplierDao;
 
     @Autowired
+//    @MockitoBean
     protected IProductDao productDao;
 
     @Autowired
