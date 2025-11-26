@@ -1,6 +1,5 @@
 package fr.abes.helloabes.core.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

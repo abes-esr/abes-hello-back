@@ -7,6 +7,14 @@ import fr.abes.helloabes.web.configuration.AuthenticationResponse;
 import fr.abes.helloabes.web.configuration.DtoMapperUtility;
 import fr.abes.helloabes.web.configuration.JwtUtility;
 import fr.abes.helloabes.web.dto.AppUserDto;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,13 +23,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.Map;
@@ -78,6 +79,7 @@ public class PublicController {
     public Map<String, String> displayHome() {
 
         return Collections.singletonMap("response", "Hello from ABES - PUBLIC API PAGE");
+
     }
 
     /**
@@ -126,6 +128,7 @@ public class PublicController {
             @Parameter(description = "Objet JSON contenant les informations sur l'utilisateur à authentifier. Tous les champs sont nécessaire.", required = true)
             @PathParam("user")
             @Valid @NotNull @RequestBody AppUserDto userDto) {
+
         AppUser authRequest = dtoMapper.map(userDto, AppUser.class);
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassWord()));
@@ -134,5 +137,6 @@ public class PublicController {
         String token = jwtUtility.generateToken(authRequest.getUserName());
 
         return ResponseEntity.ok(new AuthenticationResponse(token, authRequest.getUserName()));
+
     }
 }

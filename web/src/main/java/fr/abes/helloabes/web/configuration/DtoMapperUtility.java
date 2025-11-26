@@ -15,7 +15,6 @@ public class DtoMapperUtility {
         this.modelMapper = modelMapper;
     }
 
-
     public <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
         modelMapper.getConfiguration().setPreferNestedProperties(false);
         return source

@@ -1,20 +1,24 @@
 package fr.abes.helloabes.web.controller.mockito;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.junit.jupiter.api.Test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Classe de test pour la route /
+ * Classe de test pour la route /api/v1
  */
 public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
 
     /**
-     * Test la route / avec la méthode GET
-     * @throws Exception
+     * Teste de la route /api/v1 avec :
+     *  . GET
+     *  Résultats :
+     *  . isOk()
+     *  . renvoi du message de bienvenue
+     * @throws Exception Lève une exception
      */
     @Test
     public void homeGetMethod() throws Exception {
@@ -25,8 +29,12 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
 
 
     /**
-     * Test la route / avec la méthode POST
-     * @throws Exception
+     * Test la route /api/v1 avec :
+     *  . POST
+     *  Résultats :
+     *  . isMethodNotAllowed()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void homePostMethod() throws Exception {
@@ -40,8 +48,12 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
 
 
     /**
-     * Test la route / avec la méthode PUT
-     * @throws Exception
+     * Test la route /api/v1 avec :
+     *  . PUT
+     *  Résultats :
+     *  . isMethodNotAllowed()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void homePutMethod() throws Exception {
@@ -55,8 +67,12 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
 
 
     /**
-     * Test la route / avec la méthode DELETE
-     * @throws Exception
+     * Test la route /api/v1 avec :
+     *  . DELETE
+     *  Résultats :
+     *  . isMethodNotAllowed()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void homeDeleteMethod() throws Exception {
@@ -70,8 +86,13 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
 
 
     /**
-     * Test la route / avec la méthode GET et un JSON en body
-     * @throws Exception
+     * Test la route /api/v1 avec :
+     *  . GET
+     *  . un body vide
+     *  Résultats :
+     *  . isOk()
+     *  . renvoi du message de bienvenue
+     * @throws Exception Lève une exception
      */
     @Test
     public void homeEmptyBody() throws Exception {

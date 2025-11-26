@@ -1,11 +1,7 @@
 package fr.abes.helloabes.web.configuration;
 
 import fr.abes.helloabes.core.service.CustomUserDetailsService;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotNull;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +9,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
@@ -23,6 +25,7 @@ import java.io.IOException;
  * @author Duy Tran
  */
 @Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     /** Service utilitaire pour les jetons JWT. */
@@ -50,11 +53,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @throws IOException si
      */
     @Override
-    protected void doFilterInternal(@NotNull HttpServletRequest httpServletRequest, @NotNull HttpServletResponse httpServletResponse,
-                                    @NotNull FilterChain filterChain) throws ServletException, IOException, UsernameNotFoundException {
+    protected void doFilterInternal(
+            @NotNull HttpServletRequest httpServletRequest,
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull FilterChain filterChain
+            ) throws ServletException, IOException, UsernameNotFoundException {
 
         String authorizationHeader = httpServletRequest.getHeader("Authorization");
-
         String token = null;
         String userName = null;
 
@@ -70,11 +75,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 userDetails = service.loadUserByUsername(userName);
             } catch (UsernameNotFoundException e) {
-                logger.info(e.getMessage());
+                log.error("Utilisateur inconnu : {}", e.getMessage());
             }
 
             if (userDetails != null && jwtUtility.validateToken(token, userDetails)) {
-
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken

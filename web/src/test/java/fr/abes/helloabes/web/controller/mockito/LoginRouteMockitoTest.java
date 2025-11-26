@@ -2,25 +2,31 @@ package fr.abes.helloabes.web.controller.mockito;
 
 import fr.abes.helloabes.core.entities.AppUser;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Classe de test pour la route /login
+ * Classe de test pour la route /api/v1/login
  */
 @ActiveProfiles("test-mockito")
+@Slf4j
 public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
 
-    /**
-     * Test la route /login avec la méthode GET
-     * @throws Exception
+     /**
+     * Teste la route /api/v1/login avec :
+     *  . GET
+     *  Résultats :
+     *  . isMethodNotAllowed()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void loginGetMethod() throws Exception {
@@ -33,8 +39,13 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
     }
 
     /**
-     * Test la route /login avec la méthode POST
-     * @throws Exception
+     * Teste la route /api/v1/login avec :
+     *  . POST
+     *  . pas de body dans la requête
+     *  Résultats :
+     *  . isBadRequest()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void loginPostMethod() throws Exception {
@@ -47,8 +58,12 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
     }
 
     /**
-     * Test la route /login avec la méthode PUT
-     * @throws Exception
+     * Teste la route /api/v1/login avec :
+     *  . PUT
+     *  Résultats :
+     *  . isMethodNotAllowed()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void loginPutMethod() throws Exception {
@@ -61,8 +76,12 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
     }
 
     /**
-     * Test la route /login avec la méthode DELETE
-     * @throws Exception
+     * Teste la route /api/v1/login avec :
+     *  . DELETE
+     *  Résultats :
+     *  . isMethodNotAllowed()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void loginDeleteMethod() throws Exception {
@@ -75,8 +94,13 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
     }
 
     /**
-     * Test l'authentification d'un utilisateur
-     * @throws Exception
+     * Teste la route /api/v1/login avec :
+     *  . POST
+     *  . données de connexion correctes
+     *  Résultats :
+     *  . isOk()
+     *  . renvoi du userName et d'un token
+     * @throws Exception Lève une exception
      */
     @Test
     public void loginAdminUser() throws Exception {
@@ -90,16 +114,25 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         Mockito.when(userDao.findByUserName(myUser.getUserName())).thenReturn(myDataBaseUser);
 
-         mockMvc.perform(post("/api/v1/login")
+        mockMvc.perform(post("/api/v1/login")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andDo(result -> {
+                    log.info("Test réussi. Status Code : {}", result.getResponse().getStatus());
+                })
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.userName").value(myUser.getUserName()));
+                .andExpect(jsonPath("$.userName").value(myUser.getUserName()))
+                .andReturn();
     }
 
     /**
-     * Test l'authentification d'un utilisateur avec un nom d'utilisateur inconnu
-     * @throws Exception
+     * Teste la route /api/v1/login avec :
+     *  . POST
+     *  . données de connexion incorrectes (userName incorrect)
+     *  Résultats :
+     *  . isUnauthorized()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void loginWrongUserNameUser() throws Exception {
@@ -122,8 +155,13 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
     }
 
     /**
-     * Test l'authentification d'un utilisateur avec un mot de passe incorrect
-     * @throws Exception
+     * Teste la route /api/v1/login avec :
+     *  . POST
+     *  . données de connexion incorrectes (passWord incorrect)
+     *  Résultats :
+     *  . isUnauthorized()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void loginWrongPassWordUser() throws Exception {
@@ -146,8 +184,13 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
     }
 
     /**
-     * Test l'authentification avec un JSON vide
-     * @throws Exception
+     * Teste la route /api/v1/login avec :
+     *  . POST
+     *  . données de connexion manquantes (body de la requête vide)
+     *  Résultats :
+     *  . isBadRequest()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void loginEmptyJson() throws Exception {

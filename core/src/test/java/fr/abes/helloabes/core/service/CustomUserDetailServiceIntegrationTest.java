@@ -3,20 +3,22 @@ package fr.abes.helloabes.core.service;
 import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.AppUser;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Test d'intégration de la couche service utilisateur de Spring.
  * La base de données est remplacée par un Mock.
  */
+@Slf4j
 @ExtendWith(SpringExtension.class)
 public class CustomUserDetailServiceIntegrationTest {
 
@@ -38,7 +40,7 @@ public class CustomUserDetailServiceIntegrationTest {
     }
 
     /**
-     * Test la recherche d'un utilisateur par son nom d'utilisation
+     * Teste la recherche d'un utilisateur par son nom d'utilisation
      */
     @Test
     public void findUserByUserName() {
@@ -51,5 +53,6 @@ public class CustomUserDetailServiceIntegrationTest {
 
         Assertions.assertEquals("admin", myCandidate.getUsername());
 
+        log.info("Test réussi : {} - {}", myCandidate.getUsername(), myCandidate.getPassword());
     }
 }

@@ -3,10 +3,9 @@ package fr.abes.helloabes.web.security;
 import fr.abes.helloabes.core.service.CustomUserDetailsService;
 import fr.abes.helloabes.web.configuration.JwtAuthenticationEntryPoint;
 import fr.abes.helloabes.web.configuration.JwtAuthenticationFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
@@ -27,7 +26,7 @@ import java.util.Collections;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
- * La classe {@code SecurityConfigurer} permet de configurer la sécurité du service web.
+ * La classe {@code SpringSecurityConfig} permet de configurer la sécurité du service web.
  * Cette classe est basée sur le framework Spring avec le module Spring Security.
  * @since 0.0.1
  * @author Duy Tran
@@ -47,7 +46,6 @@ public class SpringSecurityConfig {
 
     /**
      * Construit une nouvelle configuration de sécurité pour le service web avec un filtre pour les jetons JWT.
-     * @param jwtFilter Filtre pour les jetons JWT.
      */
     public SpringSecurityConfig(JwtAuthenticationFilter jwtFilter, JwtAuthenticationEntryPoint unauthorizedHandler, CustomUserDetailsService customUserDetailsService) {
         this.jwtFilter = jwtFilter;
@@ -67,11 +65,11 @@ public class SpringSecurityConfig {
         return authenticationManagerBuilder.build();
     }
 
+    // TODO voir pour configurer un logout si pertinent dans le cadre de l'usage de springboot 3.5.6
+
     /**
-     * Configure la politique de sécurité du service web
-     * @param http
-     * @return
-     * @throws Exception
+     * Configure la politique de sécurité du service web pour les chemins d'accès aux contrôleurs sécurisés
+     * @throws Exception lève une exception
      */
     @Bean
     @Order(1)
@@ -90,6 +88,10 @@ public class SpringSecurityConfig {
         return http.build();
     }
 
+    /**
+     * Configure la politique de sécurité du service web pour les chemins d'accès aux contrôleurs non sécurisés
+     * @throws Exception lève une exception
+     */
     @Bean
     public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         http

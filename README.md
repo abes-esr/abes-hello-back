@@ -44,6 +44,12 @@ Le processor fait appel à une méthode externe qui illustre l'utilisation du re
 
 TODO : expliquer comment compiler et tester en local
 
+Configuration du lancement du batch en local avec IntelliJ :
+
+// TODO voir la politique de développement pour placer l'image ci-dessous à l'endroit recommandé  
+
+![img.png](img.png)
+
 ### Utilisation en local avec Docker
 
 Voir https://github.com/abes-esr/abes-hello-docker qui propose les configurations docker pour déployer en local ou sur des env de dev, test ou prod.

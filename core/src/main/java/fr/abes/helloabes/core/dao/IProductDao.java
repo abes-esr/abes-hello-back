@@ -1,6 +1,7 @@
 package fr.abes.helloabes.core.dao;
 
 import fr.abes.helloabes.core.entities.Product;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

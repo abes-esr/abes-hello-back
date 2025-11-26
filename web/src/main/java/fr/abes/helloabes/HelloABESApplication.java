@@ -72,8 +72,7 @@ public class HelloABESApplication extends SpringBootServletInitializer implement
 
 	/**
 	 * Configure le serveur
-	 * @param builder
-	 * @return
+	 * @param builder SpringApplicationBuilder
 	 */
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {

@@ -1,10 +1,10 @@
 package fr.abes.helloabes.web.configuration;
 
-import io.jsonwebtoken.*;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import io.jsonwebtoken.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.*;
 import java.util.function.Function;
@@ -15,7 +15,6 @@ import java.util.function.Function;
  * @since 0.0.1
  * @author Duy Tran
  */
-//@Service
 @Component
 public class JwtUtility {
 
@@ -77,11 +76,10 @@ public class JwtUtility {
     }
 
     /**
-     *
-     * @param token
-     * @param claimsResolver
-     * @param <T>
-     * @return
+     * Extrait les
+     * @param token un JWT
+     * @param claimsResolver une fonction de type Claims
+     * @return <T> Type généric
      */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -99,6 +97,12 @@ public class JwtUtility {
         return createToken(claims, username);
     }
 
+    /**
+     * Vérifie l'intégrité du JWT
+     * @param token un JWT
+     * @param httpServletRequest une requête HTTP
+     * @return boolean
+     */
     public boolean checkToken(String token, HttpServletRequest httpServletRequest) {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
@@ -108,7 +112,6 @@ public class JwtUtility {
         } catch (ExpiredJwtException ex) {
             httpServletRequest.setAttribute("expired", "Token Exipred");
         }
-
         return false;
     }
 

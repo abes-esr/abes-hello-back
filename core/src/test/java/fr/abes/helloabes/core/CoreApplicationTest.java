@@ -9,6 +9,7 @@ import fr.abes.helloabes.core.entities.Order;
 import fr.abes.helloabes.core.entities.Product;
 import fr.abes.helloabes.core.entities.Supplier;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,7 @@ import java.util.List;
  * Les annotations suivantes permettent de simuler un Boot de Spring. *
  * @since 0.0.1
  */
+@Slf4j
 @ExtendWith(SpringExtension.class)
 @DataJpaTest // Permet d'utiliser une base de données H2 en mémoire pour les tests.
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
@@ -85,6 +87,8 @@ public class CoreApplicationTest {
         Assertions.assertEquals(2,adminOrders.size());
         Assertions.assertEquals(myOrder,adminOrders.get(0));
         Assertions.assertEquals(myOrder2,adminOrders.get(1));
+
+        log.info("Insertion des commandes réussie : {}", orderDao.findOrdersOfUser(admin));
     }
 
     /**
@@ -109,11 +113,13 @@ public class CoreApplicationTest {
         Assertions.assertEquals(2,adminOrders.size());
         Assertions.assertEquals(myOrder,adminOrders.get(0));
         Assertions.assertEquals(myOrder2,adminOrders.get(1));
+
+        log.info("Insertion des commandes réussie : {}", orderDao.findOrdersOfUser(admin));
     }
 
     /**
      * Test l'insertion et la suppression d'une commande.
-     * Les produits ne doivent pas être supprimé.
+     * Les produits ne doivent pas être supprimés.
      */
     @Test
     @Transactional
@@ -136,16 +142,19 @@ public class CoreApplicationTest {
         myOrder.addProduct(book);
 
         orderDao.save(myOrder);
+        Assertions.assertEquals(orderDao.findOrdersOfUser(admin).get(0),myOrder);
+        log.info("Insertion des commandes réussie : {}", orderDao.findOrdersOfUser(admin).get(0).getProducts().toString());
         orderDao.flush();
 
         admin.removeOrders();
         userDao.flush();
 
         Assertions.assertEquals(0,admin.getOrders().size());
+        log.info("Suppression des commandes réussie : {}", userDao.findByUserName(admin.getUserName()).getOrders());
     }
 
     /**
-     * Test la suppresion d'un produit qui concerne une commande.
+     * Test la suppression d'un produit qui concerne une commande.
      */
     @Test
     public void insertAndRemoveProduct() {
@@ -171,11 +180,15 @@ public class CoreApplicationTest {
         orderDao.saveAndFlush(myOrder1);
         orderDao.saveAndFlush(myOrder2);
 
+        log.info("Insertion des produits réussie : {}", orderDao.findOrdersOfUser(admin).get(0).getProducts().toString());
+
         myOrder1.removeProduct(book2);
         orderDao.flush();
 
         List<Order> orders = orderDao.findOrdersOfUser(admin);
         Assertions.assertEquals(2,orders.size());
         Assertions.assertEquals(orders.get(0),myOrder1);
+
+        log.info("Suppression d'un produit réussie : {}", orderDao.findOrdersOfUser(admin).get(0).getProducts().toString());
     }
 }
