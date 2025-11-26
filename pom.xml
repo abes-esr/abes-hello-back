@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- =======================================================================
         Fichier de configuration du projet Maven
-
         Abes-hello-back
      ======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
 
     <!-- ===================================================== -->
     <!--     Description du projet                             -->
@@ -16,13 +14,13 @@
     <version>2.0.1-SNAPSHOT</version>
     <name>Hello ABES Back</name>
     <description>Application d'exemple pour illustrer la politique de développement au sein de l'ABES</description>
+
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
         <module>web</module>
         <module>batch</module>
     </modules>
-
 
     <!-- ===================================================== -->
     <!--     Proprietes du projet                              -->
@@ -35,7 +33,6 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
     </properties>
 
     <!-- =========================================================== -->
@@ -97,6 +94,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
+
         <!-- === Annotations === -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -104,6 +102,7 @@
             <version>1.18.42</version>
             <scope>provided</scope>
         </dependency>
+
         <!-- === Outils === -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -132,61 +131,19 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-
-        <!-- === Tests === -->
-<!--        <dependency>-->
-<!--            <groupId>org.junit.jupiter</groupId>-->
-<!--            <artifactId>junit-jupiter</artifactId>-->
-<!--            <version>5.7.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.junit.vintage</groupId>-->
-<!--            <artifactId>junit-vintage-engine</artifactId>-->
-<!--            <version>5.12.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.12.2</version>
             <scope>test</scope>
         </dependency>
-        <!-- Mock en junit4, a migrer quand powermock sera compatible
-            junit5 -->
-<!--        <dependency>-->
-<!--            <groupId>org.powermock</groupId>-->
-<!--            <artifactId>powermock-module-junit4</artifactId>-->
-<!--            <version>2.0.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.powermock</groupId>-->
-<!--            <artifactId>powermock-api-mockito2</artifactId>-->
-<!--            <version>2.0.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-
     </dependencies>
-
-    <!-- =========================================================== -->
-    <!--     Distribution management                                  -->
-    <!-- =========================================================== -->
-
-    <distributionManagement>
-        <site>
-            <id>abes</id>
-            <url>https://javadoc.abes.fr/docAbes/Abes-${project.version}</url>
-        </site>
-    </distributionManagement>
 
     <!-- =========================================================== -->
     <!--     Configuration de la compilation                         -->
     <!-- =========================================================== -->
     <build>
         <finalName>${finalName}</finalName>
-
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -239,15 +196,13 @@
                     <scmCommentPrefix>[maven-release-plugin] [no ci]</scmCommentPrefix>
                   </configuration>
                 </plugin>
-
             </plugins>
         </pluginManagement>
     </build>
+
     <scm>
       <connection>scm:git:https://github.com/abes-esr/abes-hello-back.git</connection>
       <tag>HEAD</tag>
     </scm>
 
-        
-        
 </project>

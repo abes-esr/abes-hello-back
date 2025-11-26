@@ -6,24 +6,25 @@ import fr.abes.helloabes.core.service.impl.UserServiceImpl;
 import fr.abes.helloabes.web.controller.PublicController;
 import fr.abes.helloabes.web.controller.SecuredController;
 
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
+@Slf4j
 public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase {
 
     @InjectMocks
@@ -41,8 +42,8 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
     /**
      * Authentifie l'utilisateur
      * @param myUser AppUser Utilisateur à enregistrer et à authentifier
-     * @return String jeton
-     * @throws Exception
+     * @return String JWT
+     * @throws Exception Lève une exception
      */
     protected String authenticate(AppUser myUser) throws Exception {
 
@@ -60,15 +61,29 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
         return JsonPath.read(result.getResponse().getContentAsString(), "$.accessToken");
     }
 
+    /**
+     * Teste le chargement du contexte avec :
+     *  . securedController
+     *  . publicController
+     *  Résultats :
+     *  . isNotNull
+     */
     @Test
     public void contextLoads() {
         Assertions.assertNotNull(securedController);
+        log.info("Test réussi. Contrôleur initialisé : {}", securedController);
         Assertions.assertNotNull(publicController);
+        log.info("Test réussi. Contrôleur initialisé : {}", publicController);
     }
 
     /**
-     * Test une route inconnue sans authentification - méthode GET
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . GET
+     *  . aucune authentification
+     *  Résultats :
+     *   . isUnauthorized()
+     *   . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRouteGetMethod() throws Exception {
@@ -81,12 +96,18 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
     }
 
     /**
-     * Test une route inconnue sans authentification - méthode POST
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . POST
+     *  . aucune authentification
+     *  Résultats :
+     *   . isUnauthorized()
+     *   . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRoutePostMethod() throws Exception {
-        mockMvc.perform(post("/api/v1/secured/test"))  .andExpect(status().isUnauthorized())
+        mockMvc.perform(post("/api/v1/secured/test"))
+                .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
@@ -94,12 +115,18 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
     }
 
     /**
-     * Test une route inconnue sans authentification - méthode PUT
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . PUT
+     *  . aucune authentification
+     *  Résultats :
+     *   . isUnauthorized()
+     *   . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRoutePutMethod() throws Exception {
-        mockMvc.perform(put("/api/v1/secured/test"))  .andExpect(status().isUnauthorized())
+        mockMvc.perform(put("/api/v1/secured/test"))
+                .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
@@ -107,12 +134,18 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
     }
 
     /**
-     * Test une route inconnue sans authentification - méthode DELETE
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . DELETE
+     *  . aucune authentification
+     *  Résultats :
+     *   . isUnauthorized()
+     *   . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRouteDeleteMethod() throws Exception {
-        mockMvc.perform(delete("/api/v1/secured/test"))  .andExpect(status().isUnauthorized())
+        mockMvc.perform(delete("/api/v1/secured/test"))
+                .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("This ressource requires an authentification"))
@@ -120,8 +153,13 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
     }
 
     /**
-     * Test une route inconnue avec authentification valide - méthode GET
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . GET
+     *  . authentification valide
+     *  Résultats :
+     *   . isNotFound()
+     *   . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRouteAuthenticateGetMethod() throws Exception {
@@ -138,8 +176,13 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
     }
 
     /**
-     * Test une route inconnue avec authentification valide - méthode POST
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . POST
+     *  . authentification valide
+     *  Résultats :
+     *   . isNotFound()
+     *   . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRouteAuthenticatePostMethod() throws Exception {
@@ -148,7 +191,7 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
 
         mockMvc.perform(post("/api/v1/secured/test")
                 .header("Authorization","Bearer "+token))
-                .andExpect(status().isNotFound()).andExpect(status().isNotFound())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("Page not found"))
@@ -156,8 +199,13 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
     }
 
     /**
-     * Test une route inconnue avec authentification valide - méthode PUT
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . PUT
+     *  . authentification valide
+     *  Résultats :
+     *   . isNotFound()
+     *   . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRouteAuthenticatePutMethod() throws Exception {
@@ -166,7 +214,7 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
 
         mockMvc.perform(put("/api/v1/secured/test")
                 .header("Authorization","Bearer "+token))
-                .andExpect(status().isNotFound()).andExpect(status().isNotFound())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("Page not found"))
@@ -174,8 +222,13 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
     }
 
     /**
-     * Test une route inconnue avec authentification valide - méthode DELETE
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . DELETE
+     *  . authentification valide
+     *  Résultats :
+     *   . isNotFound()
+     *   . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRouteAuthenticateDeleteMethod() throws Exception {
@@ -184,7 +237,7 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
 
         mockMvc.perform(delete("/api/v1/secured/test")
                 .header("Authorization","Bearer "+token))
-                .andExpect(status().isNotFound()).andExpect(status().isNotFound())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("Page not found"))

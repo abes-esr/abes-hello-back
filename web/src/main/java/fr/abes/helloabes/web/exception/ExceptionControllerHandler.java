@@ -1,7 +1,7 @@
 package fr.abes.helloabes.web.exception;
 
 import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ControllerAdvice
@@ -22,9 +23,9 @@ public class ExceptionControllerHandler {
     }
 
     /**
-     * Vérifier le Token passé dans le header avec un format correct
-     * @param ex
-     * @return
+     * Si le Token passé dans le header est dans un format incorrect
+     * @param ex HttpMessageNotReadableException
+     * @return ResponseEntity
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
@@ -35,9 +36,9 @@ public class ExceptionControllerHandler {
     }
 
     /**
-     * Vérifier les méthodes correspondent avec les URI dans le controller
-     * @param ex
-     * @return
+     * Si la méthode d'une requête ne correspond pas avec la méthode attendue du controller
+     * @param ex HttpRequestMethodNotSupportedException
+     * @return ResponseEntity
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
@@ -47,9 +48,9 @@ public class ExceptionControllerHandler {
     }
 
     /**
-     * Vérifier le nom d'utilisateur et le mot de passe lors de l'inscription
-     * @param ex
-     * @return
+     * Si le nom d'utilisateur ou le mot de passe est/sont invalide(s)
+     * @param ex Exception de type MethodArgumentNotValidException ou HandlerMethodValidationException
+     * @return ResponseEntity
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, HandlerMethodValidationException.class})
     protected ResponseEntity<Object> handleMethodArgumentNotValid(Exception ex) {
@@ -59,9 +60,9 @@ public class ExceptionControllerHandler {
     }
 
     /**
-     * Page 404
-     * @param ex
-     * @return
+     * Si la requête pointe vers une url non disponible (Page 404)
+     * @param ex NoHandlerFoundException
+     * @return ResponseEntity
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex) {
@@ -71,9 +72,9 @@ public class ExceptionControllerHandler {
     }
 
     /**
-     * Si l'authentification d'un utilisateur a echoué
+     * Si un utilisateur non authentifié tente d'accéder à une ressource requérant une authentification
      * @param ex AuthenticationException
-     * @return
+     * @return ResponseEntity
      */
     @ExceptionHandler(AuthenticationException.class)
     protected ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex) {
@@ -83,9 +84,9 @@ public class ExceptionControllerHandler {
     }
 
     /**
-     * Si un utilisateur avec le nom d'utilisateur existe déjà
+     * Si un utilisateur tente de s'enregistrer avec un nom d'utilisateur existant déjà
      * @param ex UserAlreadyExistException
-     * @return
+     * @return ResponseEntity
      */
     @ExceptionHandler(UserAlreadyExistsException.class)
     protected ResponseEntity<Object> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {

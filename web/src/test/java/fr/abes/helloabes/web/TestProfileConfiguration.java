@@ -2,6 +2,7 @@ package fr.abes.helloabes.web;
 
 import fr.abes.helloabes.web.controller.jpa.ApplicationJPATestBase;
 import fr.abes.helloabes.web.controller.mockito.ApplicationMockitoTestBase;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -24,6 +25,5 @@ public class TestProfileConfiguration {
     public ApplicationTestBase mockitoApplicationTest() {
         return new ApplicationMockitoTestBase();
     }
-
 
 }

@@ -5,21 +5,23 @@ import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Test d'intégration de la couche service des utilisateurs de l'application.
  * La base de données est remplacée par un Mock.
  */
 @ExtendWith(SpringExtension.class)
+@Slf4j
 public class UserServiceImplIntegrationTest {
 
     public BCryptPasswordEncoder encoder() {
@@ -61,7 +63,7 @@ public class UserServiceImplIntegrationTest {
     }
 
     /**
-     * Test la recherche d'un utilisateur par son nom d'utilisateur
+     * Teste la recherche d'un utilisateur par son nom d'utilisateur
      */
     @Test
     public void findUserByUserName() {
@@ -73,11 +75,13 @@ public class UserServiceImplIntegrationTest {
         AppUser myUser = userService.findUser(myCandidate);
 
         Assertions.assertEquals("admin", myUser.getUserName());
+
+        log.info("Test réussi. UserName = {}", myUser.getUserName());
     }
 
     /**
-     * Test la création d'un nouvelle utilisateur.
-     * On test ici le cryptage du mot de passe.
+     * Teste la création d'un nouvel utilisateur.
+     * Teste le cryptage du mot de passe.
      */
     @Test
     public void createUser() {
@@ -91,24 +95,21 @@ public class UserServiceImplIntegrationTest {
 
         AppUser myCandidate = userService.createUser(myTestingUser);
 
-
-        //On test si le mot de passe de l'utilisateur passé en paramètre
-        //a bien été crypté et correspond au mot de passe clair.
+        // Teste si le mot de passe utilisateur passé en paramètre a bien été crypté et correspond au mot de passe clair.
         Assertions.assertTrue(encoder().matches(myUser.getPassWord(),myTestingUser.getPassWord()));
+        log.info("Test réussi. L'encodage du mot de passe et la vérification de sa correspondance avec le mot de passe en clair a fonctionné correctement.");
 
-
-        //On test si le mapping DAO a bien fonctionné.
-        //Les noms d'utilisateur doivent correspondrent.
+        // Teste si le mapping DAO a bien fonctionné. Les noms d'utilisateur doivent correspondre.
         Assertions.assertEquals(myUser.getUserName(),myCandidate.getUserName());
+        log.info("Test réussi. Le mapping DAO a fonctionné correctement : les noms d'utilisateurs correspondent.");
 
-
-        //On test si le mapping DAO a bien fonctionné.
-        //Le mot de passe crypté du candidat doit correspondre au mot de passe clair.
+        // Teste si le mapping DAO a bien fonctionné. Le mot de passe crypté de l'utilisateur doit correspondre au mot de passe clair.
         Assertions.assertTrue(encoder().matches(myUser.getPassWord(),myCandidate.getPassWord()));
+        log.info("Test réussi. Le mapping DAO a fonctionné correctement : le mot de passe encodé correspond au mot de passe en clair.");
     }
 
     /**
-     * Test la création d'un utilisateur dont le nom d'utilisateur existe dejà.
+     * Teste la création d'un utilisateur dont le nom d'utilisateur existe dejà.
      */
     @Test
     public void createTwiceSameUser() {
@@ -118,10 +119,10 @@ public class UserServiceImplIntegrationTest {
         // On mocke la DAO avec l'utilisateur à tester
         Mockito.when(userRepository.findByUserName("admin")).thenReturn(myTestingUser);
 
-        // TODO rédiger un test correct en remplacement de celui ci-dessous :
-        Exception exception = Assertions.assertThrows(UserAlreadyExistsException.class, () -> {
+        UserAlreadyExistsException result = Assertions.assertThrows(UserAlreadyExistsException.class, () -> {
             userService.createUser(myTestingUser);
         });
 
+        log.info("Test réussi. Erreur levée : {}", result.getMessage());
     }
 }

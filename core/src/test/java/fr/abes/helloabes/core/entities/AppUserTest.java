@@ -1,8 +1,10 @@
 package fr.abes.helloabes.core.entities;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@Slf4j
 public class AppUserTest {
 
     protected static AppUser getTotoUser() {
@@ -19,6 +21,8 @@ public class AppUserTest {
         AppUser myUser = getTotoUser();
         Assertions.assertEquals("toto", myUser.getUserName());
         Assertions.assertEquals("tata", myUser.getPassWord());
+
+        log.info("Test réussi. Résultat : {} - {}", myUser.getUserName(), myUser.getPassWord());
     }
 
     /**
@@ -28,7 +32,9 @@ public class AppUserTest {
     public void setIdentifyNumber() {
         AppUser myUser = getTotoUser();
         myUser.setIdentityNumber(10);
-        Assertions.assertEquals(Integer.valueOf(10), Integer.valueOf(myUser.getIdentityNumber()));
+        Assertions.assertEquals(Integer.valueOf(10), myUser.getIdentityNumber());
+
+        log.info("Test réussi. Résultat : {}", myUser.getIdentityNumber());
     }
 
     /**
@@ -39,6 +45,8 @@ public class AppUserTest {
         AppUser myUser = getTotoUser();
         myUser.setUserName("monNouveauNom");
         Assertions.assertEquals("monNouveauNom", myUser.getUserName());
+
+        log.info("Test réussi. Résultat : {}", myUser.getUserName());
     }
 
     /**
@@ -49,6 +57,8 @@ public class AppUserTest {
         AppUser myUser = getTotoUser();
         myUser.setPassWord("monNouveauPass");
         Assertions.assertEquals("monNouveauPass", myUser.getPassWord());
+
+        log.info("Test réussi. Résultat : {}", myUser.getPassWord());
     }
 
 }

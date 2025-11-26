@@ -1,6 +1,5 @@
 package fr.abes.helloabes.core.service.impl;
 
-import fr.abes.helloabes.core.dao.IOrderDao;
 import fr.abes.helloabes.core.dao.IProductDao;
 import fr.abes.helloabes.core.entities.Product;
 import fr.abes.helloabes.core.service.IProductService;
@@ -15,7 +14,7 @@ public class ProductServiceImpl implements IProductService {
 
     /**
      * Enregistre un nouveau produit.
-     * @param product Product Le produit a enregistré.
+     * @param product Product Le produit à enregistrer.
      * @return Product Le produit enregistré.
      */
     @Override

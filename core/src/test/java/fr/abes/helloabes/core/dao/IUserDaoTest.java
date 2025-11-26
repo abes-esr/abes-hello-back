@@ -2,18 +2,18 @@ package fr.abes.helloabes.core.dao;
 
 import fr.abes.helloabes.core.entities.AppUser;
 
-import jakarta.validation.ConstraintViolationException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -23,6 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  * Les annotations suivantes permettent de simuler un Boot de Spring. *
  * @since 0.0.1
  */
+@Slf4j
 @ExtendWith(SpringExtension.class)
 @DataJpaTest // Permet d'utiliser une base de données H2 en mémoire pour les tests.
 @EnableAutoConfiguration
@@ -30,7 +31,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = AppUser.class)
 public class IUserDaoTest {
 
-//    @MockitoBean
     @Autowired
     private IUserDao userDao;
 
@@ -48,13 +48,15 @@ public class IUserDaoTest {
         AppUser myNewUser = userDao.save(getAdminUser());
         Assertions.assertEquals("admin", myNewUser.getUserName());
         Assertions.assertEquals("@totoTOTO1234", myNewUser.getPassWord());
+
+        log.info("Test réussi. Réussi : {}", userDao.findAll());
     }
 
     /**
-     * Test l'ajout d'un utilisateur dont le nom d'utilisateur existe dejà
+     * Teste la récupération d'un utilisateur dont le nom d'utilisateur existe deux fois en base de données
      */
     @Test
-    public void saveAlreadyExistingUserName() {
+    public void findByUserNameWithTwoResult() {
 
         userDao.save(getAdminUser());
 
@@ -63,84 +65,94 @@ public class IUserDaoTest {
 
         userDao.save(mySecondUser);
 
-        Exception exception = Assertions.assertThrows(IncorrectResultSizeDataAccessException.class, () -> {
+        IncorrectResultSizeDataAccessException result = Assertions.assertThrows(IncorrectResultSizeDataAccessException.class, () -> {
             userDao.findByUserName("admin");
         });
+
+        log.info("Test réussi. {}", result.getMessage());
     }
 
     /**
-     * Test l'ajout d'un utilisateur dont le nom d'utilisateur est null
+     * Teste l'ajout d'un utilisateur dont le nom d'utilisateur est null
      */
     @Test
     public void saveNullUserName() {
         AppUser myUser = getAdminUser();
         myUser.setUserName(null);
 
-        Exception exception = Assertions.assertThrows(ConstraintViolationException.class, () -> {
+        ConstraintViolationException constraintViolationException = Assertions.assertThrows(ConstraintViolationException.class, () -> {
             userDao.save(myUser);
         });
 
         String expectedMessage = "Le nom d'utilisateur ne doit pas être null";
-        String actualMessage = exception.getMessage();
+        String actualMessage = constraintViolationException.getMessage();
 
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
+
+        log.info("Test réussi. {}", constraintViolationException.getMessage());
     }
 
     /**
-     * Test l'ajout d'un utilisateur dont le nom d'utilisateur est vide
+     * Teste l'ajout d'un utilisateur dont le nom d'utilisateur est vide
      */
     @Test
     public void saveEmptyUserName() {
         AppUser myUser = getAdminUser();
         myUser.setUserName("");
 
-        Exception exception = Assertions.assertThrows(ConstraintViolationException.class, () -> {
+        ConstraintViolationException constraintViolationException = Assertions.assertThrows(ConstraintViolationException.class, () -> {
             userDao.save(myUser);
         });
 
         String expectedMessage = "Le nom d'utilisateur ne doit pas être vide";
-        String actualMessage = exception.getMessage();
+        String actualMessage = constraintViolationException.getMessage();
 
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
+
+        log.info("Test réussi. {}", constraintViolationException.getMessage());
     }
 
     /**
-     * Test l'ajout d'un utilisateur dont le mot de passe est null
+     * Teste l'ajout d'un utilisateur dont le mot de passe est null
      */
     @Test
     public void saveNullPassword() {
         AppUser myUser = getAdminUser();
         myUser.setPassWord(null);
 
-        Exception exception = Assertions.assertThrows(ConstraintViolationException.class, () -> {
+        ConstraintViolationException constraintViolationException = Assertions.assertThrows(ConstraintViolationException.class, () -> {
             userDao.save(myUser);
         });
 
         String expectedMessage = "Le mot de passe ne doit pas être null";
-        String actualMessage = exception.getMessage();
+        String actualMessage = constraintViolationException.getMessage();
 
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
+
+        log.info("Test réussi. {}", constraintViolationException.getMessage());
     }
 
     /**
-     * Test l'ajout d'un utilisateur dont le mot de passe est faible
+     * Teste l'ajout d'un utilisateur dont le mot de passe est faible
      */
     @Test
     public void saveWeakPassword() {
 
-        Exception exception = Assertions.assertThrows(ConstraintViolationException.class, () -> {
+        ConstraintViolationException constraintViolationException = Assertions.assertThrows(ConstraintViolationException.class, () -> {
             AppUser myUser = new AppUser("admin", "admin");
             userDao.save(myUser);
         });
 
         String expectedMessage = "Le mot de passe ne respecte pas les règles de sécurité";
-        String actualMessage = exception.getMessage();
+        String actualMessage = constraintViolationException.getMessage();
 
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
+
+        log.info("Test réussi. {}", constraintViolationException.getMessage());
     }
 
     /**
-     * Test la recherche d'un utilisateur existant par son nom d'utilisateur
+     * Teste la recherche d'un utilisateur existant par son nom d'utilisateur
      */
     @Test
     public void findExistUserByUserName() {
@@ -149,10 +161,12 @@ public class IUserDaoTest {
         AppUser myCandidate = userDao.findByUserName("admin");
         Assertions.assertEquals("admin", myCandidate.getUserName());
         Assertions.assertEquals("@totoTOTO1234", myCandidate.getPassWord());
+
+        log.info("Test réussi. Résultat : {}", userDao.findAll());
     }
 
     /**
-     * Test la recherche d'un utilisateur qui n'existe pas par son nom d'utilisateur
+     * Teste la recherche d'un utilisateur qui n'existe pas par son nom d'utilisateur
      */
     @Test
     public void findNotExistsUserByUserName() {
@@ -160,6 +174,8 @@ public class IUserDaoTest {
 
         AppUser myCandidate = userDao.findByUserName("corentin");
         Assertions.assertNull(myCandidate);
+
+        log.info("Test réussi. Résultat : {}", userDao.findByUserName("corentin"));
     }
     
 }

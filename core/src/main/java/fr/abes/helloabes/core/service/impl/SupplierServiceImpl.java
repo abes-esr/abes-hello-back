@@ -1,13 +1,11 @@
 package fr.abes.helloabes.core.service.impl;
 
-import fr.abes.helloabes.core.dao.IProductDao;
 import fr.abes.helloabes.core.dao.ISupplierDao;
 import fr.abes.helloabes.core.entities.Supplier;
 import fr.abes.helloabes.core.service.ISupplierService;
+
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
 
 public class SupplierServiceImpl implements ISupplierService {
 
@@ -51,8 +49,8 @@ public class SupplierServiceImpl implements ISupplierService {
     }
     
     @Transactional
-    public void insertSuppliers() {
-        
-     
+    public void insertSuppliers(Supplier supplier) {
+
+        supplierDao.save(supplier);
     }
 }

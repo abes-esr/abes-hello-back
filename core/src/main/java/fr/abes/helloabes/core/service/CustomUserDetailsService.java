@@ -2,6 +2,7 @@ package fr.abes.helloabes.core.service;
 
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.dao.IUserDao;
+
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

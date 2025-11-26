@@ -2,27 +2,25 @@ package fr.abes.helloabes.web.controller.mockito;
 
 import fr.abes.helloabes.core.service.impl.UserServiceImpl;
 import fr.abes.helloabes.web.controller.PublicController;
-//import org.junit.Assert;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
+
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Classe de test pour le controlleur publique.
+ * Classe de test pour le controlleur public.
  * On injecte le mock du dépot DAO dans le controlleur.
  */
 @ExtendWith(SpringExtension.class)
+@Slf4j
 public class PublicControllerMockitoTestBase extends ApplicationMockitoTestBase {
 
     @InjectMocks
@@ -33,14 +31,25 @@ public class PublicControllerMockitoTestBase extends ApplicationMockitoTestBase 
         publicController = new PublicController(new UserServiceImpl(userDao,encoder()),authenticationManager,jwtUtility, dtoMapper);
     }
 
+    /**
+     * Teste le chargement du contexte avec :
+     *  . publicController
+     *  Résultats :
+     *  . isNotNull
+     */
     @Test
     public void contextLoads() {
         Assertions.assertNotNull(publicController);
+        log.info("Test réussi. Contrôleur initialisé : {}", publicController);
     }
 
     /**
-     * Test une route inconnue avec la methode GET
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . GET
+     *  Résultats :
+     *  . isNotFound()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRouteGetMethod() throws Exception {
@@ -51,10 +60,13 @@ public class PublicControllerMockitoTestBase extends ApplicationMockitoTestBase 
                 .andExpect(jsonPath("$.message").value("Page not found"))
                 .andExpect(jsonPath("$.debugMessage").exists());
     }
-
     /**
-     * Test une route inconnue avec la methode POST
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . POST
+     *  Résultats :
+     *  . isNotFound()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRoutePostMethod() throws Exception {
@@ -67,8 +79,12 @@ public class PublicControllerMockitoTestBase extends ApplicationMockitoTestBase 
     }
 
     /**
-     * Test une route inconnue avec la methode PUT
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . PUT
+     *  Résultats :
+     *  . isNotFound()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRoutePutMethod() throws Exception {
@@ -81,8 +97,12 @@ public class PublicControllerMockitoTestBase extends ApplicationMockitoTestBase 
     }
 
     /**
-     * Test une route inconnue avec la methode DELETE
-     * @throws Exception
+     * Teste une route inconnue avec :
+     *  . DELETE
+     *  Résultats :
+     *  . isNotFound()
+     *  . renvoi d'un message d'erreur
+     * @throws Exception Lève une exception
      */
     @Test
     public void wrongRouteDeleteMethod() throws Exception {

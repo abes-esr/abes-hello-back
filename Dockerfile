@@ -63,11 +63,3 @@ ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ENTRYPOINT ["java","-jar","/app/abeshello.jar"]
 
-# pour avoir le manager de tomcat
-# https://hub.docker.com/r/bitnami/tomcat
-# FROM bitnami/tomcat:9.0 as web-image
-# COPY --from=build-image /build/web/target/*.war /opt/bitnami/tomcat/webapps/ROOT.war
-
-#FROM eclipse-temurin:11-jre as back-server
-#COPY --from=web-build /app/web/target/*.jar /app/licences-nationales.jar
-#ENTRYPOINT ["java","-jar","/app/licences-nationales.jar"]

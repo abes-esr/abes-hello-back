@@ -5,10 +5,11 @@ import fr.abes.helloabes.core.dao.IUserDao;
 import fr.abes.helloabes.core.entities.Order;
 import fr.abes.helloabes.core.exception.UserAlreadyExistsException;
 import fr.abes.helloabes.core.service.IUserService;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 

@@ -5,15 +5,16 @@ import fr.abes.helloabes.core.service.IOrderService;
 import fr.abes.helloabes.core.service.IUserService;
 import fr.abes.helloabes.web.configuration.DtoMapperUtility;
 import fr.abes.helloabes.web.dto.OrderDto;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +60,7 @@ public class SecuredController {
     public Map<String, String> displaySecureHome() {
 
         return Collections.singletonMap("response", "Hello from ABES - {* PRIVATE *} API PAGE");
+
     }
 
     /**
@@ -78,10 +80,8 @@ public class SecuredController {
     public List<OrderDto> displaySecureCommandes(Authentication authentication) {
 
         AppUser user = userService.findUserByUserName(authentication.getName());
-
         return dtoMapper.mapList(orderService.findOrdersOfUser(user), OrderDto.class);
 
     }
-
 
 }

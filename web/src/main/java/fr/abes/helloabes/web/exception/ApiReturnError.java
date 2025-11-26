@@ -13,21 +13,8 @@ public class ApiReturnError {
     private String message;
     private String debugMessage;
 
-
     private ApiReturnError() {
         timestamp = LocalDateTime.now();
-    }
-
-    ApiReturnError(HttpStatus status) {
-        this();
-        this.status = status;
-    }
-
-    ApiReturnError(HttpStatus status, Throwable ex) {
-        this();
-        this.status = status;
-        this.message = "Unexpected error";
-        this.debugMessage = ex.getLocalizedMessage();
     }
 
     ApiReturnError(HttpStatus status, String message, Throwable ex) {
@@ -35,13 +22,6 @@ public class ApiReturnError {
         this.status = status;
         this.message = message;
         this.debugMessage = ex.getLocalizedMessage();
-    }
-
-    ApiReturnError(HttpStatus status, String message) {
-        this();
-        this.status = status;
-        this.message = message;
-
     }
 
 }
