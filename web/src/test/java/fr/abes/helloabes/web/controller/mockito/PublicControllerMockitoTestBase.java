@@ -1,13 +1,10 @@
 package fr.abes.helloabes.web.controller.mockito;
 
-import fr.abes.helloabes.core.service.impl.UserServiceImpl;
 import fr.abes.helloabes.web.controller.PublicController;
 
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,10 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Classe de test pour le controlleur public.
- * On injecte le mock du dépot DAO dans le controlleur.
+ * Classe de test pour le contrôleur public.
+ * On injecte le mock du dépot DAO dans le contrôleur.
  */
-@ExtendWith(SpringExtension.class)
 @Slf4j
 public class PublicControllerMockitoTestBase extends ApplicationMockitoTestBase {
 
@@ -28,7 +24,7 @@ public class PublicControllerMockitoTestBase extends ApplicationMockitoTestBase 
 
     @BeforeEach
     public void setup(){
-        publicController = new PublicController(new UserServiceImpl(userDao,encoder()),authenticationManager,jwtUtility, dtoMapper);
+        publicController = new PublicController(userService, authenticationManager, jwtUtility, dtoMapper);
     }
 
     /**

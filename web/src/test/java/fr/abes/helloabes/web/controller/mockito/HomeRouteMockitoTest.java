@@ -1,5 +1,6 @@
 package fr.abes.helloabes.web.controller.mockito;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Classe de test pour la route /api/v1
  */
+@Slf4j
 public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
 
     /**
@@ -24,7 +26,10 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
     public void homeGetMethod() throws Exception {
         mockMvc.perform(get("/api/v1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.response").value("Hello from ABES - PUBLIC API PAGE"));
+                .andExpect(jsonPath("$.response").value("Hello from ABES - PUBLIC API PAGE"))
+                .andDo(result -> {
+                    log.info("Test réussi. Résultat : {}", result.getResponse().getContentAsString());
+                });
     }
 
 
@@ -100,6 +105,9 @@ public class HomeRouteMockitoTest extends PublicControllerMockitoTestBase {
         String json = "{ }";
         mockMvc.perform(get("/api/v1").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.response").value("Hello from ABES - PUBLIC API PAGE"));
+                .andExpect(jsonPath("$.response").value("Hello from ABES - PUBLIC API PAGE"))
+                .andDo(result -> {
+                   log.info("Test réussi. Résultat : {}", result.getResponse().getContentAsString());
+                });
     }
 }

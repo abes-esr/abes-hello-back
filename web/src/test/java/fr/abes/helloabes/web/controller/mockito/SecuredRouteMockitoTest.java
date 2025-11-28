@@ -51,11 +51,11 @@ public class SecuredRouteMockitoTest extends SecuredControllerMockitoTestBase {
 
         mockMvc.perform(get("/api/v1/secured")
                 .header("Authorization","Bearer "+token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response").value("Hello from ABES - {* PRIVATE *} API PAGE"))
                 .andDo(result -> {
                     log.info("Test réussi. Status Code : {}", result.getResponse().getStatus());
-                })
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.response").value("Hello from ABES - {* PRIVATE *} API PAGE"));
+                });
     }
 
     /**

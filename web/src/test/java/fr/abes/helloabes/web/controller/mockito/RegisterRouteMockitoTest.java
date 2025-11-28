@@ -115,12 +115,12 @@ public class RegisterRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         mockMvc.perform(post("/api/v1/register")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andDo(result -> {
-                    log.info("Test réussi. Status code : " + result.getResponse().getStatus());
-                })
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userName").value(myDataBaseUser.getUserName()))
-                .andExpect(jsonPath("$.passWord").value(myDataBaseUser.getPassWord()));
+                .andExpect(jsonPath("$.passWord").value(myDataBaseUser.getPassWord()))
+                .andDo(result -> {
+                    log.info("Test réussi. Status code : " + result.getResponse().getStatus());
+                });
     }
 
     /**
