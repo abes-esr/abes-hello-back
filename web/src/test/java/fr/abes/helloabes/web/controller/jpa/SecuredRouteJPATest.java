@@ -1,9 +1,9 @@
 package fr.abes.helloabes.web.controller.jpa;
 
 import fr.abes.helloabes.core.entities.AppUser;
+import fr.abes.helloabes.web.dto.AppUserDto;
+
 import lombok.extern.slf4j.Slf4j;
-import org.mockito.Mockito;
-import org.springframework.test.annotation.IfProfileValue;
 import org.junit.jupiter.api.Test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,20 +23,14 @@ public class SecuredRouteJPATest extends SecuredControllerJPATestBase {
      * @throws Exception Lève une exception
      */
     @Test
-    @IfProfileValue(name ="spring.profiles.active", value ="test-jpa")
     public void securedCommandeAuthenticate() throws Exception {
 
         AppUser adminUser = getTotoUser();
-        AppUser myDataBaseUser = getDataBaseUser(adminUser);
-        String token = authenticate(myDataBaseUser);
 
-        Mockito.when(orderService.findOrdersOfUser(Mockito.any())).thenReturn(getListOfOrders(myDataBaseUser));
+        String token = authenticate(dtoMapper.map(adminUser, AppUserDto.class));
 
         mockMvc.perform(get("/api/v1/secured/commande")
                 .header("Authorization","Bearer "+token))
-                .andDo(result -> {
-                    log.info("Test réussi. Status Code : {}", result.getResponse().getStatus());
-                })
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.[0].id").exists())
@@ -49,6 +43,9 @@ public class SecuredRouteJPATest extends SecuredControllerJPATestBase {
                 .andExpect(jsonPath("$.[0].products").isArray())
                 .andExpect(jsonPath("$.[0].products[0].id").isNumber())
                 .andExpect(jsonPath("$.[0].products[0].name").isString())
-                .andExpect(jsonPath("$.[0].products[0].price").isNumber());
+                .andExpect(jsonPath("$.[0].products[0].price").isNumber())
+                .andDo(result -> {
+                    log.info("Test réussi. Status Code : {}", result.getResponse().getStatus());
+                });
     }
 }

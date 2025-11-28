@@ -2,28 +2,25 @@ package fr.abes.helloabes.web.controller.mockito;
 
 import fr.abes.helloabes.core.entities.AppUser;
 import fr.abes.helloabes.core.service.impl.OrderServiceImpl;
-import fr.abes.helloabes.core.service.impl.UserServiceImpl;
 import fr.abes.helloabes.web.controller.PublicController;
 import fr.abes.helloabes.web.controller.SecuredController;
 
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
 @Slf4j
 public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase {
 
@@ -33,10 +30,13 @@ public class SecuredControllerMockitoTestBase extends ApplicationMockitoTestBase
     @InjectMocks
     protected PublicController publicController;
 
+    @MockitoBean
+    protected OrderServiceImpl orderService;
+
     @BeforeEach
     public void setup(){
-        publicController = new PublicController(new UserServiceImpl(userDao,encoder()),authenticationManager,jwtUtility, dtoMapper);
-        securedController = new SecuredController(new UserServiceImpl(userDao,encoder()),new OrderServiceImpl(orderDao), dtoMapper);
+        publicController = new PublicController(userService, authenticationManager, jwtUtility, dtoMapper);
+        securedController = new SecuredController(userService, orderService, dtoMapper);
     }
 
     /**

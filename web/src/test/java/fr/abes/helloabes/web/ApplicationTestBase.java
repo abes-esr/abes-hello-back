@@ -1,11 +1,7 @@
 package fr.abes.helloabes.web;
 
 import fr.abes.helloabes.HelloABESApplication;
-import fr.abes.helloabes.core.dao.IOrderDao;
 import fr.abes.helloabes.core.entities.AppUser;
-import fr.abes.helloabes.core.entities.Order;
-import fr.abes.helloabes.core.entities.Product;
-import fr.abes.helloabes.core.entities.Supplier;
 import fr.abes.helloabes.web.configuration.DtoMapperUtility;
 import fr.abes.helloabes.web.configuration.JwtUtility;
 
@@ -16,10 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Assertions;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Classe de test général pour l'application.
@@ -32,9 +24,6 @@ public class ApplicationTestBase {
     protected BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Autowired
-    protected IOrderDao orderDao;
 
     @Autowired
     protected DtoMapperUtility dtoMapper;
@@ -75,29 +64,4 @@ public class ApplicationTestBase {
         return myDataBaseUser;
     }
 
-    protected List<Order> getListOfOrders(AppUser user) {
-        // Create supplier
-        Supplier supplier = new Supplier();
-        supplier.setId(2L);
-        supplier.setName("Darty");
-
-        // Create products
-        Product product1 = new Product();
-        product1.setId(6L);
-        product1.setName("L'écran HP");
-        product1.setPrice(350.0);
-
-        // Create order
-        Order order = new Order();
-        order.setId(3L);
-        order.setSupplier(supplier);
-        order.setProducts(Collections.singletonList(product1));
-
-        // Create listOrder
-        List<Order> listOrder = new ArrayList<>();
-        listOrder.add(order);
-
-//        return orderDao.findOrdersOfUser(user); // TODO voir pourquoi la base de test est vide
-        return listOrder;
-    }
 }

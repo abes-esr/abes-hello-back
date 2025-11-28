@@ -3,7 +3,6 @@ package fr.abes.helloabes.web.controller.mockito;
 import fr.abes.helloabes.core.entities.AppUser;
 
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Classe de test pour la route /api/v1/login
  */
-@ActiveProfiles("test-mockito")
 @Slf4j
 public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
 
@@ -116,12 +114,12 @@ public class LoginRouteMockitoTest extends PublicControllerMockitoTestBase {
 
         mockMvc.perform(post("/api/v1/login")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andDo(result -> {
-                    log.info("Test réussi. Status Code : {}", result.getResponse().getStatus());
-                })
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.userName").value(myUser.getUserName()))
+                .andDo(result -> {
+                    log.info("Test réussi. Status Code : {}", result.getResponse().getStatus());
+                })
                 .andReturn();
     }
 
