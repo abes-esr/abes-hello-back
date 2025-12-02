@@ -49,11 +49,7 @@ COPY ./docker/batch/abes-hello-batch1.sh /scripts/abes-hello-batch1.sh
 COPY --from=build-image /build/batch/target/*.jar /scripts/abes-hello-batch1.jar
 
 # L'agent OpenTelemetry
-COPY ./opentelemetry-javaagent.jar /scripts/opentelemetry-javaagent.jar4
-ENV NAMESPACE="hello-abes"
-ENV OTEL_RESOURCE_ATTRIBUTES="service.name=batch,deployment.environment=lab,service.namespace=${NAMESPACE},service.version=0.0.1,service.instance.id=${HOSTNAME}:8080"
-ENV OTEL_EXPORTER_OTLP_PROTOCOL=grpc
-ENV OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
+COPY ./opentelemetry-javaagent.jar /scripts/opentelemetry-javaagent.jar
 
 COPY ./docker/batch/docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
@@ -69,10 +65,6 @@ COPY --from=build-image /build/web/target/*.jar /app/abeshello.jar
 
 # L'agent OpenTelemetry
 COPY ./opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
-ENV NAMESPACE="hello-abes"
-ENV OTEL_RESOURCE_ATTRIBUTES="service.name=web,deployment.environment=lab,service.namespace=${NAMESPACE},service.version=0.0.1,service.instance.id=${HOSTNAME}:8080"
-ENV OTEL_EXPORTER_OTLP_PROTOCOL=grpc
-ENV OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
 
 ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
