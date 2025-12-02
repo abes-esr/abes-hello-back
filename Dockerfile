@@ -48,6 +48,9 @@ RUN dnf install -y java-11-openjdk
 COPY ./docker/batch/abes-hello-batch1.sh /scripts/abes-hello-batch1.sh
 COPY --from=build-image /build/batch/target/*.jar /scripts/abes-hello-batch1.jar
 
+# L'agent OpenTelemetry
+COPY ./opentelemetry-javaagent.jar /scripts/opentelemetry-javaagent.jar4
+
 COPY ./docker/batch/docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["crond", "-n"]
@@ -59,7 +62,11 @@ CMD ["crond", "-n"]
 FROM tomcat:9-jdk17 AS web-image
 WORKDIR /app/
 COPY --from=build-image /build/web/target/*.jar /app/abeshello.jar
+
+# L'agent OpenTelemetry
+COPY ./opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
+
 ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-ENTRYPOINT ["java","-jar","/app/abeshello.jar"]
+ENTRYPOINT ["java","-javaagent:opentelemetry-javaagent.jar", "-jar","/app/abeshello.jar"]
 
