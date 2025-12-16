@@ -1,8 +1,6 @@
 application-localhost.properties
-hibernate.cfg.xml
 HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**
 !**/src/test/**
 
@@ -20,7 +18,6 @@ target/
 *.iws
 *.iml
 *.ipr
-*.gdsl
 
 ### NetBeans ###
 /nbproject/private/
@@ -33,11 +30,6 @@ build/
 ### VS Code ###
 .vscode/
 /batch/src/main/resources/application.properties
-/core/src/test/resources/hibernate.cfg.xml
 
 ### Logs ###
 /logs/
-
-### Jenkins ###
-src/*.gdsl
-
