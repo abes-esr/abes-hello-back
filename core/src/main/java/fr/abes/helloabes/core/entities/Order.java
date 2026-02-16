@@ -17,13 +17,14 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name= "order_")
+@Table(name = "order_")
 public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * Identifiant unique d'une commande. Cet identifiant est géré automatiquement par la couche
+     * Identifiant unique d'une commande. Cet identifiant est géré automatiquement
+     * par la couche
      * Entity de Java.
      */
     @Id
@@ -36,7 +37,7 @@ public class Order implements Serializable {
      * un User peut avoir 1 ou plusieurs commandes
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     @JsonIgnore
     private AppUser user;
 
@@ -45,7 +46,7 @@ public class Order implements Serializable {
      * un fournisseur peut fournir une ou plusieurs commandes
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="supplier_id")
+    @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 
     /**
@@ -54,12 +55,9 @@ public class Order implements Serializable {
      * Un produit peut être ajouté dans une ou plusieurs commandes
      * On ne supprime pas les produits si une commande est supprimée.
      */
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
-            name =  "order_product",
-            joinColumns  = {@JoinColumn(name="order_id")},
-            inverseJoinColumns = {@JoinColumn(name="product_id" )}
-    )
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+    @JoinTable(name = "order_product", joinColumns = { @JoinColumn(name = "order_id") }, inverseJoinColumns = {
+            @JoinColumn(name = "product_id") })
     private List<Product> products = new ArrayList<>();
 
     public Order(AppUser user, Supplier supplier) {
@@ -68,17 +66,20 @@ public class Order implements Serializable {
     }
 
     public Order(AppUser user, Supplier supplier, List<Product> products) {
-        this(user,supplier);
-        
+        this(user, supplier);
+
         Iterator<Product> iterator = products.iterator();
-        while (iterator.hasNext()) { 
+        while (iterator.hasNext()) {
             Product product = iterator.next();
-            addProduct(product);
-        }        
+            if (product != null) {
+                addProduct(product);
+            }
+        }
     }
 
     /**
      * Ajoute un produit à la commande.
+     * 
      * @param product Product le produit à ajouter.
      */
     public void addProduct(Product product) {
@@ -88,6 +89,7 @@ public class Order implements Serializable {
 
     /**
      * Supprime un produit d'une commande.
+     * 
      * @param product Product le produit à suprimmer.
      */
     public void removeProduct(Product product) {
@@ -104,34 +106,34 @@ public class Order implements Serializable {
 
         while (iterator.hasNext()) {
             Product product = iterator.next();
-            
+
             product.getOrders().remove(this);
             iterator.remove();
         }
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
-        
+
         if (this == obj) {
             return true;
         }
-        
+
         if (getClass() != obj.getClass()) {
             return false;
         }
-        
+
         return id != null && id.equals(((Order) obj).id);
     }
-    
+
     @Override
     public int hashCode() {
         return 2020;
     }
-    
+
     @Override
     public String toString() {
         return "Order {" + "id=" + id + "}";
