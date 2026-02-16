@@ -72,7 +72,7 @@ COPY ./opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
 ENV NAMESPACE="hello-abes"
 ENV OTEL_RESOURCE_ATTRIBUTES="service.name=web,deployment.environment=lab,service.namespace=${NAMESPACE},service.version=0.0.1,service.instance.id=${HOSTNAME}:8080"
 ENV OTEL_EXPORTER_OTLP_PROTOCOL=grpc
-ENV OTEL_EXPORTER_OTLP_ENDPOINT="http://alloy:4317"
+ENV OTEL_EXPORTER_OTLP_ENDPOINT="http://diplotaxis7-dev.v106.abes.fr:4317"
 
 ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
