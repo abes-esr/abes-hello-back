@@ -28,8 +28,11 @@ target/
 build/
 
 ### VS Code ###
-.vscode/
 /batch/src/main/resources/application.properties
 
 ### Logs ###
-/logs/
+**/*.log
+
+### Jenkins ###
+src/*.gdsl
+

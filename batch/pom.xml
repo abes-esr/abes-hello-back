@@ -88,7 +88,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>4.0.0-RC1</version>
                 <configuration>
-                    <mainClass>fr.abes.helloabes.batch.Application</mainClass>
+                    <mainClass>fr.abes.helloabes.Application</mainClass>
                 </configuration>
             </plugin>
         </plugins>

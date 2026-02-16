@@ -24,10 +24,10 @@ COPY ./core/   /build/core/
 COPY ./web/    /build/web/
 COPY ./batch/  /build/batch/
 RUN mvn --batch-mode \
-        -Dmaven.test.skip=false \
-        -Duser.timezone=Europe/Paris \
-        -Duser.language=fr \
-        package
+    -Dmaven.test.skip=false \
+    -Duser.timezone=Europe/Paris \
+    -Duser.language=fr \
+    package
 
 
 
@@ -48,6 +48,13 @@ RUN dnf install -y java-11-openjdk
 COPY ./docker/batch/abes-hello-batch1.sh /scripts/abes-hello-batch1.sh
 COPY --from=build-image /build/batch/target/*.jar /scripts/abes-hello-batch1.jar
 
+# L'agent OpenTelemetry
+COPY ./opentelemetry-javaagent.jar /scripts/opentelemetry-javaagent.jar
+ENV NAMESPACE="hello-abes"
+ENV OTEL_RESOURCE_ATTRIBUTES="service.name=batch,deployment.environment=lab,service.namespace=${NAMESPACE},service.version=0.0.1,service.instance.id=${HOSTNAME}:8080"
+ENV OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+ENV OTEL_EXPORTER_OTLP_ENDPOINT="http://diplotaxis7-dev.v106.abes.fr:4317"
+
 COPY ./docker/batch/docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["crond", "-n"]
@@ -59,7 +66,15 @@ CMD ["crond", "-n"]
 FROM tomcat:9-jdk17 AS web-image
 WORKDIR /app/
 COPY --from=build-image /build/web/target/*.jar /app/abeshello.jar
+
+# L'agent OpenTelemetry
+COPY ./opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
+ENV NAMESPACE="hello-abes"
+ENV OTEL_RESOURCE_ATTRIBUTES="service.name=web,deployment.environment=lab,service.namespace=${NAMESPACE},service.version=0.0.1,service.instance.id=${HOSTNAME}:8080"
+ENV OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+ENV OTEL_EXPORTER_OTLP_ENDPOINT="http://alloy:4317"
+
 ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-ENTRYPOINT ["java","-jar","/app/abeshello.jar"]
+ENTRYPOINT ["java","-javaagent:opentelemetry-javaagent.jar", "-jar","/app/abeshello.jar"]
 
