@@ -20,5 +20,7 @@ INSERT INTO "product" ("product_id", "product_name", "product_price") VALUES (6,
 INSERT INTO "product" ("product_id", "product_name", "product_price") VALUES (7, 'Tablette Samsung', 480.70);
 INSERT INTO "product" ("product_id", "product_name", "product_price") VALUES (8, 'Samsung S20', 890.40);
 INSERT INTO "product" ("product_id", "product_name", "product_price") VALUES (9, 'Iphone 12', 1090.50);
-
-
+-- synchronisation des séquences après insertions manuelles
+SELECT setval(pg_get_serial_sequence('app_user', 'user_id'), (SELECT MAX(user_id) FROM app_user));
+SELECT setval(pg_get_serial_sequence('supplier', 'supplier_id'), (SELECT MAX(supplier_id) FROM supplier));
+SELECT setval(pg_get_serial_sequence('product', 'product_id'), (SELECT MAX(product_id) FROM product));
