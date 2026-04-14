@@ -2,14 +2,6 @@
 # Image pour la compilation
 FROM maven:3-eclipse-temurin-17 AS build-image
 WORKDIR /build/
-# Installation et configuration de la locale FR
-RUN apt update && DEBIAN_FRONTEND=noninteractive apt -y install locales
-RUN sed -i '/fr_FR.UTF-8/s/^# //g' /etc/locale.gen && \
-    locale-gen
-ENV LANG fr_FR.UTF-8
-ENV LANGUAGE fr_FR:fr
-ENV LC_ALL fr_FR.UTF-8
-
 
 # On lance la compilation Java
 # On débute par une mise en cache docker des dépendances Java
@@ -28,8 +20,6 @@ RUN mvn --batch-mode \
     -Duser.timezone=Europe/Paris \
     -Duser.language=fr \
     package
-
-
 
 ###
 # Image pour le module batch
@@ -50,8 +40,8 @@ COPY --from=build-image /build/batch/target/*.jar /scripts/abes-hello-batch1.jar
 
 # L'agent OpenTelemetry
 COPY ./opentelemetry-javaagent.jar /scripts/opentelemetry-javaagent.jar
-ENV NAMESPACE="hello-abes"
-ENV OTEL_RESOURCE_ATTRIBUTES="service.name=batch,deployment.environment=lab,service.namespace=${NAMESPACE},service.version=0.0.1,service.instance.id=${HOSTNAME}:8080"
+ENV NAMESPACE="abes-hello"
+ENV OTEL_RESOURCE_ATTRIBUTES="service.name=batch,deployment.environment=lab,service.namespace=${NAMESPACE},service.version=0.0.1"
 ENV OTEL_EXPORTER_OTLP_PROTOCOL=grpc
 ENV OTEL_EXPORTER_OTLP_ENDPOINT="http://diplotaxis7-dev.v106.abes.fr:4317"
 
@@ -69,8 +59,8 @@ COPY --from=build-image /build/web/target/*.jar /app/abeshello.jar
 
 # L'agent OpenTelemetry
 COPY ./opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
-ENV NAMESPACE="hello-abes"
-ENV OTEL_RESOURCE_ATTRIBUTES="service.name=web,deployment.environment=lab,service.namespace=${NAMESPACE},service.version=0.0.1,service.instance.id=${HOSTNAME}:8080"
+ENV NAMESPACE="abes-hello"
+ENV OTEL_RESOURCE_ATTRIBUTES="service.name=web,deployment.environment=lab,service.namespace=${NAMESPACE},service.version=0.0.1"
 ENV OTEL_EXPORTER_OTLP_PROTOCOL=grpc
 ENV OTEL_EXPORTER_OTLP_ENDPOINT="http://diplotaxis7-dev.v106.abes.fr:4317"
 
