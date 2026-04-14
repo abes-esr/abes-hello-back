@@ -1,6 +1,16 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
+        {
+            "type": "java",
+            "name": "Spring Boot - Hello Abes Web",
+            "request": "launch",
+            "mainClass": "fr.abes.helloabes.HelloABESApplication",
+            "projectName": "web",
+            "args": "",
+            "javaExec": "C:/Program Files/Java/jdk-17/bin/java.exe"
+        },
         {
             "type": "java",
             "name": "Spring Boot - Hello Abes Batch",
