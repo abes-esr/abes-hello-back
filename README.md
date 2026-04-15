@@ -9,7 +9,7 @@ Les fonctionnalités misent en œuvre dans ``abes-hello-back`` sont :
 2. Un service web RESTful permettant aux utilisateurs authentifiés sur le service de recevoir un message privé et de consulter l'historique des commandes passées
 3. Un batch permettant de lire des données en base de données puis d'effectuer un traitement dessus 
 
-Version: 2.0.1-SNAPSHOT
+Version: 2.0.1
 
 ## Développements
 
